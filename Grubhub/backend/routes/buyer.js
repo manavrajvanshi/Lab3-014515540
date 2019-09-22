@@ -42,10 +42,63 @@ router.post('/signup', (req,res) =>{
                 }else{
                     console.log("Email already exists in the table, buyer data not entered.");
                 }
-            }
-            
-            
+            }      
         });
+    });
+});
+
+
+router.post('/signin',(req, res)=> {
+    let email = req.body.email;
+    let password = req.body.password;
+    let query = `SELECT * FROM buyers WHERE email = '${email}'`;
+    pool.query(query, function (queryError, results, fields) {
+        if (queryError){
+            throw queryError;
+        }else{
+            if(results.length > 0){
+                let buyer = results[0];
+                let hashedPassword = buyer['password'];
+                console.log("Buyer matched, checking for password!");
+                bcrypt.compare(password, hashedPassword).then(function(matched) {
+                    if(matched){
+                        delete buyer.password;
+                        res.send(JSON.stringify(buyer));
+                        console.log(buyer);
+                    }
+                    else{
+                        res.end("Incorrect Password");
+                        console.log("Incorrect Password");
+                    }
+                    res.end(matched.toString());
+                }).catch(decryptionError => console.log(decryptionError));
+                
+            }else{
+                console.log("No user with the given email found.");
+                res.end("No user with the given email found.");
+            }           
+        }           
+    });  
+})
+
+router.post('/update', (req,res) =>{
+    let name = req.body.name;
+    let email = req.body.email;
+    let password = req.body.password;
+    let phone = req.body.phone;
+    let bid = req.body.bid;
+
+    bcrypt.hash(password, 10).then(function(hashedPassword){
+        
+        let query = `UPDATE buyers SET name = '${name}', email = '${email}',password = '${hashedPassword}',phone = '${phone}' WHERE bid = ${bid};`
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                throw queryError;
+            }else{
+                console.log(results);
+                res.send("Records Updated");
+            }   
+        }); 
     });
 });
 
