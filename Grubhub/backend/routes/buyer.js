@@ -17,16 +17,13 @@ router.post('/signup', (req,res) =>{
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
-    console.log(password)
     
     bcrypt.hash(password, 10).then(function(hashedPassword){
-        res.send(`Email: ${email}, Name: ${name}, Hashed Password: ${hashedPassword}`);
-        res.end();
-        
+              
         let query = `SELECT * from buyers WHERE email = '${email}'`;
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
-                throw queryError;
+                console.log("Error in first if. Check Backend -> Buyer -> Signup second");
             }else{
                 console.log("Checking if email exists in buyers table.");
                 if(results.length == 0 ){
@@ -34,13 +31,15 @@ router.post('/signup', (req,res) =>{
                     let query = `INSERT INTO buyers (name, email, password) VALUES ('${name}', '${email}','${hashedPassword}')`;
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
-                            throw queryError;
+                            res.send("Error second if. Check Backend -> Buyer -> Signup second ");
                         }else{
                             console.log("Data Entered");
+                            res.send("Sucessfully Signed Up!");
                         }    
                     });   
                 }else{
                     console.log("Email already exists in the table, buyer data not entered.");
+                    res.send("Alredy Registered");
                 }
             }      
         });
@@ -54,7 +53,7 @@ router.post('/signin',(req, res)=> {
     let query = `SELECT * FROM buyers WHERE email = '${email}'`;
     pool.query(query, function (queryError, results, fields) {
         if (queryError){
-            throw queryError;
+            console.log("Error in first if. Check Backend -> Buyer -> Signin ")
         }else{
             if(results.length > 0){
                 let buyer = results[0];
@@ -63,7 +62,7 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         delete buyer.password;
-                        res.send(JSON.stringify(buyer));
+                        res.send("logged in");
                         console.log(buyer);
                     }
                     else{
@@ -93,7 +92,7 @@ router.post('/update', (req,res) =>{
         let query = `UPDATE buyers SET name = '${name}', email = '${email}',password = '${hashedPassword}',phone = '${phone}' WHERE bid = ${bid};`
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
-                throw queryError;
+                console.log("Error in if 1, Check Backend -> Buyer -> update ")
             }else{
                 console.log(results);
                 res.send("Records Updated");

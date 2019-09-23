@@ -20,13 +20,12 @@ router.post('/signup', (req,res) =>{
     let restaurantZip = req.body.restaurantZip;
     
     bcrypt.hash(password, 10).then(function(hashedPassword){
-        res.send(`Email: ${email}, Name: ${name}, Hashed Password: ${hashedPassword}, Restaurant : ${restaurantName}, ${restaurantZip}`);
-        res.end();
 
         let query = `SELECT * from restaurants WHERE ownerEmail = '${email}'`;
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
-                throw queryError;
+                console.log("Error in first if. Check Backend -> Owner -> Signup \n ");
+                res.send("Error");
             }else{
                 console.log("Checking if email exists in restaurants table.");
                 if(results.length == 0 ){
@@ -34,13 +33,16 @@ router.post('/signup', (req,res) =>{
                     let query = `INSERT INTO restaurants (ownerName, ownerEmail, ownerPassword, restaurantName, restaurantZip) VALUES ('${name}', '${email}','${hashedPassword}','${restaurantName}','${restaurantZip}')`;
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
-                            throw queryError;
+                            console.log("Error in Second if. Check Backend -> Restaurant -> SignUp ");
+                            res.send("Error");
                         }else{
-                            console.log("Data Entered");
+                            console.log("Signed up");
+                            res.send("Signed up sucessfully");
                         }    
                     });   
                 }else{
                     console.log("Email already exists in the table, owner data not entered.");
+                    res.send("Account Already Exists");
                 }
             }           
         });            
@@ -54,7 +56,7 @@ router.post('/signin',(req, res)=> {
     let query = `SELECT * FROM restaurants WHERE ownerEmail = '${email}'`;
     pool.query(query, function (queryError, results, fields) {
         if (queryError){
-            throw queryError;
+            console.log("Error in first if. Check Backend -> Restaurant -> Signin ")
         }else{
             if(results.length > 0){
                 let owner = results[0];
@@ -63,14 +65,14 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         delete owner.ownerPassword;
-                        res.send(JSON.stringify(owner));
-                        console.log(owner);
+                        res.send("Logged in");
+                        console.log("Logged in");
                     }
                     else{
                         res.end("Incorrect Password");
                         console.log("Incorrect Password");
                     }
-                    res.end(matched.toString());
+                
                 }).catch(decryptionError => console.log(decryptionError));
                 
             }else{
