@@ -2,24 +2,25 @@ import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 let re = null;
-export class BuyerHome extends React.Component{
+export class OwnerHome extends React.Component{
     render(){
-        let buyer={
+        let owner={
             
         };
         
 
         if(cookie.load('authCookie') === "authenticated" ){
-            buyer = cookie.load('buyerData')
+            
+            owner = cookie.load('ownerData')
         }else{
             re = <Redirect to = "/"/>
-            console.log("Inside Else");
+            
         }
        
         return(
             <div>
                 {re}
-                Welcome {JSON.stringify(buyer)}
+                Welcome {JSON.stringify(owner)}
             </div>
         );
     }

@@ -1,5 +1,6 @@
 import React from 'react';
 import cookie from 'react-cookies';
+import axios from 'axios';
 
 
 
@@ -14,7 +15,13 @@ export class Navbar extends React.Component{
         cookie.remove('userType');
         cookie.remove('userId');
         cookie.remove('buyerData');
-
+        cookie.remove('ownerData');
+        axios.get('http://localhost:3001/restaurant/logout',{})
+                .then(response => {
+                    console.log("Logged Out");
+                }).catch(error=>{
+                    console.log("Error: "+JSON.stringify(error));
+                });
     }
     render(){
         let bar;
@@ -36,9 +43,9 @@ export class Navbar extends React.Component{
             }else if(userType === "owner"){
                 bar =  (
                     <div >
-                        <a href="#home">Welcome {userId}</a>
-                        <a href="#updateProfile">Update Profile</a>
-                        <a href="#logButton">Logout</a>        
+                        <a href="/ownerHome">Welcome {userId}</a>
+                        <a href="/ownerUpdate">Update Profile</a>
+                        <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
                 )
             }
@@ -47,6 +54,8 @@ export class Navbar extends React.Component{
                 <div>
                     <a href="/buyerLogin">Buyer Login</a>  
                     <a href="/ownerLogin">Owner Login</a>  
+                    <a href="/buyerSignup">Buyer Signup</a>  
+                    <a href="/ownerSignup">Owner Signup</a> 
                 </div>
             )
         }

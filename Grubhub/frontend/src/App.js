@@ -8,6 +8,8 @@ import {BuyerHome} from './buyer/home.js';
 import {BuyerUpdate} from './buyer/update.js';
 import {OwnerSignup} from './owner/signup.js';
 import {OwnerLogin} from './owner/login.js';
+import {OwnerHome} from './owner/home.js';
+import {OwnerUpdate} from './owner/update.js';
 
 import './App.css';
 
@@ -24,6 +26,8 @@ function App() {
 
           <Route path = "/ownerLogin" component = {OwnerLogin}/>
           <Route path = "/ownerSignup" component={OwnerSignup}/>
+          <Route path = "/ownerHome" component={OwnerHome}/>
+          <Route path = "/ownerUpdate" component = {OwnerUpdate} />
           
         </div>
       </BrowserRouter>

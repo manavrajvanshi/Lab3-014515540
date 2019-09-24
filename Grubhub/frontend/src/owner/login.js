@@ -1,5 +1,7 @@
 import React from 'react';
 import axios from 'axios';
+import {Redirect} from 'react-router';
+import cookie from 'react-cookies';
 
 export class OwnerLogin extends React.Component{
 
@@ -7,7 +9,8 @@ export class OwnerLogin extends React.Component{
         super(props);
         this.state = {
             email :"",
-            password:""
+            password:"",
+            auth :false
         }
         this.handleInput = this.handleInput.bind(this);
         this.login = this.login.bind(this);
@@ -34,17 +37,34 @@ export class OwnerLogin extends React.Component{
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/signin',data)
                 .then(response => {
-                    console.log(response.data);
+
+                    console.log("HIIIIIIIII");
+                    console.log(cookie.load('ownerData'));
+                    if( cookie.load('authCookie') === "authenticated"){
+                        this.setState({
+                            auth:true
+                        })
+                    }else{
+                        this.setState({
+                            auth:false
+                        })
+                    }
                 }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error.data));
+                    console.log("Error: "+JSON.stringify(error));
                 }
             );
         }
         
     }
     render(){
+
+        let redirect = null;
+        if (this.state.auth || cookie.load('authCookie')==="authenticated"){
+            redirect = <Redirect to = "/ownerHome"/>
+        }
         return(
             <div>
+                {redirect}
                 <form onSubmit = {this.login}>
                     <table border = "0">
                         <tbody>

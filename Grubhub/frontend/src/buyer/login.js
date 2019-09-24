@@ -47,7 +47,7 @@ export class BuyerLogin extends React.Component{
                         })
                     }
                 }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error.data));
+                    console.log("Error: "+JSON.stringify(error));
                 });
         }
         
@@ -59,7 +59,7 @@ export class BuyerLogin extends React.Component{
         }
         return(
             <div>
-                    {redirect}
+                {redirect}
                 
                 <form onSubmit = {this.login}>
                     <table border = "0">

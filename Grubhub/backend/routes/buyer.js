@@ -71,6 +71,7 @@ router.post('/signin',(req, res)=> {
                         res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
 
                         res.writeHead(200);
+                        res.end();
                         console.log(buyer);
                     }
                     else{
@@ -142,5 +143,12 @@ router.post('/update', (req,res) =>{
     });
 });
 
+router.get('/logout',(req,res) =>{
+    res.clearCookie('authCookie');
+    res.clearCookie('userType');
+    res.clearCookie('userId');
+    res.clearCookie('buyerData');
+    res.redirect("http://localhost:3000/");
+}) 
 
 module.exports = router;

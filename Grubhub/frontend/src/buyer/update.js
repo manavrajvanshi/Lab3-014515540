@@ -92,7 +92,7 @@ export class BuyerUpdate extends React.Component{
 
                             <tr>
                                 <td colSpan = "2" align = "center">
-                                    <input type = "submit" name = "signupdateup" value = "UPDATE"/>
+                                    <input type = "submit" name = "update" value = "UPDATE"/>
                                 </td> 
                             </tr>
                         </tbody>

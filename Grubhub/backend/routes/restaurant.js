@@ -65,10 +65,17 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         delete owner.ownerPassword;
-                        res.send("Logged in");
-                        console.log("Logged in");
+                        res.cookie('authCookie', 'authenticated');
+                        res.cookie('userType', 'owner');
+                        res.cookie('userId', 'owner'+owner['rid']);
+                        res.cookie('ownerData',JSON.stringify(owner),{encode:String});
+                        
+                        res.writeHead(200);
+                        res.end()
+                        console.log(owner);
                     }
                     else{
+                        res.writeHead(403);
                         res.end("Incorrect Password");
                         console.log("Incorrect Password");
                     }
@@ -82,6 +89,7 @@ router.post('/signin',(req, res)=> {
         }           
     });  
 })
+
 
 
 router.post('/update', (req,res) =>{
@@ -111,5 +119,13 @@ router.post('/update', (req,res) =>{
         }); 
     }).catch(passwordHashFailure => console.log(passwordHashFailure));
 });
+
+router.get('/logout',(req,res) =>{
+    res.clearCookie('authCookie');
+    res.clearCookie('userType');
+    res.clearCookie('userId');
+    res.clearCookie('ownerData');
+    res.redirect("http://localhost:3000/");
+}) 
 
 module.exports = router;
