@@ -1,16 +1,22 @@
 import React from 'react';
 import axios from 'axios';
+import {Redirect} from 'react-router';
+import cookie from 'react-cookies';
 
-export class buyerLogin extends React.Component{
+
+export class BuyerLogin extends React.Component{
 
     constructor(props){
         super(props);
         this.state = {
             email :"",
-            password:""
+            password:"",
+            auth :false
         }
         this.handleInput = this.handleInput.bind(this);
         this.login = this.login.bind(this);
+
+        
     }
 
     handleInput(e){
@@ -29,12 +35,17 @@ export class buyerLogin extends React.Component{
         if(  data.email === "" || data.password === ""){
             console.log("Invalid data, Cannot Login");
         }else{
-            console.log(JSON.stringify(this.state));
+            
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/buyer/signin',data)
                 .then(response => {
-                    console.log(response.data);
+                    console.log(cookie.load('buyerData'));
+                    if( cookie.load('authCookie') === "authenticated"){
+                        this.setState({
+                            auth:true
+                        })
+                    }
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error.data));
                 });
@@ -42,8 +53,14 @@ export class buyerLogin extends React.Component{
         
     }
     render(){
+        let redirect = null;
+        if (this.state.auth || cookie.load('authCookie')==="authenticated"){
+            redirect = <Redirect to = "/buyerHome"/>
+        }
         return(
             <div>
+                    {redirect}
+                
                 <form onSubmit = {this.login}>
                     <table border = "0">
                         <tbody>

@@ -1,17 +1,19 @@
 import React from 'react';
 import axios from 'axios';
+import cookie from 'react-cookies';
 
-export class BuyerSignup extends React.Component{
+export class BuyerUpdate extends React.Component{
 
     constructor(props){
         super(props);
         this.state = {
-            name :"",
-            email :"",
-            password:""
+            name :cookie.load('buyerData').name,
+            email :cookie.load('buyerData').email,
+            password:cookie.load('buyerData').password,
+            phone:cookie.load('buyerData').phone
         }
         this.handleInput = this.handleInput.bind(this);
-        this.signup = this.signup.bind(this);
+        this.update = this.update.bind(this);
     }
 
     handleInput(e){
@@ -20,21 +22,23 @@ export class BuyerSignup extends React.Component{
         })
     }
 
-    signup(e){
+    update(e){
         e.preventDefault();
         const data = {
             name : this.state.name,
             email : this.state.email,
             password : this.state.password,
+            phone : this.state.phone,
+            bid : cookie.load('buyerData').bid
         }
 
         if( data.name === "" || data.email === "" || data.password === ""){
-            console.log("Invalid data, Cannot signup");
+            console.log("Invalid data, Cannot Update");
         }else{
             console.log(JSON.stringify(this.state));
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://localhost:3001/buyer/signup',data)
+            axios.post('http://localhost:3001/buyer/update',data)
                 .then(response => {
                     console.log(response.data);
                 }).catch(error=>{
@@ -47,7 +51,7 @@ export class BuyerSignup extends React.Component{
     render(){
         return(
             <div>
-                <form onSubmit = {this.signup}>
+                <form onSubmit = {this.update}>
                     <table border = "0">
                         <tbody>
                             <tr>
@@ -78,8 +82,17 @@ export class BuyerSignup extends React.Component{
                             </tr>
 
                             <tr>
+                                <td>
+                                    Phone: 
+                                </td>
+                                <td>
+                                    <input type = "number" name = "phone" onChange = {this.handleInput} value = {this.state.phone} />
+                                </td>
+                            </tr>
+
+                            <tr>
                                 <td colSpan = "2" align = "center">
-                                    <input type = "submit" name = "signup" value = "SIGN UP"/>
+                                    <input type = "submit" name = "signupdateup" value = "UPDATE"/>
                                 </td> 
                             </tr>
                         </tbody>
