@@ -25,6 +25,7 @@ router.post('/signup', (req,res) =>{
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
                 console.log("Error in first if. Check Backend -> Owner -> Signup \n ");
+                res.writeHead(400);
                 res.send("Error");
             }else{
                 console.log("Checking if email exists in restaurants table.");
@@ -35,15 +36,18 @@ router.post('/signup', (req,res) =>{
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
                             console.log("Error in Second if. Check Backend -> Restaurant -> SignUp ");
-                            res.send("Error");
+                            res.writeHead(201);
+                            res.end("Error:  Check Backend -> Restaurant -> SignUp (2nd If)");
                         }else{
                             console.log("Signed up");
-                            res.send("Signed up sucessfully");
+                            res.writeHead(200);
+                            res.end("Signed up sucessfully");
                         }    
                     });   
                 }else{
                     console.log("Email already exists in the table, owner data not entered.");
-                    res.send("Account Already Exists");
+                    res.writeHead(202)
+                    res.end("Account Already Exists");
                 }
             }           
         });            
@@ -57,6 +61,8 @@ router.post('/signin',(req, res)=> {
     let query = `SELECT * FROM restaurants WHERE ownerEmail = '${email}'`;
     pool.query(query, function (queryError, results, fields) {
         if (queryError){
+            res.writeHead(203);
+            res.end();
             console.log("Error in first if. Check Backend -> Restaurant -> Signin ")
         }else{
             if(results.length > 0){
@@ -73,10 +79,10 @@ router.post('/signin',(req, res)=> {
                         
                         res.writeHead(200);
                         res.end()
-                        console.log(owner);
+                        console.log("Owner Signed in");
                     }
                     else{
-                        res.writeHead(403);
+                        res.writeHead(201);
                         res.end("Incorrect Password");
                         console.log("Incorrect Password");
                     }
@@ -84,6 +90,7 @@ router.post('/signin',(req, res)=> {
                 }).catch(decryptionError => console.log(decryptionError));
                 
             }else{
+                res.writeHead(202);
                 console.log("No user with the given email found.");
                 res.end("No user with the given email found.");
             }           
@@ -125,6 +132,8 @@ router.post('/update', (req,res) =>{
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
                 console.log("Error in first if. Check Backend -> restaurant -> update ");
+                res.writeHead(201);
+                res.end("Data not updated, Error in first if. Check Backend -> restaurant -> update.")
             }else{
                 console.log("Checking if email exists in restaurants table.");
 
@@ -135,17 +144,20 @@ router.post('/update', (req,res) =>{
                          WHERE rid = ${rid}`;
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
+                            res.writeHead(202);
+                            res.end("Error in if 2, Check Backend -> restaurant -> update ")
                             console.log("Error in if 2, Check Backend -> restaurant -> update ")
                         }else{
                             console.log(results);
-                            res.send("Records Updated");
+                            res.writeHead(200);
+                            res.end("Records Updated");
                         }   
                     }); 
 
                 }else{
                     console.log("Email already exists in the table, owner data not Updated.");
-                    res.writeHead("400");
-                    res.end("Email Belongs to someone else.");
+                    res.writeHead(203);
+                    res.end("Email Belongs to another account.");
                 }
             }      
         });

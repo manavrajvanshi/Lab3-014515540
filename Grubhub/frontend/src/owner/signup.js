@@ -28,8 +28,14 @@ class OwnerSignup extends React.Component{
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/signup',data)
                 .then(response => {
-                    //alert("Signed Up");
-                    console.log(response.data);
+                    if(response.status === 200){
+                        alert("Sucessfully Signed Up, please update your profile after logging in.");
+                    }else if(response.status === 201){
+                        alert("Error Signing up.");
+                        console.log(response.data);
+                    }else if(response.status === 202){
+                        alert(response.data);
+                    }
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error.data));
                 }
@@ -48,7 +54,7 @@ class OwnerSignup extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" onChange = {this.props.handleInput} value = {this.props.name} autoFocus required/>
+                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.props.handleInput} value = {this.props.name} autoFocus required/>
                                 </td>
                             </tr>
 

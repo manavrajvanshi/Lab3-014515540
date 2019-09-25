@@ -24,7 +24,9 @@ router.post('/signup', (req,res) =>{
         let query = `SELECT * from buyers WHERE email = '${email}'`;
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
-                console.log("Error in first if. Check Backend -> Buyer -> Signup second");
+                res.writeHead(400);
+                res.end();
+                console.log("Error in first if. Check Backend -> Buyer -> Signup ");
             }else{
                 console.log("Checking if email exists in buyers table.");
                 if(results.length == 0 ){
@@ -32,15 +34,18 @@ router.post('/signup', (req,res) =>{
                     let query = `INSERT INTO buyers (name, email, password) VALUES ('${name}', '${email}','${hashedPassword}')`;
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
-                            res.send("Error second if. Check Backend -> Buyer -> Signup second ");
+                            res.writeHead(201);
+                            res.end("Error second if. Check Backend -> Buyer -> Signup ");
                         }else{
                             console.log("Data Entered");
-                            res.send("Sucessfully Signed Up!");
+                            res.writeHead(200);
+                            res.end("Sucessfully Signed Up!");
                         }    
                     });   
                 }else{
                     console.log("Email already exists in the table, buyer data not entered.");
-                    res.send("Alredy Registered");
+                    res.writeHead(202);
+                    res.end("This account already exists.");
                 }
             }      
         });
@@ -75,7 +80,7 @@ router.post('/signin',(req, res)=> {
                         //console.log(buyer);
                     }
                     else{
-                        res.writeHead(403);
+                        res.writeHead(201);
                         res.end("Incorrect Password");
                         console.log("Incorrect Password");
                     }
@@ -83,6 +88,7 @@ router.post('/signin',(req, res)=> {
                 }).catch(decryptionError => console.log(decryptionError));
                 
             }else{
+                res.writeHead(202);
                 console.log("No user with the given email found.");
                 res.end("No user with the given email found.");
             }           
@@ -126,16 +132,20 @@ router.post('/update', (req,res) =>{
                     let query = `UPDATE buyers SET name = '${name}', email = '${email}',password = '${hashedPassword}',phone = '${phone}' WHERE bid = ${bid};`
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
-                            console.log("Error in if 1, Check Backend -> Buyer -> update ")
+                            console.log("Error in if 2, Check Backend -> Buyer -> update ");
+                            res.writeHead(201);
+                            res.end("Records not updated, Error in if 2, Check Backend -> Buyer -> update.");
                         }else{
-                            console.log(results);
-                            res.send("Records Updated");
+                            //console.log(results);
+                            console.log("Profile Updated");
+                            res.writeHead(200);
+                            res.end("Records Updated");
                         }   
                     }); 
 
                 }else{
                     console.log("Email already exists in the table, buyer data not Updated.");
-                    res.writeHead("400");
+                    res.writeHead("202");
                     res.end("Email Belongs to someone else.");
                 }
             }      

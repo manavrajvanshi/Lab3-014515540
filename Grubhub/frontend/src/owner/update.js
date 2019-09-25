@@ -27,13 +27,25 @@ class OwnerUpdate extends React.Component{
         if( data.ownerName === "" || data.ownerEmail === "" || data.ownerPassword === ""){
             console.log("Invalid data, Cannot Update");
         }else{
-            console.log("HEREEEE")
+            // console.log("HEREEEE")
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/update',data)
                 .then(response => {
                     console.log(response.data);
                     this.forceUpdate();
+                    if(response.status === 200){
+                        alert("Profile Updated");
+                        this.forceUpdate();
+                    }else if( response.status === 201){
+                        alert("Data not updated, contact support team.");
+                        console.log(response.data);
+                    }else if(response.status === 202){
+                        console.log("Data not updated, contact support team.");
+                    }
+                    else if(response.status === 203){
+                        alert(response.data);
+                    }
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
                 }
@@ -58,7 +70,7 @@ class OwnerUpdate extends React.Component{
                                    Owner Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "ownerName" onChange = {this.props.handleInput} value = {this.props.ownerName} autoFocus    />
+                                    <input type = "text" name = "ownerName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.props.handleInput} value = {this.props.ownerName} autoFocus    />
                                 </td>
                             </tr>
 

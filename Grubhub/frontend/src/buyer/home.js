@@ -2,12 +2,12 @@ import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
+
 let re = null;
 let buyer ;
 class BuyerHome extends React.Component{
     UNSAFE_componentWillMount(){
-        if(cookie.load('authCookie') === "authenticated" ){
-            
+        if(cookie.load('authCookie') === "authenticated" ){  
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             let data = {
@@ -35,7 +35,7 @@ class BuyerHome extends React.Component{
         return(
             <div>
                 {re}
-                {console.log(buyer)}
+                
                 <div>
                     <p>Welcome {buyer.name}</p>
                     <p>Your E-mail: {buyer.email}</p>

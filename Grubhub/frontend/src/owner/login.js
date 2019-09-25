@@ -4,6 +4,7 @@ import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import {connect} from 'react-redux'; 
 
+
 class OwnerLogin extends React.Component{
 
     constructor(props){
@@ -26,12 +27,23 @@ class OwnerLogin extends React.Component{
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/signin',data)
                 .then(response => {
-                    console.log(cookie.load('ownerData'));
-                    if( cookie.load('authCookie') === "authenticated"){
-                        this.forceUpdate();
-                    }else{
-                        
+
+                    if(response.status === 200){
+                        console.log(cookie.load('ownerData'));
+                        if( cookie.load('authCookie') === "authenticated"){
+                            this.forceUpdate();
+                        }
+                    }else if(response.status === 201){
+                        console.log(response.status+" error "+ response.data);
+                        alert("Incorrect Password");
+                    }else if(response.status === 202){
+                        console.log(response.status+" error "+ response.data);
+                        alert("No User with the given credentials.");
+                    }else if(response.status === 203){
+                        console.log("Error in first if in backend - restaurant - signin")
                     }
+
+                    
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
                 }
@@ -48,7 +60,7 @@ class OwnerLogin extends React.Component{
         return(
             <div>
                 {redirect}
-                <form onSubmit = {this.login}>
+                <form onSubmit = {this.login} className = "loginForm">
                     <table border = "0">
                         <tbody>
                             <tr>

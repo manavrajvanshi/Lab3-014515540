@@ -24,12 +24,21 @@ class BuyerUpdate extends React.Component{
         if( data.name === "" || data.email === "" || data.password === ""){
             console.log("Invalid data, Cannot Update");
         }else{
-            console.log(JSON.stringify(this.state));
+            
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/buyer/update',data)
                 .then(response => {
-                    this.forceUpdate();
+                    if(response.status === 200){
+                        alert("Profile Updated");
+                        this.forceUpdate();
+                    }else if( response.status === 201){
+                        alert("Some Error Occured, records not updated");
+                        console.log(response.data);
+                    }else if(response.status === 202){
+                        alert("The email belongs to someone else");
+                    }
+                    
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error.data));
                 }
@@ -53,7 +62,7 @@ class BuyerUpdate extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" onChange = {this.props.handleInput} value = {this.props.name}  autoFocus required/>
+                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.props.handleInput} value = {this.props.name}  autoFocus required/>
                                 </td>
                             </tr>
 

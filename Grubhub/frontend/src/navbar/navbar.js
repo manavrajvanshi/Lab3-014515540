@@ -1,7 +1,7 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import axios from 'axios';
-
+import './navbar.css';
 
 
 export class Navbar extends React.Component{
@@ -33,31 +33,35 @@ export class Navbar extends React.Component{
         let bar;
         let authCookie = cookie.load('authCookie');
         let userType = cookie.load('userType');
-        let userId = cookie.load('userId');
+        //let userId = cookie.load('userId');
+        
 
         if(authCookie === "authenticated"){
             
             
             if (userType === "buyer"){
                 bar =  (
-                    <div >
-                        <a href="/buyerHome">Welcome {userId}</a>
+                    <div className = "topnav">
+                        <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
                         <a href="/buyerUpdate">Update Profile</a>
+                        <a href="#/" >Past Orders</a> 
+                        <a href="#/" >Hungry? Order Now</a>   
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
                 )
             }else if(userType === "owner"){
                 bar =  (
-                    <div >
-                        <a href="/ownerHome">Welcome {userId}</a>
+                    <div className = "topnav">
+                        <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
                         <a href="/ownerUpdate">Update Profile</a>
+                        <a href ="#/">Order Status</a>
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
                 )
             }
         }else{
             bar = (
-                <div>
+                <div className = "topnav">
                     <a href="/buyerLogin">Buyer Login</a>  
                     <a href="/ownerLogin">Owner Login</a>  
                     <a href="/buyerSignup">Buyer Signup</a>  
@@ -76,3 +80,4 @@ export class Navbar extends React.Component{
         )
     }
 }
+

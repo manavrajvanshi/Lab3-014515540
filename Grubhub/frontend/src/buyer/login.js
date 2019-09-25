@@ -3,6 +3,7 @@ import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import {connect} from 'react-redux'; 
+import './login.css';
 
 class BuyerLogin extends React.Component{
 
@@ -17,24 +18,30 @@ class BuyerLogin extends React.Component{
             email : this.props.email,
             password : this.props.password,
         }
-        console.log(data); 
+        //console.log(data); 
         if(  data.email === "" || data.password === ""){
-
-            console.log(data.email);
-            console.log(data.password);
+            // console.log(data.email);
+            // console.log(data.password);
             console.log("Invalid data, Cannot Login");
         }else{
-            
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/buyer/signin',data)
                 .then(response => {
-                    console.log(cookie.load('buyerData'));
-                    if( cookie.load('authCookie') === "authenticated"){
-                        this.forceUpdate();
+                    if(response.status === 200){
+                        console.log("cookie: ",cookie.load('buyerData'));
+                        if( cookie.load('authCookie') === "authenticated"){
+                            this.forceUpdate();
+                        }
+                    }else if(response.status === 201){
+                        console.log(response.status+" error "+ response.data);
+                        alert("Incorrect Password");
+                    }else if(response.status === 202){
+                        console.log(response.status+" error "+ response.data);
+                        alert("No User with the given credentials.");
                     }
                 }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error));
+                    console.log(error);
                 });
         }
         
@@ -48,7 +55,7 @@ class BuyerLogin extends React.Component{
             <div>
                 {redirect}
                 
-                <form onSubmit = {this.login}>
+                <form onSubmit = {this.login}className = "loginForm">
                     <table border = "0">
                         <tbody>
                             <tr>
@@ -83,7 +90,7 @@ class BuyerLogin extends React.Component{
     }
 }
 const mapStateToProps = (state) =>{
-    console.log(state);
+    // console.log(state);
     return{
         name : state.buyer.name,
         email : state.buyer.email,
