@@ -31,6 +31,7 @@ router.post('/signup', (req,res) =>{
                 if(results.length == 0 ){
                     console.log("Entering the new details of owner");
                     let query = `INSERT INTO restaurants (ownerName, ownerEmail, ownerPassword, restaurantName, restaurantZip) VALUES ('${name}', '${email}','${hashedPassword}','${restaurantName}','${restaurantZip}')`;
+                    //console.log(query);
                     pool.query(query, function (queryError, results, fields) {
                         if (queryError){
                             console.log("Error in Second if. Check Backend -> Restaurant -> SignUp ");
@@ -102,23 +103,100 @@ router.post('/update', (req,res) =>{
     let restaurantZip = req.body.restaurantZip;
     let cuisine = req.body.cuisine;
 
+    let selfFlag = false;
+
+    let query = `SELECT ownerEmail from restaurants WHERE rid = '${rid}'`;
+    pool.query(query, function (queryError, results, fields) {
+        if (queryError){
+            console.log("Error in first if. Check Backend -> Buyer -> update ");
+        }else{
+            if(results[0].ownerEmail === ownerEmail){
+                selfFlag = true;
+            }
+            else{
+                selfFlaf = false;
+            }
+        }      
+    });
+
     bcrypt.hash(ownerPassword, 10).then(function(hashedPassword){
         
-        let query = `UPDATE restaurants SET ownerName = '${ownerName}',
-        ownerEmail = '${ownerEmail}', ownerPassword = '${hashedPassword}', ownerPhone = '${ownerPhone}',
-        restaurantName = '${restaurantName}', restaurantZip = ${restaurantZip},cuisine = '${cuisine}'
-        WHERE rid = ${rid}`;
-
+        let query = `SELECT * from restaurants WHERE ownerEmail = '${ownerEmail}'`;
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
-                throw queryError;
+                console.log("Error in first if. Check Backend -> restaurant -> update ");
             }else{
-                console.log(results);
-                res.send("Records Updated");
-            }   
-        }); 
-    }).catch(passwordHashFailure => console.log(passwordHashFailure));
+                console.log("Checking if email exists in restaurants table.");
+
+                if(results.length == 0 || selfFlag){
+                    let query = `UPDATE restaurants SET ownerName = '${ownerName}',
+                         ownerEmail = '${ownerEmail}', ownerPassword = '${hashedPassword}', ownerPhone = '${ownerPhone}',
+                         restaurantName = '${restaurantName}', restaurantZip = ${restaurantZip},cuisine = '${cuisine}'
+                         WHERE rid = ${rid}`;
+                    pool.query(query, function (queryError, results, fields) {
+                        if (queryError){
+                            console.log("Error in if 2, Check Backend -> restaurant -> update ")
+                        }else{
+                            console.log(results);
+                            res.send("Records Updated");
+                        }   
+                    }); 
+
+                }else{
+                    console.log("Email already exists in the table, owner data not Updated.");
+                    res.writeHead("400");
+                    res.end("Email Belongs to someone else.");
+                }
+            }      
+        });
+    }).catch(error => console.log(error));
 });
+
+    // bcrypt.hash(ownerPassword, 10).then(function(hashedPassword){
+        
+    //     let query = `UPDATE restaurants SET ownerName = '${ownerName}',
+    //     ownerEmail = '${ownerEmail}', ownerPassword = '${hashedPassword}', ownerPhone = '${ownerPhone}',
+    //     restaurantName = '${restaurantName}', restaurantZip = ${restaurantZip},cuisine = '${cuisine}'
+    //     WHERE rid = ${rid}`;
+
+    //     pool.query(query, function (queryError, results, fields) {
+    //         if (queryError){
+    //             throw queryError;
+    //         }else{
+    //             console.log(results);
+    //             res.send("Records Updated");
+    //         }   
+    //     }); 
+    // }).catch(passwordHashFailure => console.log(passwordHashFailure));
+
+//     res.send(req.body)
+// });
+
+router.post('/home',(req, res)=> {
+
+    //console.log(JSON.stringify(req.cookies));
+    let rid = req.body.rid;
+    //console.log(rid);
+    
+    let query = `SELECT * FROM restaurants WHERE rid = '${rid}'`;
+    pool.query(query, function (queryError, results, fields) {
+        if (queryError){
+            console.log("Error in first if. Check Backend -> owner -> HOME ")
+        }else{
+            if(results.length > 0){
+                let owner = results[0];
+                delete owner.ownerPassword;
+                res.send(JSON.stringify(owner));
+                console.log(owner);
+               
+                
+            }else{
+                console.log("No user with the given rid found.");
+                res.end("You are not authenticated or user not found.");
+            }           
+        }           
+    });  
+})
 
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');

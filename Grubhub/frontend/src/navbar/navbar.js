@@ -11,12 +11,18 @@ export class Navbar extends React.Component{
     }
 
     handleLogout(){
+        let url;
+        if(cookie.load('userType')==="buyer"){
+            url ='http://localhost:3001/buyer/logout';
+        }else{
+            url ='http://localhost:3001/restaurant/logout';
+        }
         cookie.remove('authCookie');
         cookie.remove('userType');
         cookie.remove('userId');
         cookie.remove('buyerData');
         cookie.remove('ownerData');
-        axios.get('http://localhost:3001/restaurant/logout',{})
+        axios.get(url,{})
                 .then(response => {
                     console.log("Logged Out");
                 }).catch(error=>{

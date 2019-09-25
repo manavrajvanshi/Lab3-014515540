@@ -1,34 +1,23 @@
 import React from 'react';
 import axios from 'axios';
 import cookie from 'react-cookies';
-
-export class BuyerUpdate extends React.Component{
+import {connect} from 'react-redux'; 
+import {Redirect} from 'react-router';
+let re = null;
+class BuyerUpdate extends React.Component{
 
     constructor(props){
-        super(props);
-        this.state = {
-            name :cookie.load('buyerData').name,
-            email :cookie.load('buyerData').email,
-            password:cookie.load('buyerData').password,
-            phone:cookie.load('buyerData').phone
-        }
-        this.handleInput = this.handleInput.bind(this);
+        super(props);      
         this.update = this.update.bind(this);
-    }
-
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
     }
 
     update(e){
         e.preventDefault();
         const data = {
-            name : this.state.name,
-            email : this.state.email,
-            password : this.state.password,
-            phone : this.state.phone,
+            name : this.props.name,
+            email : this.props.email,
+            password : this.props.password,
+            phone : this.props.phone,
             bid : cookie.load('buyerData').bid
         }
 
@@ -40,7 +29,7 @@ export class BuyerUpdate extends React.Component{
             //make a post request with the user data
             axios.post('http://localhost:3001/buyer/update',data)
                 .then(response => {
-                    console.log(response.data);
+                    this.forceUpdate();
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error.data));
                 }
@@ -49,8 +38,13 @@ export class BuyerUpdate extends React.Component{
         
     }
     render(){
+        if(cookie.load('authCookie') !== "authenticated" ){
+            re = <Redirect to = "/"/>
+            console.log("Inside Else");
+        }
         return(
             <div>
+                {re}
                 <form onSubmit = {this.update}>
                     <table border = "0">
                         <tbody>
@@ -59,7 +53,7 @@ export class BuyerUpdate extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
+                                    <input type = "text" name = "name" onChange = {this.props.handleInput} value = {this.props.name}  autoFocus required/>
                                 </td>
                             </tr>
 
@@ -68,7 +62,7 @@ export class BuyerUpdate extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email}  required/>
                                 </td>
                             </tr>
 
@@ -77,7 +71,7 @@ export class BuyerUpdate extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required />
+                                    <input type = "password" name = "password" onChange = {this.props.handleInput} required />
                                 </td>
                             </tr>
 
@@ -86,7 +80,7 @@ export class BuyerUpdate extends React.Component{
                                     Phone: 
                                 </td>
                                 <td>
-                                    <input type = "number" name = "phone" onChange = {this.handleInput} value = {this.state.phone} />
+                                    <input type = "number" name = "phone" onChange = {this.props.handleInput} value = {this.props.phone} />
                                 </td>
                             </tr>
 
@@ -103,3 +97,19 @@ export class BuyerUpdate extends React.Component{
         )
     }
 }
+
+const mapStateToProps = (state) =>{
+    return{
+        name : state.buyer.name,
+        email : state.buyer.email,
+        password : state.buyer.password,
+        phone : state.buyer.phone
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        handleInput: (e) => dispatch ({type : 'HANDLE_USER_INPUT',"event":e})
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(BuyerUpdate);

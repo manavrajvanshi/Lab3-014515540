@@ -1,63 +1,55 @@
 import React from 'react';
 import axios from 'axios';
 import cookie from 'react-cookies';
-
-export class OwnerUpdate extends React.Component{
+import {connect} from 'react-redux';
+import {Redirect} from 'react-router';
+let re = null;
+class OwnerUpdate extends React.Component{
 
     constructor(props){
         super(props);
-        
-        this.state = {
-            ownerName :cookie.load('ownerData').ownerName,
-            ownerEmail :cookie.load('ownerData').ownerEmail,
-            ownerPassword :cookie.load('ownerData').ownerPassword,
-            ownerPhone :cookie.load('ownerData').ownerPhone,
-            cuisine : cookie.load('ownerData').cuisine,
-            restaurantName :cookie.load('ownerData').restaurantName,
-            restaurantZip :cookie.load('ownerData').restaurantZip
-        }
-        this.handleInput = this.handleInput.bind(this);
         this.update = this.update.bind(this);
-    }
-
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
     }
 
     update(e){
         e.preventDefault();
         const data = {
-            ownerName : this.state.ownerName,
-            ownerEmail : this.state.ownerEmail,
-            ownerPassword : this.state.ownerPassword,
-            ownerPhone : this.state.ownerPhone,
+            ownerName : this.props.ownerName,
+            ownerEmail : this.props.ownerEmail,
+            ownerPassword : this.props.ownerPassword,
+            ownerPhone : this.props.ownerPhone,
             rid : cookie.load('ownerData').rid,
-            cuisine : this.state.cuisine,
-            restaurantName : this.state.restaurantName,
-            restaurantZip : this.state.restaurantZip
+            cuisine : this.props.cuisine,
+            restaurantName : this.props.restaurantName,
+            restaurantZip : this.props.restaurantZip
         }
-
+        console.log(data);
         if( data.ownerName === "" || data.ownerEmail === "" || data.ownerPassword === ""){
             console.log("Invalid data, Cannot Update");
         }else{
-            console.log(JSON.stringify(this.state));
+            console.log("HEREEEE")
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/update',data)
                 .then(response => {
                     console.log(response.data);
+                    this.forceUpdate();
                 }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error.data));
+                    console.log("Error: "+JSON.stringify(error));
                 }
             );
         }
         
     }
+    
     render(){
+        if(cookie.load('authCookie') !== "authenticated" ){
+            re = <Redirect to = "/"/>
+            console.log("Inside Else");
+        }
         return(
             <div>
+                {re}
                 <form onSubmit = {this.update}>
                     <table border = "0">
                         <tbody>
@@ -66,7 +58,7 @@ export class OwnerUpdate extends React.Component{
                                    Owner Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "ownerName" onChange = {this.handleInput} value = {this.state.ownerName} autoFocus required/>
+                                    <input type = "text" name = "ownerName" onChange = {this.props.handleInput} value = {this.props.ownerName} autoFocus    />
                                 </td>
                             </tr>
 
@@ -75,7 +67,7 @@ export class OwnerUpdate extends React.Component{
                                     Owner Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "ownerEmail" onChange = {this.handleInput} value = {this.state.ownerEmail} required/>
+                                    <input type = "email" name = "ownerEmail" onChange = {this.props.handleInput} value = {this.props.ownerEmail} />
                                 </td>
                             </tr>
 
@@ -84,7 +76,7 @@ export class OwnerUpdate extends React.Component{
                                     Owner Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "ownerPassword" onChange = {this.handleInput} required />
+                                    <input type = "password" name = "ownerPassword" onChange = {this.props.handleInput} value = {this.props.ownerPassword}  />
                                 </td>
                             </tr>
 
@@ -93,7 +85,7 @@ export class OwnerUpdate extends React.Component{
                                     Owner Phone: 
                                 </td>
                                 <td>
-                                    <input type = "number" name = "ownerPhone" onChange = {this.handleInput} value = {this.state.ownerPhone} />
+                                    <input type = "number" name = "ownerPhone" onChange = {this.props.handleInput} value = {this.props.ownerPhone} />
                                 </td>
                             </tr>
 
@@ -102,7 +94,7 @@ export class OwnerUpdate extends React.Component{
                                     Restaurant Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "restaurantName" onChange = {this.handleInput} value = {this.state.restaurantName} />
+                                    <input type = "text" name = "restaurantName" onChange = {this.props.handleInput} value = {this.props.restaurantName} />
                                 </td>
                             </tr>
 
@@ -111,7 +103,7 @@ export class OwnerUpdate extends React.Component{
                                     Restaurant Zip: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "restaurantZip" onChange = {this.handleInput} value = {this.state.restaurantZip} />
+                                    <input type = "text" name = "restaurantZip" onChange = {this.props.handleInput} value = {this.props.restaurantZip} />
                                 </td>
                             </tr>
 
@@ -120,7 +112,7 @@ export class OwnerUpdate extends React.Component{
                                     Cuisine: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "cuisine" onChange = {this.handleInput} value = {this.state.cuisine} />
+                                    <input type = "text" name = "cuisine" onChange = {this.props.handleInput} value = {this.props.cuisine} />
                                 </td>
                             </tr>
 
@@ -137,3 +129,21 @@ export class OwnerUpdate extends React.Component{
         )
     }
 }
+const mapStateToProps = (state) =>{
+    return{
+        ownerName : state.owner.ownerName,
+        ownerEmail : state.owner.ownerEmail,
+        ownerPassword : state.owner.ownerPassword,
+        ownerPhone: state.owner.ownerPhone,
+        restaurantName: state.owner.restaurantName,
+        restaurantZip : state.owner.restaurantZip,
+        cuisine : state.owner.cuisine
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        handleInput: (e) => dispatch ({type : 'HANDLE_OWNER_INPUT',"event":e})
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(OwnerUpdate);

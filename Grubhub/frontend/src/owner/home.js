@@ -1,27 +1,55 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import axios from 'axios';
 let re = null;
-export class OwnerHome extends React.Component{
-    render(){
-        let owner={
-            
-        };
-        
-
+let owner;
+class OwnerHome extends React.Component{
+    UNSAFE_componentWillMount(){
         if(cookie.load('authCookie') === "authenticated" ){
             
-            owner = cookie.load('ownerData')
+            axios.defaults.withCredentials = true;
+            //make a post request with the user data
+            let data = {
+                "rid" : cookie.load('ownerData').rid
+            }
+            
+            axios.post('http://localhost:3001/restaurant/home',data)
+                .then(response => {
+                    owner = response.data;
+                    this.forceUpdate();
+                }).catch(error=>{
+                    console.log("Error: "+JSON.stringify(error));
+                }
+            );
         }else{
             re = <Redirect to = "/"/>
-            
+            console.log("Inside Else");
         }
-       
+    }
+    
+    
+    render(){
+        
+        
+
+        if(!owner){
+            return <div></div>
+        }
         return(
             <div>
                 {re}
-                Welcome {JSON.stringify(owner)}
+                {console.log(owner)}
+                <div>
+                    <p>Welcome {owner.ownerName}</p>
+                    <p>Your E-mail: {owner.ownerEmail}</p>
+                    <p>Your Contact Number: {owner.ownerPhone}</p>
+                </div>
+                
+                
             </div>
         );
     }
 }
+
+export default OwnerHome;

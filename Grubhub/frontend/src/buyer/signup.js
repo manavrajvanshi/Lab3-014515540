@@ -1,37 +1,27 @@
 import React from 'react';
 import axios from 'axios';
+import {connect} from 'react-redux'; 
 
-export class BuyerSignup extends React.Component{
+class BuyerSignup extends React.Component{
 
     constructor(props){
         super(props);
-        this.state = {
-            name :"",
-            email :"",
-            password:""
-        }
-        this.handleInput = this.handleInput.bind(this);
+     
         this.signup = this.signup.bind(this);
-    }
-
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
     }
 
     signup(e){
         e.preventDefault();
         const data = {
-            name : this.state.name,
-            email : this.state.email,
-            password : this.state.password,
+            name : this.props.name,
+            email : this.props.email,
+            password : this.props.password,
         }
 
         if( data.name === "" || data.email === "" || data.password === ""){
             console.log("Invalid data, Cannot signup");
         }else{
-            console.log(JSON.stringify(this.state));
+            
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/buyer/signup',data)
@@ -55,7 +45,7 @@ export class BuyerSignup extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
+                                    <input type = "text" name = "name" onChange = {this.props.handleInput} value = {this.props.name} autoFocus required/>
                                 </td>
                             </tr>
 
@@ -64,7 +54,7 @@ export class BuyerSignup extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email} required/>
                                 </td>
                             </tr>
 
@@ -73,7 +63,7 @@ export class BuyerSignup extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required />
+                                    <input type = "password" name = "password" onChange = {this.props.handleInput} required />
                                 </td>
                             </tr>
 
@@ -90,3 +80,19 @@ export class BuyerSignup extends React.Component{
         )
     }
 }
+
+const mapStateToProps = (state) =>{
+    return{
+        name : state.buyer.name,
+        email : state.buyer.email,
+        password : state.buyer.password,
+        phone: state.buyer.phone
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        handleInput: (e) => dispatch ({type : 'HANDLE_USER_INPUT',"event":e})
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(BuyerSignup);

@@ -50,7 +50,7 @@ router.post('/signup', (req,res) =>{
 
 router.post('/signin',(req, res)=> {
 
-    console.log(JSON.stringify(req.cookies));
+    //console.log(JSON.stringify(req.cookies));
     let email = req.body.email;
     let password = req.body.password;
     let query = `SELECT * FROM buyers WHERE email = '${email}'`;
@@ -72,7 +72,7 @@ router.post('/signin',(req, res)=> {
 
                         res.writeHead(200);
                         res.end();
-                        console.log(buyer);
+                        //console.log(buyer);
                     }
                     else{
                         res.writeHead(403);
@@ -140,8 +140,34 @@ router.post('/update', (req,res) =>{
                 }
             }      
         });
-    });
+    }).catch(error => console.log(error));;
 });
+
+router.post('/home',(req, res)=> {
+
+    //console.log(JSON.stringify(req.cookies));
+    let bid = req.body.bid;
+    //console.log(bid);
+    
+    let query = `SELECT * FROM buyers WHERE bid = '${bid}'`;
+    pool.query(query, function (queryError, results, fields) {
+        if (queryError){
+            console.log("Error in first if. Check Backend -> Buyer -> HOME ")
+        }else{
+            if(results.length > 0){
+                let buyer = results[0];
+                delete buyer.password;
+                res.send(JSON.stringify(buyer));
+                console.log(buyer);
+               
+                
+            }else{
+                console.log("No user with the given bid found.");
+                res.end("You are not authenticated or user found.");
+            }           
+        }           
+    });  
+})
 
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');

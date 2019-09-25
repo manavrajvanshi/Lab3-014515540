@@ -1,45 +1,34 @@
 import React from 'react';
 import axios from 'axios';
+import {connect} from 'react-redux';
 
-export class OwnerSignup extends React.Component{
+class OwnerSignup extends React.Component{
 
     constructor(props){
         super(props);
-        this.state = {
-            name :"",
-            email :"",
-            password:"",
-            restaurantName: "",
-            restaurantZip: ""
-        }
-        this.handleInput = this.handleInput.bind(this);
         this.signup = this.signup.bind(this);
     }
 
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
-    }
 
     signup(e){
         e.preventDefault();
-        const data = {
-            name : this.state.name,
-            email : this.state.email,
-            password : this.state.password,
-            restaurantName : this.state.restaurantName,
-            restaurantZip : this.state.restaurantZip
-        }
 
+        const data = {
+            name : this.props.name,
+            email : this.props.email,
+            password : this.props.password,
+            restaurantName : this.props.restaurantName,
+            restaurantZip : this.props.restaurantZip
+        }
+        console.log(data);
         if( data.name === "" || data.email === "" || data.password === ""){
             console.log("Invalid data, Cannot signup");
         }else{
-            console.log(JSON.stringify(this.state));
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/signup',data)
                 .then(response => {
+                    //alert("Signed Up");
                     console.log(response.data);
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error.data));
@@ -59,7 +48,7 @@ export class OwnerSignup extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
+                                    <input type = "text" name = "name" onChange = {this.props.handleInput} value = {this.props.name} autoFocus required/>
                                 </td>
                             </tr>
 
@@ -68,7 +57,7 @@ export class OwnerSignup extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email} required/>
                                 </td>
                             </tr>
 
@@ -77,16 +66,17 @@ export class OwnerSignup extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required />
+                                    <input type = "password" name = "password" onChange = {this.props.handleInput}  value = {this.props.password}required />
                                 </td>
                             </tr>
 
+                            
                             <tr>
                                 <td>
                                     Restaurant Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "restaurantName" onChange = {this.handleInput} required />
+                                    <input type = "text" name = "restaurantName" onChange = {this.props.handleInput}  value = {this.props.restaurantName} required />
                                 </td>
                             </tr>
 
@@ -95,7 +85,7 @@ export class OwnerSignup extends React.Component{
                                     Restaurant Zip: 
                                 </td>
                                 <td>
-                                    <input type = "number" name = "restaurantZip" onChange = {this.handleInput} required />
+                                    <input type = "number" name = "restaurantZip" onChange = {this.props.handleInput}  value = {this.props.restaurantZip}required />
                                 </td>
                             </tr>
 
@@ -112,3 +102,23 @@ export class OwnerSignup extends React.Component{
         )
     }
 }
+
+
+
+const mapStateToProps = (state) =>{
+    return{
+        name : state.owner.name,
+        email : state.owner.email,
+        password : state.owner.password,
+        phone: state.owner.phone,
+        restaurantName: state.owner.restaurantName,
+        restaurantZip : state.owner.restaurantZip
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        handleInput: (e) => dispatch ({type : 'HANDLE_OWNER_INPUT',"event":e})
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(OwnerSignup);

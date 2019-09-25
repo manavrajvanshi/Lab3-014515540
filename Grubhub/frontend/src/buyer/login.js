@@ -2,37 +2,26 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
+import {connect} from 'react-redux'; 
 
-
-export class BuyerLogin extends React.Component{
+class BuyerLogin extends React.Component{
 
     constructor(props){
         super(props);
-        this.state = {
-            email :"",
-            password:"",
-            auth :false
-        }
-        this.handleInput = this.handleInput.bind(this);
         this.login = this.login.bind(this);
-
-        
-    }
-
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
     }
 
     login(e){
         e.preventDefault();
         const data = {
-            email : this.state.email,
-            password : this.state.password,
+            email : this.props.email,
+            password : this.props.password,
         }
-
+        console.log(data); 
         if(  data.email === "" || data.password === ""){
+
+            console.log(data.email);
+            console.log(data.password);
             console.log("Invalid data, Cannot Login");
         }else{
             
@@ -42,9 +31,7 @@ export class BuyerLogin extends React.Component{
                 .then(response => {
                     console.log(cookie.load('buyerData'));
                     if( cookie.load('authCookie') === "authenticated"){
-                        this.setState({
-                            auth:true
-                        })
+                        this.forceUpdate();
                     }
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
@@ -54,7 +41,7 @@ export class BuyerLogin extends React.Component{
     }
     render(){
         let redirect = null;
-        if (this.state.auth || cookie.load('authCookie')==="authenticated"){
+        if (cookie.load('authCookie')==="authenticated"){
             redirect = <Redirect to = "/buyerHome"/>
         }
         return(
@@ -69,7 +56,7 @@ export class BuyerLogin extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email} required/>
                                 </td>
                             </tr>
 
@@ -78,7 +65,7 @@ export class BuyerLogin extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required/>
+                                    <input type = "password" name = "password" onChange = {this.props.handleInput} required/>
                                 </td>
                             </tr>
 
@@ -95,3 +82,20 @@ export class BuyerLogin extends React.Component{
         )
     }
 }
+const mapStateToProps = (state) =>{
+    console.log(state);
+    return{
+        name : state.buyer.name,
+        email : state.buyer.email,
+        password : state.buyer.password,
+        phone: state.buyer.phone
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        handleInput: (e) => dispatch ({type : 'HANDLE_USER_INPUT',"event":e}),
+        auth: () => dispatch({type:"AUTH"})
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(BuyerLogin);

@@ -2,52 +2,35 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
+import {connect} from 'react-redux'; 
 
-export class OwnerLogin extends React.Component{
+class OwnerLogin extends React.Component{
 
     constructor(props){
         super(props);
-        this.state = {
-            email :"",
-            password:"",
-            auth :false
-        }
-        this.handleInput = this.handleInput.bind(this);
         this.login = this.login.bind(this);
-    }
-
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
     }
 
     login(e){
         e.preventDefault();
         const data = {
-            email : this.state.email,
-            password : this.state.password,
+            email : this.props.email,
+            password : this.props.password,
         }
 
         if(  data.email === "" || data.password === ""){
             console.log("Invalid data, Cannot Login");
         }else{
-            console.log(JSON.stringify(this.state));
+            
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post('http://localhost:3001/restaurant/signin',data)
                 .then(response => {
-
-                    console.log("HIIIIIIIII");
                     console.log(cookie.load('ownerData'));
                     if( cookie.load('authCookie') === "authenticated"){
-                        this.setState({
-                            auth:true
-                        })
+                        this.forceUpdate();
                     }else{
-                        this.setState({
-                            auth:false
-                        })
+                        
                     }
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
@@ -59,7 +42,7 @@ export class OwnerLogin extends React.Component{
     render(){
 
         let redirect = null;
-        if (this.state.auth || cookie.load('authCookie')==="authenticated"){
+        if (cookie.load('authCookie')==="authenticated"){
             redirect = <Redirect to = "/ownerHome"/>
         }
         return(
@@ -73,7 +56,7 @@ export class OwnerLogin extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email} required/>
                                 </td>
                             </tr>
 
@@ -82,7 +65,7 @@ export class OwnerLogin extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required/>
+                                    <input type = "password" name = "password" onChange = {this.props.handleInput} required/>
                                 </td>
                             </tr>
 
@@ -99,3 +82,20 @@ export class OwnerLogin extends React.Component{
         )
     }
 }
+
+
+const mapStateToProps = (state) =>{
+    return{
+        name : state.owner.name,
+        email : state.owner.email,
+        password : state.owner.password,
+        phone: state.owner.phone
+    }
+}
+const mapDispatchToProps = (dispatch) =>{
+    return {
+        handleInput: (e) => dispatch ({type : 'HANDLE_OWNER_INPUT',"event":e})
+    }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(OwnerLogin);

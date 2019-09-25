@@ -2,14 +2,14 @@ import React from 'react';
 import {BrowserRouter,Route} from 'react-router-dom';
 
 import {Navbar} from './navbar/navbar.js';
-import {BuyerLogin} from './buyer/login.js';
-import {BuyerSignup} from './buyer/signup.js';
-import {BuyerHome} from './buyer/home.js';
-import {BuyerUpdate} from './buyer/update.js';
-import {OwnerSignup} from './owner/signup.js';
-import {OwnerLogin} from './owner/login.js';
-import {OwnerHome} from './owner/home.js';
-import {OwnerUpdate} from './owner/update.js';
+import BuyerLogin from './buyer/login.js';
+import BuyerSignup from './buyer/signup.js';
+import BuyerHome from './buyer/home.js';
+import BuyerUpdate from './buyer/update.js';
+import OwnerSignup from './owner/signup.js';
+import OwnerLogin from './owner/login.js';
+import OwnerHome from './owner/home.js';
+import OwnerUpdate from './owner/update.js';
 
 import './App.css';
 
