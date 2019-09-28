@@ -2,9 +2,10 @@ import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
+import './home.css';
 
 let re = null;
-let buyer ;
+let buyer,image ;
 class BuyerHome extends React.Component{
     UNSAFE_componentWillMount(){
         if(cookie.load('authCookie') === "authenticated" ){  
@@ -17,6 +18,7 @@ class BuyerHome extends React.Component{
             axios.post('http://localhost:3001/buyer/home',data)
                 .then(response => {
                     buyer = response.data;
+                    image = "http://localhost:3001/buyer/"+data.bid+".jpg";
                     this.forceUpdate();
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
@@ -32,11 +34,13 @@ class BuyerHome extends React.Component{
         if(!buyer){
             return <div></div>
         }
+        
         return(
             <div>
                 {re}
                 
-                <div>
+                <div name = "profile">
+                    <img src = {image} width ="200" height = "200" alt = 'Profile'/>
                     <p>Welcome {buyer.name}</p>
                     <p>Your E-mail: {buyer.email}</p>
                     <p>Your Contact Number: {buyer.phone}</p>

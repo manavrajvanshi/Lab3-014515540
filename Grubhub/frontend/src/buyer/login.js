@@ -4,14 +4,15 @@ import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import {connect} from 'react-redux'; 
 import './login.css';
-
+let redirect = null;
+        
 class BuyerLogin extends React.Component{
 
     constructor(props){
         super(props);
         this.login = this.login.bind(this);
     }
-
+    
     login(e){
         e.preventDefault();
         const data = {
@@ -31,7 +32,8 @@ class BuyerLogin extends React.Component{
                     if(response.status === 200){
                         console.log("cookie: ",cookie.load('buyerData'));
                         if( cookie.load('authCookie') === "authenticated"){
-                            this.forceUpdate();
+                            //this.forceUpdate();
+                            this.props.authf();
                         }
                     }else if(response.status === 201){
                         console.log(response.status+" error "+ response.data);
@@ -47,7 +49,6 @@ class BuyerLogin extends React.Component{
         
     }
     render(){
-        let redirect = null;
         if (cookie.load('authCookie')==="authenticated"){
             redirect = <Redirect to = "/buyerHome"/>
         }
@@ -95,13 +96,14 @@ const mapStateToProps = (state) =>{
         name : state.buyer.name,
         email : state.buyer.email,
         password : state.buyer.password,
-        phone: state.buyer.phone
+        phone: state.buyer.phone,
+        state : state.auth
     }
 }
 const mapDispatchToProps = (dispatch) =>{
     return {
         handleInput: (e) => dispatch ({type : 'HANDLE_USER_INPUT',"event":e}),
-        auth: () => dispatch({type:"AUTH"})
+        authf: () => dispatch({type:"AUTH"})
     }
 }
 

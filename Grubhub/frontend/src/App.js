@@ -6,6 +6,7 @@ import BuyerLogin from './buyer/login.js';
 import BuyerSignup from './buyer/signup.js';
 import BuyerHome from './buyer/home.js';
 import BuyerUpdate from './buyer/update.js';
+import BuyerPicture from './buyer/picture.js';
 import OwnerSignup from './owner/signup.js';
 import OwnerLogin from './owner/login.js';
 import OwnerHome from './owner/home.js';
@@ -23,7 +24,7 @@ function App() {
           <Route path = "/buyerSignup" component={BuyerSignup}/>
           <Route path = "/buyerHome" component={BuyerHome}/>
           <Route path = "/buyerUpdate" component={BuyerUpdate}/>
-
+          <Route path = "/buyerPicture" component = {BuyerPicture} />
           <Route path = "/ownerLogin" component = {OwnerLogin}/>
           <Route path = "/ownerSignup" component={OwnerSignup}/>
           <Route path = "/ownerHome" component={OwnerHome}/>

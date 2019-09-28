@@ -44,8 +44,11 @@ export class Navbar extends React.Component{
                     <div className = "topnav">
                         <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
                         <a href="/buyerUpdate">Update Profile</a>
+                        <a href ="/buyerPicture">Upload Picture</a>
+                        <a href="#/" >Hungry? Order Now</a>  
                         <a href="#/" >Past Orders</a> 
-                        <a href="#/" >Hungry? Order Now</a>   
+                        <a href="#/" >Order Status</a>   
+                        <a href="#/" >Contact Us</a> 
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
                 )

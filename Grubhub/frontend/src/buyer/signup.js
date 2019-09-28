@@ -1,7 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import {connect} from 'react-redux'; 
+import {Redirect} from 'react-router';
 
+let re = null;
 class BuyerSignup extends React.Component{
 
     constructor(props){
@@ -28,6 +30,8 @@ class BuyerSignup extends React.Component{
                 .then(response => {
                     if(response.status === 200){
                         alert("Sucessfully Signed Up, please update your profile after logging in.");
+                        re = <Redirect to = "/buyerLogin"/>
+                        this.forceUpdate();
                     }else if(response.status === 201){
                         alert("Error Signing up.");
                         console.log(response.data);
@@ -42,8 +46,10 @@ class BuyerSignup extends React.Component{
         
     }
     render(){
+        
         return(
             <div>
+                {re}
                 <form onSubmit = {this.signup}>
                     <table border = "0">
                         <tbody>

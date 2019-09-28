@@ -1,4 +1,5 @@
 const initialState = {
+    auth : false,
     buyer: {
         name :"",
         email: "",
@@ -26,6 +27,10 @@ const reducer = ( state = initialState, action ) =>{
     }
     if(action.type === "HANDLE_OWNER_INPUT"){
         newState['owner'][action.event.target.name] = action.event.target.value;
+        
+    }
+    if(action.type === "AUTH"){
+        newState['auth']= true;
         
     }
     

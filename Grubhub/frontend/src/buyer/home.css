@@ -1,0 +1,23 @@
+div[name="home"] {
+    text-align : center;
+  }
+
+P
+{
+    text-align: center;
+}
+
+H2
+{ 
+    text-align: center;
+}
+
+img
+{
+    border-radius: 50%;
+    text-align:center;
+    display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 15%;
+}

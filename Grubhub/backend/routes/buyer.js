@@ -1,10 +1,8 @@
 var express = require('express');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
+const multer = require('multer');
 
-
-
-let router = express.Router();
 
 const pool  = mysql.createPool({
     connectionLimit : 100,
@@ -13,6 +11,20 @@ const pool  = mysql.createPool({
     password        : 'rootroot',
     database        : 'grubhubProject'
 });
+
+const storage = multer.diskStorage({
+    destination: 'images/buyer/',
+    filename: function(req, file, cb){
+        
+        let currentUserCookie = JSON.parse(req.cookies.buyerData);
+        
+        cb(null, JSON.stringify(currentUserCookie.bid)+'.jpg' );
+    }
+});
+
+const upload = multer({storage:storage});
+
+let router = express.Router();
 
 router.post('/signup', (req,res) =>{
     let name = req.body.name;
@@ -40,6 +52,7 @@ router.post('/signup', (req,res) =>{
                             console.log("Data Entered");
                             res.writeHead(200);
                             res.end("Sucessfully Signed Up!");
+                            
                         }    
                     });   
                 }else{
@@ -177,6 +190,12 @@ router.post('/home',(req, res)=> {
             }           
         }           
     });  
+})
+
+
+router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,res) =>{
+    res.redirect('http://localhost:3000/buyerHome');
+    
 })
 
 router.get('/logout',(req,res) =>{
