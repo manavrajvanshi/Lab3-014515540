@@ -1,23 +1,36 @@
 import React from 'react';
 import axios from 'axios';
 import cookie from 'react-cookies';
-import {connect} from 'react-redux'; 
 import {Redirect} from 'react-router';
 let re = null;
-class BuyerUpdate extends React.Component{
+export default class BuyerUpdate extends React.Component{
 
     constructor(props){
-        super(props);      
+        super(props);   
+        this.state = {
+            name : '',
+            email : '',
+            password :'',
+            phone :''
+        }  
+        
+        this.handleInput = this.handleInput.bind(this);
         this.update = this.update.bind(this);
+    }
+
+    handleInput(e){
+        this.setState({
+            [e.target.name] : e.target.value
+        })
     }
 
     update(e){
         e.preventDefault();
         const data = {
-            name : this.props.name,
-            email : this.props.email,
-            password : this.props.password,
-            phone : this.props.phone,
+            name : this.state.name,
+            email : this.state.email,
+            password : this.state.password,
+            phone : this.state.phone,
             bid : cookie.load('buyerData').bid
         }
 
@@ -31,7 +44,10 @@ class BuyerUpdate extends React.Component{
                 .then(response => {
                     if(response.status === 200){
                         alert("Profile Updated");
-                        this.forceUpdate();
+                        re = <Redirect to = "/buyerHome"/>
+                        this.setState({
+                            updated: true
+                        })
                     }else if( response.status === 201){
                         alert("Some Error Occured, records not updated");
                         console.log(response.data);
@@ -62,7 +78,7 @@ class BuyerUpdate extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.props.handleInput} value = {this.props.name}  autoFocus required/>
+                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name}  autoFocus required/>
                                 </td>
                             </tr>
 
@@ -71,7 +87,7 @@ class BuyerUpdate extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email}  required/>
+                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email}  required/>
                                 </td>
                             </tr>
 
@@ -80,7 +96,7 @@ class BuyerUpdate extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.props.handleInput} required />
+                                    <input type = "password" name = "password" onChange = {this.handleInput} required />
                                 </td>
                             </tr>
 
@@ -89,7 +105,7 @@ class BuyerUpdate extends React.Component{
                                     Phone: 
                                 </td>
                                 <td>
-                                    <input type = "number" name = "phone" onChange = {this.props.handleInput} value = {this.props.phone} />
+                                    <input type = "number" name = "phone" onChange = {this.handleInput} value = {this.state.phone} />
                                 </td>
                             </tr>
 
@@ -106,19 +122,3 @@ class BuyerUpdate extends React.Component{
         )
     }
 }
-
-const mapStateToProps = (state) =>{
-    return{
-        name : state.buyer.name,
-        email : state.buyer.email,
-        password : state.buyer.password,
-        phone : state.buyer.phone
-    }
-}
-const mapDispatchToProps = (dispatch) =>{
-    return {
-        handleInput: (e) => dispatch ({type : 'HANDLE_USER_INPUT',"event":e})
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(BuyerUpdate);

@@ -2,21 +2,28 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
-import {connect} from 'react-redux'; 
 
-
-class OwnerLogin extends React.Component{
+export default class OwnerLogin extends React.Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            email : '',
+            password : ''
+        }
+        this.handleInput = this.handleInput.bind(this);
         this.login = this.login.bind(this);
     }
-
+    handleInput(e){
+        this.setState({
+            [e.target.name] : e.target.value
+        })
+    }
     login(e){
         e.preventDefault();
         const data = {
-            email : this.props.email,
-            password : this.props.password,
+            email : this.state.email,
+            password : this.state.password,
         }
 
         if(  data.email === "" || data.password === ""){
@@ -31,7 +38,9 @@ class OwnerLogin extends React.Component{
                     if(response.status === 200){
                         console.log(cookie.load('ownerData'));
                         if( cookie.load('authCookie') === "authenticated"){
-                            this.forceUpdate();
+                            this.setState({
+                                auth : true
+                            })
                         }
                     }else if(response.status === 201){
                         console.log(response.status+" error "+ response.data);
@@ -41,16 +50,14 @@ class OwnerLogin extends React.Component{
                         alert("No User with the given credentials.");
                     }else if(response.status === 203){
                         console.log("Error in first if in backend - restaurant - signin")
-                    }
-
-                    
+                    }          
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
                 }
             );
-        }
-        
+        }   
     }
+    
     render(){
 
         let redirect = null;
@@ -68,7 +75,7 @@ class OwnerLogin extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
                                 </td>
                             </tr>
 
@@ -77,7 +84,7 @@ class OwnerLogin extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.props.handleInput} required/>
+                                    <input type = "password" name = "password" onChange = {this.handleInput} required/>
                                 </td>
                             </tr>
 
@@ -95,19 +102,3 @@ class OwnerLogin extends React.Component{
     }
 }
 
-
-const mapStateToProps = (state) =>{
-    return{
-        name : state.owner.name,
-        email : state.owner.email,
-        password : state.owner.password,
-        phone: state.owner.phone
-    }
-}
-const mapDispatchToProps = (dispatch) =>{
-    return {
-        handleInput: (e) => dispatch ({type : 'HANDLE_OWNER_INPUT',"event":e})
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(OwnerLogin);

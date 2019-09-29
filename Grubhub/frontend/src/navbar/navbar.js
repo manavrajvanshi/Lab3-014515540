@@ -57,6 +57,7 @@ export class Navbar extends React.Component{
                     <div className = "topnav">
                         <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
                         <a href="/ownerUpdate">Update Profile</a>
+                        <a href ="/ownerPicture">Upload Picture</a>
                         <a href ="#/">Order Status</a>
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>

@@ -1,8 +1,30 @@
 var express = require('express');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
+const multer = require('multer');
 
-let router = express.Router();
+const ownerStorage = multer.diskStorage({
+    destination: 'images/owner/',
+    filename: function(req, file, cb){
+        
+        let currentUserCookie = JSON.parse(req.cookies.ownerData);
+        
+        cb(null, JSON.stringify(currentUserCookie.rid)+'.jpg' );
+    }
+});
+const ownerUpload = multer({storage:ownerStorage});
+
+const restaurantStorage = multer.diskStorage({
+    destination: 'images/restaurant/',
+    filename: function(req, file, cb){
+        
+        let currentUserCookie = JSON.parse(req.cookies.ownerData);
+        
+        cb(null, JSON.stringify(currentUserCookie.rid)+'.jpg' );
+    }
+});
+
+const restaurantUpload = multer({storage:restaurantStorage});
 
 const pool  = mysql.createPool({
     connectionLimit : 100,
@@ -11,6 +33,12 @@ const pool  = mysql.createPool({
     password        : 'rootroot',
     database        : 'grubhubProject'
 });
+
+
+
+
+let router = express.Router();
+
 
 router.post('/signup', (req,res) =>{
     let name = req.body.name;
@@ -121,7 +149,7 @@ router.post('/update', (req,res) =>{
                 selfFlag = true;
             }
             else{
-                selfFlaf = false;
+                selfFlag = false;
             }
         }      
     });
@@ -164,25 +192,6 @@ router.post('/update', (req,res) =>{
     }).catch(error => console.log(error));
 });
 
-    // bcrypt.hash(ownerPassword, 10).then(function(hashedPassword){
-        
-    //     let query = `UPDATE restaurants SET ownerName = '${ownerName}',
-    //     ownerEmail = '${ownerEmail}', ownerPassword = '${hashedPassword}', ownerPhone = '${ownerPhone}',
-    //     restaurantName = '${restaurantName}', restaurantZip = ${restaurantZip},cuisine = '${cuisine}'
-    //     WHERE rid = ${rid}`;
-
-    //     pool.query(query, function (queryError, results, fields) {
-    //         if (queryError){
-    //             throw queryError;
-    //         }else{
-    //             console.log(results);
-    //             res.send("Records Updated");
-    //         }   
-    //     }); 
-    // }).catch(passwordHashFailure => console.log(passwordHashFailure));
-
-//     res.send(req.body)
-// });
 
 router.post('/home',(req, res)=> {
 
@@ -198,8 +207,8 @@ router.post('/home',(req, res)=> {
             if(results.length > 0){
                 let owner = results[0];
                 delete owner.ownerPassword;
-                res.send(JSON.stringify(owner));
-                console.log(owner);
+                res.end(JSON.stringify(owner));
+                //console.log("HI");
                
                 
             }else{
@@ -208,6 +217,16 @@ router.post('/home',(req, res)=> {
             }           
         }           
     });  
+})
+
+router.post('/profilePictureUpload',ownerUpload.single('ownerProfilePicture'), (req,res) =>{
+    res.redirect('http://localhost:3000/ownerHome');
+    
+})
+
+router.post('/restaurantPictureUpload',restaurantUpload.single('restaurantPicture'), (req,res) =>{
+    res.redirect('http://localhost:3000/ownerHome');
+    
 })
 
 router.get('/logout',(req,res) =>{

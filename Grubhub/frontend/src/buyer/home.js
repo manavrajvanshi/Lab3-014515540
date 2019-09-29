@@ -7,7 +7,8 @@ import './home.css';
 let re = null;
 let buyer,image ;
 class BuyerHome extends React.Component{
-    UNSAFE_componentWillMount(){
+    render(){
+        
         if(cookie.load('authCookie') === "authenticated" ){  
             axios.defaults.withCredentials = true;
             //make a post request with the user data
@@ -19,7 +20,9 @@ class BuyerHome extends React.Component{
                 .then(response => {
                     buyer = response.data;
                     image = "http://localhost:3001/buyer/"+data.bid+".jpg";
-                    this.forceUpdate();
+                    this.setState({
+                        imageRendered : true
+                    })
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
                 }
@@ -28,25 +31,21 @@ class BuyerHome extends React.Component{
             re = <Redirect to = "/"/>
             console.log("Inside Else");
         }
-    }
-    
-    render(){
-        if(!buyer){
-            return <div></div>
-        }
         
+        if(!buyer){
+            return <div></div>;
+        }
+
         return(
+            
             <div>
                 {re}
-                
                 <div name = "profile">
                     <img src = {image} width ="200" height = "200" alt = 'Profile'/>
                     <p>Welcome {buyer.name}</p>
                     <p>Your E-mail: {buyer.email}</p>
                     <p>Your Contact Number: {buyer.phone}</p>
                 </div>
-                
-                
             </div>
         );
     }

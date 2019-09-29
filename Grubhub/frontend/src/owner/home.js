@@ -3,9 +3,10 @@ import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
 let re = null;
-let owner;
-class OwnerHome extends React.Component{
-    UNSAFE_componentWillMount(){
+let owner, image;
+export default class OwnerHome extends React.Component{
+
+    componentDidMount(){
         if(cookie.load('authCookie') === "authenticated" ){
             
             axios.defaults.withCredentials = true;
@@ -17,7 +18,10 @@ class OwnerHome extends React.Component{
             axios.post('http://localhost:3001/restaurant/home',data)
                 .then(response => {
                     owner = response.data;
-                    this.forceUpdate();
+                    image = "http://localhost:3001/owner/"+data.rid+".jpg";
+                    this.setState({
+                        imageRendered : true
+                    })
                 }).catch(error=>{
                     console.log("Error: "+JSON.stringify(error));
                 }
@@ -28,8 +32,8 @@ class OwnerHome extends React.Component{
         }
     }
     
-    
     render(){
+
         
         
 
@@ -41,6 +45,7 @@ class OwnerHome extends React.Component{
                 {re}
                 {console.log(owner)}
                 <div>
+                    <img src = {image} width ="200" height = "200" alt = 'Profile'/>
                     <p>Welcome {owner.ownerName}</p>
                     <p>Your E-mail: {owner.ownerEmail}</p>
                     <p>Your Contact Number: {owner.ownerPhone}</p>
@@ -52,4 +57,3 @@ class OwnerHome extends React.Component{
     }
 }
 
-export default OwnerHome;

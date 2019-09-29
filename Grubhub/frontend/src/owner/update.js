@@ -1,27 +1,42 @@
 import React from 'react';
 import axios from 'axios';
 import cookie from 'react-cookies';
-import {connect} from 'react-redux';
 import {Redirect} from 'react-router';
 let re = null;
-class OwnerUpdate extends React.Component{
+
+export default class OwnerUpdate extends React.Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            ownerName : '',
+            ownerEmail : '',
+            ownerPassword : '',
+            ownerPhone : '',
+            cuisine : '',
+            restaurantName : '',
+            restaurantZip : ''
+        }
+        this.handleInput = this.handleInput.bind(this);
         this.update = this.update.bind(this);
     }
 
+    handleInput(e){
+        this.setState({
+            [e.target.name] : e.target.value
+        })
+    }
     update(e){
         e.preventDefault();
         const data = {
-            ownerName : this.props.ownerName,
-            ownerEmail : this.props.ownerEmail,
-            ownerPassword : this.props.ownerPassword,
-            ownerPhone : this.props.ownerPhone,
+            ownerName : this.state.ownerName,
+            ownerEmail : this.state.ownerEmail,
+            ownerPassword : this.state.ownerPassword,
+            ownerPhone : this.state.ownerPhone,
             rid : cookie.load('ownerData').rid,
-            cuisine : this.props.cuisine,
-            restaurantName : this.props.restaurantName,
-            restaurantZip : this.props.restaurantZip
+            cuisine : this.state.cuisine,
+            restaurantName : this.state.restaurantName,
+            restaurantZip : this.state.restaurantZip
         }
         console.log(data);
         if( data.ownerName === "" || data.ownerEmail === "" || data.ownerPassword === ""){
@@ -36,7 +51,10 @@ class OwnerUpdate extends React.Component{
                     this.forceUpdate();
                     if(response.status === 200){
                         alert("Profile Updated");
-                        this.forceUpdate();
+                        re = <Redirect to = '/ownerHome'/>
+                        this.setState({
+                            updated : true
+                        })
                     }else if( response.status === 201){
                         alert("Data not updated, contact support team.");
                         console.log(response.data);
@@ -70,7 +88,7 @@ class OwnerUpdate extends React.Component{
                                    Owner Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "ownerName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.props.handleInput} value = {this.props.ownerName} autoFocus    />
+                                    <input type = "text" name = "ownerName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.ownerName} autoFocus    />
                                 </td>
                             </tr>
 
@@ -79,7 +97,7 @@ class OwnerUpdate extends React.Component{
                                     Owner Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "ownerEmail" onChange = {this.props.handleInput} value = {this.props.ownerEmail} />
+                                    <input type = "email" name = "ownerEmail" onChange = {this.handleInput} value = {this.state.ownerEmail} />
                                 </td>
                             </tr>
 
@@ -88,7 +106,7 @@ class OwnerUpdate extends React.Component{
                                     Owner Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "ownerPassword" onChange = {this.props.handleInput} value = {this.props.ownerPassword}  />
+                                    <input type = "password" name = "ownerPassword" onChange = {this.handleInput}  />
                                 </td>
                             </tr>
 
@@ -97,7 +115,7 @@ class OwnerUpdate extends React.Component{
                                     Owner Phone: 
                                 </td>
                                 <td>
-                                    <input type = "number" name = "ownerPhone" onChange = {this.props.handleInput} value = {this.props.ownerPhone} />
+                                    <input type = "number" name = "ownerPhone" onChange = {this.handleInput} value = {this.state.ownerPhone} />
                                 </td>
                             </tr>
 
@@ -106,7 +124,7 @@ class OwnerUpdate extends React.Component{
                                     Restaurant Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "restaurantName" onChange = {this.props.handleInput} value = {this.props.restaurantName} />
+                                    <input type = "text" name = "restaurantName" onChange = {this.handleInput} value = {this.state.restaurantName} />
                                 </td>
                             </tr>
 
@@ -115,7 +133,7 @@ class OwnerUpdate extends React.Component{
                                     Restaurant Zip: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "restaurantZip" onChange = {this.props.handleInput} value = {this.props.restaurantZip} />
+                                    <input type = "text" name = "restaurantZip" onChange = {this.handleInput} value = {this.state.restaurantZip} />
                                 </td>
                             </tr>
 
@@ -124,7 +142,7 @@ class OwnerUpdate extends React.Component{
                                     Cuisine: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "cuisine" onChange = {this.props.handleInput} value = {this.props.cuisine} />
+                                    <input type = "text" name = "cuisine" onChange = {this.handleInput} value = {this.state.cuisine} />
                                 </td>
                             </tr>
 
@@ -141,21 +159,3 @@ class OwnerUpdate extends React.Component{
         )
     }
 }
-const mapStateToProps = (state) =>{
-    return{
-        ownerName : state.owner.ownerName,
-        ownerEmail : state.owner.ownerEmail,
-        ownerPassword : state.owner.ownerPassword,
-        ownerPhone: state.owner.ownerPhone,
-        restaurantName: state.owner.restaurantName,
-        restaurantZip : state.owner.restaurantZip,
-        cuisine : state.owner.cuisine
-    }
-}
-const mapDispatchToProps = (dispatch) =>{
-    return {
-        handleInput: (e) => dispatch ({type : 'HANDLE_OWNER_INPUT',"event":e})
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(OwnerUpdate);

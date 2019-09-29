@@ -1,24 +1,38 @@
 import React from 'react';
 import axios from 'axios';
-import {connect} from 'react-redux';
+import {Redirect} from 'react-router';
 
-class OwnerSignup extends React.Component{
+let re = null;
+export default class OwnerSignup extends React.Component{
 
     constructor(props){
         super(props);
+        this.state = {
+            name : '',
+            email : '',
+            password : '',
+            restaurantName :'',
+            restaurantZip : ''
+        }
+        this.handleInput = this.handleInput.bind(this);
         this.signup = this.signup.bind(this);
     }
 
+    handleInput(e){
+        this.setState({
+            [e.target.name] : e.target.value
+        })
+    }
 
     signup(e){
         e.preventDefault();
 
         const data = {
-            name : this.props.name,
-            email : this.props.email,
-            password : this.props.password,
-            restaurantName : this.props.restaurantName,
-            restaurantZip : this.props.restaurantZip
+            name : this.state.name,
+            email : this.state.email,
+            password : this.state.password,
+            restaurantName : this.state.restaurantName,
+            restaurantZip : this.state.restaurantZip
         }
         console.log(data);
         if( data.name === "" || data.email === "" || data.password === ""){
@@ -30,6 +44,10 @@ class OwnerSignup extends React.Component{
                 .then(response => {
                     if(response.status === 200){
                         alert("Sucessfully Signed Up, please update your profile after logging in.");
+                        re = <Redirect to = '/ownerLogin'/>
+                        this.setState({
+                            signedup :true
+                        })
                     }else if(response.status === 201){
                         alert("Error Signing up.");
                         console.log(response.data);
@@ -46,6 +64,7 @@ class OwnerSignup extends React.Component{
     render(){
         return(
             <div>
+                {re}
                 <form onSubmit = {this.signup}>
                     <table border = "0">
                         <tbody>
@@ -54,7 +73,7 @@ class OwnerSignup extends React.Component{
                                     Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.props.handleInput} value = {this.props.name} autoFocus required/>
+                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
                                 </td>
                             </tr>
 
@@ -63,7 +82,7 @@ class OwnerSignup extends React.Component{
                                     Email: 
                                 </td>
                                 <td>
-                                    <input type = "email" name = "email" onChange = {this.props.handleInput} value = {this.props.email} required/>
+                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
                                 </td>
                             </tr>
 
@@ -72,7 +91,7 @@ class OwnerSignup extends React.Component{
                                     Password: 
                                 </td>
                                 <td>
-                                    <input type = "password" name = "password" onChange = {this.props.handleInput}  value = {this.props.password}required />
+                                    <input type = "password" name = "password" onChange = {this.handleInput} required />
                                 </td>
                             </tr>
 
@@ -82,7 +101,7 @@ class OwnerSignup extends React.Component{
                                     Restaurant Name: 
                                 </td>
                                 <td>
-                                    <input type = "text" name = "restaurantName" onChange = {this.props.handleInput}  value = {this.props.restaurantName} required />
+                                    <input type = "text" name = "restaurantName" onChange = {this.handleInput}  value = {this.state.restaurantName} required />
                                 </td>
                             </tr>
 
@@ -91,7 +110,7 @@ class OwnerSignup extends React.Component{
                                     Restaurant Zip: 
                                 </td>
                                 <td>
-                                    <input type = "number" name = "restaurantZip" onChange = {this.props.handleInput}  value = {this.props.restaurantZip}required />
+                                    <input type = "number" name = "restaurantZip" onChange = {this.handleInput}  value = {this.state.restaurantZip}required />
                                 </td>
                             </tr>
 
@@ -111,20 +130,3 @@ class OwnerSignup extends React.Component{
 
 
 
-const mapStateToProps = (state) =>{
-    return{
-        name : state.owner.name,
-        email : state.owner.email,
-        password : state.owner.password,
-        phone: state.owner.phone,
-        restaurantName: state.owner.restaurantName,
-        restaurantZip : state.owner.restaurantZip
-    }
-}
-const mapDispatchToProps = (dispatch) =>{
-    return {
-        handleInput: (e) => dispatch ({type : 'HANDLE_OWNER_INPUT',"event":e})
-    }
-}
-
-export default connect(mapStateToProps,mapDispatchToProps)(OwnerSignup);

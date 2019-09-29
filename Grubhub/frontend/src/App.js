@@ -11,6 +11,7 @@ import OwnerSignup from './owner/signup.js';
 import OwnerLogin from './owner/login.js';
 import OwnerHome from './owner/home.js';
 import OwnerUpdate from './owner/update.js';
+import OwnerPicture from './owner/picture.js';
 
 import './App.css';
 
@@ -24,12 +25,12 @@ function App() {
           <Route path = "/buyerSignup" component={BuyerSignup}/>
           <Route path = "/buyerHome" component={BuyerHome}/>
           <Route path = "/buyerUpdate" component={BuyerUpdate}/>
-          <Route path = "/buyerPicture" component = {BuyerPicture} />
+          <Route path = "/buyerPicture" component = {BuyerPicture}/>
           <Route path = "/ownerLogin" component = {OwnerLogin}/>
           <Route path = "/ownerSignup" component={OwnerSignup}/>
           <Route path = "/ownerHome" component={OwnerHome}/>
-          <Route path = "/ownerUpdate" component = {OwnerUpdate} />
-          
+          <Route path = "/ownerUpdate" component = {OwnerUpdate}/>
+          <Route path = "/ownerPicture" component = {OwnerPicture}/>
         </div>
       </BrowserRouter>
   );
