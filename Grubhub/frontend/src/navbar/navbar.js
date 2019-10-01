@@ -45,7 +45,6 @@ export class Navbar extends React.Component{
                         <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
                         <a href="/buyerUpdate">Update Profile</a>
                         <a href ="/buyerPicture">Upload Picture</a>
-                        <a href="#/" >Hungry? Order Now</a>  
                         <a href="#/" >Past Orders</a> 
                         <a href="#/" >Order Status</a>   
                         <a href="#/" >Contact Us</a> 
@@ -53,12 +52,14 @@ export class Navbar extends React.Component{
                     </div>
                 )
             }else if(userType === "owner"){
+                console.log(cookie.load('ownerData').restaurantName);
                 bar =  (
                     <div className = "topnav">
                         <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
                         <a href="/ownerUpdate">Update Profile</a>
                         <a href ="/ownerPicture">Upload Picture</a>
-                        <a href ="#/">Order Status</a>
+                        
+                        <a href ="/menu">Manage Restaurant</a>
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
                 )

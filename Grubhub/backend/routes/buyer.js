@@ -198,6 +198,28 @@ router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,r
     
 })
 
+router.post('/searchItem', (req,res) =>{
+    let searchItem = req.body.searchItem;
+    
+    let query = `SELECT restaurants.rid , restaurants.restaurantName,restaurants.cuisine FROM restaurants INNER JOIN 
+    items ON items.rid = restaurants.rid WHERE items.name ='${searchItem}'`;
+    pool.query(query, function (queryError, results, fields) {
+        if (queryError){
+            console.log("Error in first if. Check Backend -> Buyer -> Signin ")
+        }else{
+            if(results.length > 0){
+                res.writeHead(200);
+                res.end(JSON.stringify(results));
+                console.log(results)
+            }else{
+                res.writeHead(202);
+                console.log("Items not found");
+                res.end("No items found.");
+            }           
+        }           
+    });
+})
+
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');
     res.clearCookie('userType');

@@ -43,7 +43,7 @@ export default class OwnerHome extends React.Component{
         return(
             <div>
                 {re}
-                {console.log(owner)}
+                
                 <div>
                     <img src = {image} width ="200" height = "200" alt = 'Profile'/>
                     <p>Welcome {owner.ownerName}</p>

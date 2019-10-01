@@ -176,7 +176,10 @@ router.post('/update', (req,res) =>{
                             res.end("Error in if 2, Check Backend -> restaurant -> update ")
                             console.log("Error in if 2, Check Backend -> restaurant -> update ")
                         }else{
-                            console.log(results);
+                            console.log(results);/////////////////////////////////////////////////////////
+                            
+                            //////////////////////////////////////////////////////////////////////////////
+                            //res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                             res.writeHead(200);
                             res.end("Records Updated");
                         }   
@@ -229,12 +232,93 @@ router.post('/restaurantPictureUpload',restaurantUpload.single('restaurantPictur
     
 })
 
+
+router.get('/menu', (req,res) => {
+    
+    if(req.cookies.authCookie === 'authenticated'){
+        let ownerData = req.cookies.ownerData;
+        let rid = JSON.parse(ownerData).rid;
+        let query = `SELECT * FROM items WHERE rid = '${rid}'`;
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> menu ")
+            }else{
+                // console.log(rid);
+                // console.log(query);
+                // console.log(results);
+                if(results.length > 0){
+                    let items = results;
+                    res.end(JSON.stringify(items));
+                }else{
+                    console.log("No items stored");
+                    console.log(results.length);
+                    res.end();
+                }           
+            }           
+        });
+
+    }else{
+        console.log("asdfadsf");
+        res.writeHead(405);
+        
+    }
+});
+
+router.post('/addItem', (req, res)=>{
+
+    let name = req.body.name;
+    let description = req.body.description;
+    let price = req.body.price;
+    let section = req.body.section;
+    let rid = req.body.rid;
+
+    if(req.cookies.authCookie === 'authenticated'){
+        let query = `INSERT INTO items (description,price,name,section,rid) VALUES 
+        ('${description}',${price},'${name}','${section}',${rid})`;
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> addItem ")
+            }else{
+                res.writeHead(200);
+                res.end();
+                console.log("Item Added");          
+            }           
+        });
+
+    }else{
+        console.log("Not Authenticated (/addItem)");
+        res.writeHead(400);
+        
+    }
+})
+
+router.post('/deleteMenuItem', (req,res) => {
+    if( req.cookies.authCookie === 'authenticated'){
+        let iid = req.body.iid;
+        let query = `DELETE FROM items WHERE iid = '${iid}'`;
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> deleteMenuItem");
+                res.writeHead(500);
+                res.end();
+            }else{
+                res.writeHead(200);
+                res.end();
+                console.log("Item Deleted");          
+            }           
+        });
+    }
+})
+
+
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');
     res.clearCookie('userType');
     res.clearCookie('userId');
     res.clearCookie('ownerData');
     res.redirect("http://localhost:3000/");
-}) 
+});
 
 module.exports = router;
