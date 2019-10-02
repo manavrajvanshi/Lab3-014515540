@@ -13,12 +13,30 @@ export default class Menu extends React.Component{
             name:'',
             description : '',
             price: '',
-            section : ''
         }
-        this.data = '';
+        this.data = [];
+        this.deleteSection = this.deleteSection.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.addItem = this.addItem.bind(this);
+        
+    }
+    deleteSection(e){
+        let data = {
+            rid : cookie.load('rid'),
+            section : e.target.value
+        }
+
+        axios.defaults.withCredentials = true;
+        axios.post('http://localhost:3001/restaurant/deleteSection',data)
+        .then(response => {
+            if(response.status === 200 ){
+                console.log("Section Deleted");
+                window.location.reload();
+            }
+        })
+        .catch(error => console.log("Error"));
+
     }
     handleInput(e){
         this.setState({
@@ -64,25 +82,26 @@ export default class Menu extends React.Component{
         
         
     }
-    componentDidMount(){
-        
-        console.log(cookie.load('authCookie'));
 
+    componentDidMount(){
         axios.defaults.withCredentials = true;
+
         axios.get('http://localhost:3001/restaurant/menu',{})
         .then(response => {
             this.data = response.data;
+            this.setState({})
             
-            console.log(this.data);
-            this.setState({
-                auth:true
-            })
         }).catch(error => console.log(error));
     }
 
     createTable(){
-        let itemsArray = [];
-        
+        let itemsArray = [];    
+
+        let sections = new Set();
+
+        for( let item in this.data){
+            sections.add(this.data[item].section)
+        }
         itemsArray.push(
             
         <tr>
@@ -93,8 +112,7 @@ export default class Menu extends React.Component{
             <th>Add / Delete</th>
         </tr>
         );
-        itemsArray.push(
-            
+        itemsArray.push(   
             <tr>            
                 <td><input type = "text" name = "item" onChange = {this.handleInput} value = {this.state.item}/></td>
                 <td><input type = "text" name = "description" onChange = {this.handleInput} value = {this.state.description}/></td>
@@ -102,22 +120,45 @@ export default class Menu extends React.Component{
                 <td><input type = "text" name = "price" onChange = {this.handleInput} value = {this.state.price}/></td>
                 <td><input type = "Submit" value = "Add"/></td>
             </tr>
-       
         );
+
         if(this.data.length > 0){
-            for( let item in this.data){
-                //console.log(this.data);
-                itemsArray.push(
-                <tr>
-                    <td>{this.data[item].name}</td>
-                    <td>{this.data[item].description}</td>
-                    <td>{this.data[item].section}</td>
-                    <td>{this.data[item].price}</td>
-                    <td><button value = {this.data[item].iid} onClick = {this.handleDelete}>Delete</button></td>
-                </tr>
-                
-                );
-            }
+
+            sections.forEach(
+                section =>{
+
+                    itemsArray.push(
+                        <tr>
+                            <th>
+                                {section}
+                            </th>
+                            <th>
+                                <button onClick = {this.deleteSection} value = {section}>Remove Section</button>
+                            </th>
+                            <th>
+                                <button onClick = {this.updateSection} value = {section}>Update Section</button>
+                            </th>
+                        </tr>
+                    )
+                    this.data.forEach(
+                        element =>{
+                            if (element.section === section){
+                                // console.log(element.name)
+
+                                itemsArray.push(
+                                    <tr>
+                                        <td>{element.name}</td>
+                                        <td>{element.description}</td>
+                                        <td>{element.section}</td>
+                                        <td>{element.price}</td>
+                                        <td><button value = {element.iid} onClick = {this.handleDelete}>Delete</button></td>
+                                    </tr>
+                                )
+                            }
+                        }
+                    )
+                }
+            )            
         }
         
         return itemsArray;

@@ -102,7 +102,7 @@ router.post('/signin',(req, res)=> {
                         delete owner.ownerPassword;
                         res.cookie('authCookie', 'authenticated');
                         res.cookie('userType', 'owner');
-                        res.cookie('userId', 'owner'+owner['rid']);
+                        res.cookie('rid', owner['rid']);
                         res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                         
                         res.writeHead(200);
@@ -311,7 +311,48 @@ router.post('/deleteMenuItem', (req,res) => {
         });
     }
 })
+router.post('/deleteSection', (req,res) =>{
+    if(req.cookies.authCookie === 'authenticated'){
+        let rid = req.body.rid;
+        let section = req.body.section;
+        
+        let query = `DELETE FROM items WHERE rid = ${rid} AND section ='${section}'`;
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> deleteSection ");
+                res.writeHead(400);
+                res.end();
+            }else{
+                res.writeHead(200);
+                res.end(JSON.stringify(results));       
+            }           
+        });
+    }else{
+        res.redirect('http://localhost:3000/ownerLogin');
+    }
+})
+router.post('/addSection',(req,res) => {
+    if(req.cookies.authCookie === 'authenticated'){
+        let rid = req.body.rid;
+        let sectionName = req.body.sectionName;
 
+        let query = `INSERT INTO sections VALUES ( ${rid}, '${sectionName}')`;
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> addSection ");
+                res.writeHead(400);
+                res.end("Section not added");
+            }else{
+                res.writeHead(200);
+                res.end('Section added sucessfully');       
+            }           
+        });
+    }else{
+        res.redirect('http://localhost:3000/ownerLogin');
+    }
+})
 
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');

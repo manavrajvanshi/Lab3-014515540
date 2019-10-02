@@ -13,6 +13,8 @@ import OwnerHome from './owner/home.js';
 import OwnerUpdate from './owner/update.js';
 import OwnerPicture from './owner/picture.js';
 
+import Order from './restaurant/order.js';
+
 import Menu from './restaurant/menu.js';
 
 import './App.css';
@@ -33,8 +35,9 @@ function App() {
           <Route path = "/ownerHome" component={OwnerHome}/>
           <Route path = "/ownerUpdate" component = {OwnerUpdate}/>
           <Route path = "/ownerPicture" component = {OwnerPicture}/>
-
+    
           <Route path = "/menu" component = {Menu} />
+          <Route path = "/order" component = {Order} />
         </div>
       </BrowserRouter>
   );

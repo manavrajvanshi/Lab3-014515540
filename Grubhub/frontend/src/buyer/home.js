@@ -55,7 +55,7 @@ class BuyerHome extends React.Component{
             if(response.status === 200){
                 console.log(response.data);
                 tableCreatedFlag = true;
-                restaurantsTable = <ShowRestaurants key = "random" restaurantsList = {response.data}></ShowRestaurants>
+                restaurantsTable = <ShowRestaurants key = "random" searchItem = { this.state.searchItem} restaurantsList = {response.data}></ShowRestaurants>
             }else{
                 alert("OOPS! Something went wrong, Try again after some time.");
             }
@@ -98,7 +98,7 @@ class BuyerHome extends React.Component{
 
                 <div name = "search">
                     <input type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
-                    <button onClick = {this.search}><span rrole="img" aria-label="search">&#128269;</span></button>
+                    <button onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
                 </div>
 
                {restaurantsTable}
