@@ -6,10 +6,10 @@ export default class ShowRestaurants extends React.Component{
     constructor(props){
         super(props);
         this.viewRestaurant = this.viewRestaurant.bind(this);
+     
     }
-
+    
     viewRestaurant(e){
-        alert(e.target.value);
         re = <Redirect to={{
             pathname : '/order',
             rid : e.target.value,
@@ -19,23 +19,46 @@ export default class ShowRestaurants extends React.Component{
     }
     render(){
         let restaurantsTable = [];
-       
+        let foundFlag = false;
+        //console.log(this.props.cuisineFilter);
         for(let restaurant in this.props.restaurantsList){
         
-           
-            restaurantsTable.push(
+            if(this.props.cuisineFilter === ''){
+                foundFlag = true;
+                restaurantsTable.push(
                 
-                <tr >
-                    <td>{this.props.restaurantsList[restaurant].restaurantName}</td>
-                    <td>{this.props.restaurantsList[restaurant].cuisine}</td>
-                    <td><button onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
-                </tr>
-            )
+                    <tr key = {this.props.restaurantsList[restaurant].rid} >
+                        <td>{this.props.restaurantsList[restaurant].restaurantName}</td>
+                        <td>{this.props.restaurantsList[restaurant].cuisine}</td>
+                        <td><button onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
+                    </tr>
+                )
+            }else{
+                
+                console.log("Filter ");
+                if(this.props.restaurantsList[restaurant].cuisine === this.props.cuisineFilter){
+                    foundFlag = true;
+                    restaurantsTable.push(
+                        
+                        <tr key = {this.props.restaurantsList[restaurant].rid} >
+                            <td>{this.props.restaurantsList[restaurant].restaurantName}</td>
+                            <td>{this.props.restaurantsList[restaurant].cuisine}</td>
+                            <td><button onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
+                        </tr>
+                    )
+                }
+            }
+            
+        }
+
+        if(!foundFlag){
+            return <div>No restaurants with your cuisine choice found</div>
         }
 
         return(
             <div>
                 {re}
+                
                 <table>
                     <thead>
                         <tr>

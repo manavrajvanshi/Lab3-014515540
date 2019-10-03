@@ -177,7 +177,7 @@ export default class Menu extends React.Component{
                 <form onSubmit = {this.addItem}>
                     <table>
                         <tbody>
-                        {this.createTable()}
+                            {this.createTable()}
                         </tbody>
                         
                     </table>

@@ -281,6 +281,7 @@ router.post('/addItem', (req, res)=>{
             if (queryError){
                 console.log("Error in first if. Check Backend -> restaurant -> addItem ")
             }else{
+                
                 res.writeHead(200);
                 res.end();
                 console.log("Item Added");          

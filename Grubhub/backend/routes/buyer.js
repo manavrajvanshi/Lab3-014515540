@@ -220,6 +220,85 @@ router.post('/searchItem', (req,res) =>{
     });
 })
 
+router.post('/menu', (req,res) => {
+    
+    if(req.cookies.authCookie === 'authenticated'){
+        let rid = req.body.rid;
+        let query = `SELECT * FROM items WHERE rid = '${rid}'`;
+
+        console.log(query);
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> buyer -> menu ")
+            }else{
+                if(results.length > 0){
+                    let items = results;
+                    res.end(JSON.stringify(items));
+                }else{
+                    console.log("No items found");
+                    res.writeHead(404);
+                    res.end("No items found");
+                }           
+            }           
+        });
+
+    }else{
+        console.log("Error in second if. Check Backend -> buyer -> menu ");
+        res.writeHead(405);
+        
+    }
+});
+
+router.post('/placeOrder',(req,res) => {
+    if(req.cookies.authCookie === 'authenticated'){
+        let rid = req.body.rid;
+        let bid = req.body.bid;
+        let quantity = req.body.quantity;
+        let total = req.body.total;
+
+        let query = `INSERT INTO orders (rid, bid, status) VALUES ('${rid}','${bid}','new')`;
+        
+        //console.log(query);
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> buyer -> placeOrder ");
+                res.writeHead(401);
+                res.end();
+            }else{
+                let oid = results.insertId;   
+                let items =[]
+                for( let item in quantity){
+                    let itemArr = [];
+                    itemArr.push(oid);
+                    itemArr.push(item);
+                    itemArr.push(quantity[item]);
+                    items.push(itemArr);
+                }
+                //console.log(items);
+                let query = `INSERT INTO orderdetails (oid, itemName, qty) VALUES ?`;
+                pool.query(query, [items],function (queryError, results, fields) {
+                    if (queryError){
+                        console.log("Error in Second if. Check Backend -> buyer -> placeOrder ");
+                        res.writeHead(402);
+                        res.end();
+                    }else{
+                        console.log("Order Placed");
+                        res.end("Order Placed");
+                    }           
+                });
+            }           
+        });
+
+    }else{
+        console.log("Error in third if. Check Backend -> buyer -> placeOrder ");
+        res.writeHead(403);
+        res.end();
+        
+    }
+})
+
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');
     res.clearCookie('userType');

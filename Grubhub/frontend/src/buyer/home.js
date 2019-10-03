@@ -14,7 +14,8 @@ class BuyerHome extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            searchItem :''
+            searchItem :'',
+            cuisineFilter :''
         }
         this.search = this.search.bind(this);
         this.handleInput = this.handleInput.bind(this);
@@ -50,14 +51,15 @@ class BuyerHome extends React.Component{
         let data = {
             'searchItem' : this.state.searchItem
         }
-        axios.post('http://localhost:3001/buyer/searchItem',data)
+        if(this.state.searchItem !== ''){
+            axios.post('http://localhost:3001/buyer/searchItem',data)
         .then(response => {
             if(response.status === 200){
-                console.log(response.data);
+                //console.log(response.data);
                 tableCreatedFlag = true;
-                restaurantsTable = <ShowRestaurants key = "random" searchItem = { this.state.searchItem} restaurantsList = {response.data}></ShowRestaurants>
+                restaurantsTable = <ShowRestaurants  searchItem = { this.state.searchItem} cuisineFilter = {this.state.cuisineFilter}restaurantsList = {response.data}></ShowRestaurants>
             }else{
-                alert("OOPS! Something went wrong, Try again after some time.");
+                alert(response.data);
             }
             this.setState({});
 
@@ -65,10 +67,14 @@ class BuyerHome extends React.Component{
         .catch(error => {
             alert("Error: "+JSON.stringify(error));
         });
+        }else{
+            alert("Enter a Dish Name to continue");
+        }
+        
     }
     handleInput(e){
         this.setState({
-            searchItem : e.target.value
+            [e.target.name] : e.target.value
         })
     }
     
@@ -98,6 +104,7 @@ class BuyerHome extends React.Component{
 
                 <div name = "search">
                     <input type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
+                    <input type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
                     <button onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
                 </div>
 
