@@ -181,7 +181,7 @@ router.post('/home',(req, res)=> {
                 let buyer = results[0];
                 delete buyer.password;
                 res.send(JSON.stringify(buyer));
-                console.log(buyer);
+                //console.log(buyer);
                
                 
             }else{
@@ -205,7 +205,7 @@ router.post('/searchItem', (req,res) =>{
     items ON items.rid = restaurants.rid WHERE items.name ='${searchItem}'`;
     pool.query(query, function (queryError, results, fields) {
         if (queryError){
-            console.log("Error in first if. Check Backend -> Buyer -> Signin ")
+            console.log("Error in first if. Check Backend -> Buyer -> searchItem ")
         }else{
             if(results.length > 0){
                 res.writeHead(200);
@@ -257,7 +257,7 @@ router.post('/placeOrder',(req,res) => {
         let quantity = req.body.quantity;
         let total = req.body.total;
 
-        let query = `INSERT INTO orders (rid, bid, status) VALUES ('${rid}','${bid}','new')`;
+        let query = `INSERT INTO orders (rid, bid, total, status) VALUES ('${rid}','${bid}','${total}','new')`;
         
         //console.log(query);
         
@@ -295,6 +295,147 @@ router.post('/placeOrder',(req,res) => {
         console.log("Error in third if. Check Backend -> buyer -> placeOrder ");
         res.writeHead(403);
         res.end();
+        
+    }
+})
+
+router.post('/getCurrentOrders',(req,res) => {
+    if(req.cookies.authCookie === 'authenticated'){
+        let bid = req.body.bid;
+       // console.log(query);
+       let orders = [];
+       let orderdetails = [];
+       let query = `SELECT orders.oid, restaurantName, itemName, qty, total, status
+       FROM( (orders INNER JOIN orderdetails ON orders.oid = orderdetails.oid) INNER JOIN 
+       restaurants ON restaurants.rid = orders.rid) WHERE bid = '${bid}' AND status<>'Delivered' AND status <> 'Cancelled'`;
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> buyer -> getCurrentOrders ")
+            }else{
+                if(results.length > 0){
+                    let upcomingOrders = [];
+                    let orders = results;
+                    let oidSet = new Set();
+                    for( let order of orders){
+                        //console.log(order.oid);
+                        oidSet.add(order.oid);
+                    }
+                    // oidSet.forEach( i =>{
+                    //     console.log(i)
+                    // })
+                    for( let oid of oidSet){
+                        
+                        let itemList = [];
+                        let restaurantName ='';
+                        let total ;
+                        let status;
+                        for( let order of orders){
+                            if( order.oid === oid){
+                                restaurantName = order.restaurantName;
+                                total = order.total;
+                                status = order.status;
+                                itemList.push({'itemName':order.itemName, 'qty':order.qty})
+                            }
+                        }
+                        
+                        upcomingOrders.push(
+                            {   'oid' : oid,
+                                'itemList' : itemList,
+                                'restaurantName' : restaurantName,
+                                'status' : status,
+                                'total' : total
+                            }
+                        );
+                        
+                    }
+                    console.log(upcomingOrders);
+                    res.end(JSON.stringify(upcomingOrders));
+                }else{
+                    console.log("No orders found");
+                    res.writeHead(404);
+                    res.end("No orders found");
+                }           
+            }           
+        });
+
+        
+        
+
+    }else{
+        console.log("Error in second if. Check Backend -> buyer -> getCurrentOrders ");
+        res.writeHead(405);
+        res.end("Error in validating authetication");
+        
+    }
+})
+
+
+router.post('/getPastOrders',(req,res) => {
+    if(req.cookies.authCookie === 'authenticated'||1){
+        let bid = req.body.bid;
+       // console.log(query);
+       let orders = [];
+       let orderdetails = [];
+       let query = `SELECT orders.oid, restaurantName, itemName, qty, total, status
+       FROM( (orders INNER JOIN orderdetails ON orders.oid = orderdetails.oid) INNER JOIN 
+       restaurants ON restaurants.rid = orders.rid) WHERE bid = '${bid}' AND (status ='Delivered' OR status = 'Cancelled')`;
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> buyer -> getPastOrders ")
+            }else{
+                if(results.length > 0){
+                    let upcomingOrders = [];
+                    let orders = results;
+                    let oidSet = new Set();
+                    for( let order of orders){
+                        //console.log(order.oid);
+                        oidSet.add(order.oid);
+                    }
+                    // oidSet.forEach( i =>{
+                    //     console.log(i)
+                    // })
+                    for( let oid of oidSet){
+                        
+                        let itemList = [];
+                        let restaurantName ='';
+                        let total ;
+                        let status;
+                        for( let order of orders){
+                            if( order.oid === oid){
+                                restaurantName = order.restaurantName;
+                                total = order.total;
+                                status = order.status;
+                                itemList.push({'itemName':order.itemName, 'qty':order.qty})
+                            }
+                        }
+                        
+                        upcomingOrders.push(
+                            {   'oid' : oid,
+                                'itemList' : itemList,
+                                'restaurantName' : restaurantName,
+                                'status' : status,
+                                'total' : total
+                            }
+                        );
+                        
+                    }
+                    console.log(upcomingOrders);
+                    res.end(JSON.stringify(upcomingOrders));
+                }else{
+                    console.log("No orders found");
+                    res.writeHead(404);
+                    res.end("No orders found");
+                }           
+            }           
+        });
+
+        
+        
+
+    }else{
+        console.log("Error in second if. Check Backend -> buyer -> getPastOrders ");
+        res.writeHead(405);
+        res.end("Error in validating authetication");
         
     }
 })

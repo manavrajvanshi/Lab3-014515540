@@ -36,7 +36,7 @@ export default class ShowRestaurants extends React.Component{
             }else{
                 
                 console.log("Filter ");
-                if(this.props.restaurantsList[restaurant].cuisine === this.props.cuisineFilter){
+                if(this.props.restaurantsList[restaurant].cuisine.toLowerCase() === this.props.cuisineFilter.toLowerCase()){
                     foundFlag = true;
                     restaurantsTable.push(
                         

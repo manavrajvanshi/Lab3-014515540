@@ -2,7 +2,6 @@ import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
-import './home.css';
 import ShowRestaurants from '../restaurant/showRestaurants.js'
 
 let re = null;

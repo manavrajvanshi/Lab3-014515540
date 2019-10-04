@@ -45,8 +45,8 @@ export class Navbar extends React.Component{
                         <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
                         <a href="/buyerUpdate">Update Profile</a>
                         <a href ="/buyerPicture">Upload Picture</a>
-                        <a href="#/" >Past Orders</a> 
-                        <a href="#/" >Order Status</a>   
+                        <a href="/pastOrder" >Past Orders</a> 
+                        <a href="/buyerOrderStatus" >Order Status</a>   
                         <a href="#/" >Contact Us</a> 
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
@@ -59,6 +59,8 @@ export class Navbar extends React.Component{
                         <a href="/ownerUpdate">Update Profile</a>
                         <a href ="/ownerPicture">Upload Picture</a>
                         <a href ="/menu">View/Edit Menu</a>
+                        <a href="/manageOrder" >View / Manage Orders</a> 
+                        <a href="/oldOrder" >Old Orders</a> 
                         <a href="/" onClick = {this.handleLogout}>Logout</a>        
                     </div>
                 )
@@ -66,6 +68,9 @@ export class Navbar extends React.Component{
         }else{
             bar = (
                 <div className = "topnav">
+                    <a class="navbar-brand" href="http://localhost:3000/">
+                        <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
+                    </a>
                     <a href="/buyerLogin">Buyer Login</a>  
                     <a href="/ownerLogin">Owner Login</a>  
                     <a href="/buyerSignup">Buyer Signup</a>  

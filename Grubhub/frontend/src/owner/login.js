@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
+import './login.css';
 
 export default class OwnerLogin extends React.Component{
 
@@ -65,32 +66,40 @@ export default class OwnerLogin extends React.Component{
             redirect = <Redirect to = "/ownerHome"/>
         }
         return(
-            <div>
+            <div className = "loginContainer" >
+                
                 {redirect}
+                <h2 className = "heading">Sign in with your Grubhub owner account</h2>
                 <form onSubmit = {this.login} className = "loginForm">
-                    <table border = "0">
+                    <table border = "0" style={{margin:'auto'}}>
                         <tbody>
                             <tr>
-                                <td>
-                                    Email: 
-                                </td>
-                                <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
-                                </td>
+                                <div>
+                                    <label className = "heading">
+                                        Email
+                                    </label>
+            
+                                    <td>
+                                        <input className ="inputField" type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} size = "45" required/>
+                                    </td>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Password: 
-                                </td>
-                                <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required/>
-                                </td>
+                                <div>
+                                    <label  className = "heading">
+                                        Password 
+                                    </label>
+                                    <td>
+                                        <input className ="inputField" type = "password" name = "password" onChange = {this.handleInput} size = "45" required/>
+                                    </td>
+                                </div>
+                                
                             </tr>
 
                             <tr>
                                 <td colSpan = "2" align = "center">
-                                    <input type = "submit" name = "signin" value = "SIGN IN"/>
+                                    <input className = "inputButton" type = "submit" name = "signin" value = "SIGN IN"/>
                                 </td> 
                             </tr>
                         </tbody>

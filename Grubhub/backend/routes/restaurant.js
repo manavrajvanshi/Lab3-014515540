@@ -355,6 +355,165 @@ router.post('/addSection',(req,res) => {
     }
 })
 
+router.post('/viewOrders', (req,res) => {
+    if(req.cookies.authCookie === 'authenticated'||1){
+       let rid = req.body.rid;
+       // console.log(query);
+       
+       let query = `SELECT buyers.name, orders.oid,orderdetails.itemName, orderdetails.qty, 
+       orders.total, orders.status, buyers.bid
+       FROM( (buyers INNER JOIN orders ON buyers.bid = orders.bid) INNER JOIN
+       orderdetails ON orderdetails.oid = orders.oid) WHERE orders.rid = ${rid} and status<>'Delivered' and status <> 'Cancelled'`;
+
+
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurants -> viewOrders ")
+            }else{
+                if(results.length > 0){
+
+                    //console.log(results);
+                    let upcomingOrders = [];
+                    let orders = results;
+                    let oidSet = new Set();
+                    for( let order of orders){
+                        oidSet.add(order.oid);
+                    }
+                    // oidSet.forEach( i =>{
+                    //     console.log(i)
+                    // })
+                    for( let oid of oidSet){
+                        
+                        let itemList = [];
+                        let buyerName ='';
+                        let total ;
+                        let status;
+                        for( let order of orders){
+                            if( order.oid === oid){
+                                buyerName = order.name;
+                                total = order.total;
+                                status = order.status;
+                                itemList.push({'itemName':order.itemName, 'qty':order.qty})
+                            }
+                        }
+                        
+                        //console.log(itemList);
+                        upcomingOrders.push(
+                            {   'oid' : oid,
+                                'itemList' : itemList,
+                                'buyerName' : buyerName,
+                                'status' : status,
+                                'total' : total
+                            }
+                        );
+                        
+                    }
+                    console.log(upcomingOrders);
+                    res.end(JSON.stringify(upcomingOrders));
+                }else{
+                    console.log("No orders found");
+                    res.writeHead(201);
+                    res.end("No orders found");
+                }           
+            }           
+        });
+    }else{
+        console.log("Error in second if. Check Backend -> buyer -> getCurrentOrders ");
+        res.writeHead(405);
+        res.end("Error in validating authetication");
+        
+    }
+})
+
+router.post('/oldOrder', (req,res) => {
+    if(req.cookies.authCookie === 'authenticated'||1){
+       let rid = req.body.rid;
+       // console.log(query);
+       
+       let query = `SELECT buyers.name, orders.oid,orderdetails.itemName, orderdetails.qty, 
+       orders.total, orders.status, buyers.bid
+       FROM( (buyers INNER JOIN orders ON buyers.bid = orders.bid) INNER JOIN
+       orderdetails ON orderdetails.oid = orders.oid) WHERE orders.rid = ${rid} and (status='Delivered' or status = 'Cancelled')`;
+
+
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurants -> oldOrders ")
+            }else{
+                if(results.length > 0){
+
+                    //console.log(results);
+                    let upcomingOrders = [];
+                    let orders = results;
+                    let oidSet = new Set();
+                    for( let order of orders){
+                        oidSet.add(order.oid);
+                    }
+                    // oidSet.forEach( i =>{
+                    //     console.log(i)
+                    // })
+                    for( let oid of oidSet){
+                        
+                        let itemList = [];
+                        let buyerName ='';
+                        let total ;
+                        let status;
+                        for( let order of orders){
+                            if( order.oid === oid){
+                                buyerName = order.name;
+                                total = order.total;
+                                status = order.status;
+                                itemList.push({'itemName':order.itemName, 'qty':order.qty})
+                            }
+                        }
+                        
+                        //console.log(itemList);
+                        upcomingOrders.push(
+                            {   'oid' : oid,
+                                'itemList' : itemList,
+                                'buyerName' : buyerName,
+                                'status' : status,
+                                'total' : total
+                            }
+                        );
+                        
+                    }
+                    console.log(upcomingOrders);
+                    res.end(JSON.stringify(upcomingOrders));
+                }else{
+                    console.log("No orders found");
+                    res.writeHead(201);
+                    res.end("No orders found");
+                }           
+            }           
+        });
+    }else{
+        console.log("Error in second if. Check Backend -> Restaurant -> oldOrders ");
+        res.writeHead(405);
+        res.end("Error in validating authetication");
+        
+    }
+})
+
+router.post('/updateStatus',(req,res) =>{
+    if(req.cookies.authCookie === 'authenticated'){
+        let oid = req.body.oid;
+        let status = req.body.status;
+        let query = `UPDATE orders SET status = '${status}' where oid = '${oid}'`;
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> updateSection ");
+                res.writeHead(400);
+                res.end("Status Not Updated");
+            }else{
+                res.writeHead(200);
+                res.end('Status Updated');       
+            }           
+        });
+
+    }
+})
 router.get('/logout',(req,res) =>{
     res.clearCookie('authCookie');
     res.clearCookie('userType');

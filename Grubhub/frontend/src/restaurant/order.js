@@ -35,8 +35,8 @@ export default class Order extends React.Component{
         let quan = this.state.quantity;
         let prices = this.state.prices;
 
-        console.log(this.state.prices);
-        console.log(this.state.quantity);
+        // console.log(this.state.prices);
+        // console.log(this.state.quantity);
         let orderTotal = 0;
         for (let item in quan){
             orderTotal += quan[item] * prices[item];
@@ -69,6 +69,11 @@ export default class Order extends React.Component{
     }
     
     componentDidMount(){
+
+        if(cookie.load('authCookie')!=='authenticated'){
+            let re = <Redirect to ="/buyerLogin"></Redirect>
+            return re
+        }
         let rid = this.props.location.state.rid;
         axios.defaults.withCredentials = true;
         let data = {
