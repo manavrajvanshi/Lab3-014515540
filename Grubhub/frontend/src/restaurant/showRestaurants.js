@@ -1,6 +1,6 @@
 import React from 'react';
 import {Redirect} from 'react-router';
-
+import '../App.css'
 let re;
 export default class ShowRestaurants extends React.Component{
     constructor(props){
@@ -30,7 +30,7 @@ export default class ShowRestaurants extends React.Component{
                     <tr key = {this.props.restaurantsList[restaurant].rid} >
                         <td>{this.props.restaurantsList[restaurant].restaurantName}</td>
                         <td>{this.props.restaurantsList[restaurant].cuisine}</td>
-                        <td><button onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
+                        <td><button className ="bttn" onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
                     </tr>
                 )
             }else{
@@ -43,7 +43,7 @@ export default class ShowRestaurants extends React.Component{
                         <tr key = {this.props.restaurantsList[restaurant].rid} >
                             <td>{this.props.restaurantsList[restaurant].restaurantName}</td>
                             <td>{this.props.restaurantsList[restaurant].cuisine}</td>
-                            <td><button onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
+                            <td><button className ="bttn" onClick = {this.viewRestaurant} value ={this.props.restaurantsList[restaurant].rid}>View</button></td>
                         </tr>
                     )
                 }
@@ -56,14 +56,15 @@ export default class ShowRestaurants extends React.Component{
         }
 
         return(
-            <div>
+            <div className = "resultContainer">
                 {re}
                 
-                <table>
+                <table className = "restaurantList" border ="1"  cellpadding="10" style = {{textAlign :"center"}}>
                     <thead>
                         <tr>
                             <th>Restaurants serving {this.props.searchItem}</th>
                             <th>Cuisine</th>
+                            <th>Menu</th>
                         </tr>
                     </thead>
 

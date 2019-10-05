@@ -42,39 +42,47 @@ export class Navbar extends React.Component{
             if (userType === "buyer"){
                 bar =  (
                     <div className = "topnav">
+                        <a class="navbar-brand" href="http://localhost:3000/welcome">
+                        <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
+                        </a>
                         <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
-                        <a href="/buyerUpdate">Update Profile</a>
-                        <a href ="/buyerPicture">Upload Picture</a>
                         <a href="/pastOrder" >Past Orders</a> 
-                        <a href="/buyerOrderStatus" >Order Status</a>   
-                        <a href="#/" >Contact Us</a> 
-                        <a href="/" onClick = {this.handleLogout}>Logout</a>        
+                        <a href="/buyerOrderStatus" >Order Status</a>    
+                        <a href="/welcome" style = {{float: "right"}} onClick = {this.handleLogout}>Logout</a> 
+                        <a href ="/buyerPicture" style = {{float: "right"}}>Upload Picture</a>       
+                        <a href="/buyerUpdate" style = {{float: "right"}}>Update Profile</a>
                     </div>
                 )
             }else if(userType === "owner"){
                 //console.log(cookie.load('ownerData').restaurantName);
                 bar =  (
                     <div className = "topnav">
+                        <a class="navbar-brand" href="http://localhost:3000/welcome">
+                        <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
+                        </a>
                         <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
-                        <a href="/ownerUpdate">Update Profile</a>
-                        <a href ="/ownerPicture">Upload Picture</a>
                         <a href ="/menu">View/Edit Menu</a>
                         <a href="/manageOrder" >View / Manage Orders</a> 
                         <a href="/oldOrder" >Old Orders</a> 
-                        <a href="/" onClick = {this.handleLogout}>Logout</a>        
+                        <a href="/welcome" style = {{float: "right"}} onClick = {this.handleLogout}>Logout</a>  
+                        <a href ="/ownerPicture" style = {{float: "right"}}>Upload Picture</a>      
+                        <a href="/ownerUpdate" style = {{float: "right"}}>Update Profile</a>
                     </div>
                 )
             }
         }else{
             bar = (
                 <div className = "topnav">
-                    <a class="navbar-brand" href="http://localhost:3000/">
+                    <a class="navbar-brand" href="http://localhost:3000/welcome">
                         <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                     </a>
-                    <a href="/buyerLogin">Buyer Login</a>  
-                    <a href="/ownerLogin">Owner Login</a>  
-                    <a href="/buyerSignup">Buyer Signup</a>  
-                    <a href="/ownerSignup">Owner Signup</a> 
+                    
+                   
+                    <a href="/ownerSignup"style = {{float: "right"}}>Owner Signup</a> 
+                    <a href="/ownerLogin" style = {{float: "right"}}>Owner Login</a>  
+                    <a href="/buyerSignup"style = {{float: "right"}}>Buyer Signup</a>  
+                    <a href="/buyerLogin" style = {{float: "right"}}>Buyer Login</a>  
+                    
                 </div>
             )
         }
@@ -84,6 +92,7 @@ export class Navbar extends React.Component{
         return(
 
             <div>
+                
                 {bar}
             </div>
         )

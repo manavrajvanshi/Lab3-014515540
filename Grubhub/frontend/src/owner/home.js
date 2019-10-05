@@ -2,6 +2,7 @@ import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
+import './home.css'
 let re = null;
 let owner, image;
 export default class OwnerHome extends React.Component{
@@ -27,7 +28,7 @@ export default class OwnerHome extends React.Component{
                 }
             );
         }else{
-            re = <Redirect to = "/"/>
+            re = <Redirect to = "welcome/"/>
             console.log("Inside Else");
         }
     }
@@ -41,11 +42,10 @@ export default class OwnerHome extends React.Component{
             return <div></div>
         }
         return(
-            <div>
+            <div className = "homeContainer">
                 {re}
-                
-                <div>
-                    <img src = {image} width ="200" height = "200" alt = 'Profile'/>
+                <div class = "heading">
+                    <img src = {image} width ="200" height = "200" alt = 'Profile'className = "profilePic"/>
                     <p>Welcome {owner.ownerName}</p>
                     <p>Your E-mail: {owner.ownerEmail}</p>
                     <p>Your Contact Number: {owner.ownerPhone}</p>

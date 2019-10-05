@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
-
+import '../App.css';
 let re = null;
 export default class OwnerSignup extends React.Component{
 
@@ -63,60 +63,72 @@ export default class OwnerSignup extends React.Component{
     }
     render(){
         return(
-            <div>
+            <div className = "signupContainer" >
                 {re}
+                <h2 className = "hdng">Create your account</h2>
                 <form onSubmit = {this.signup}>
-                    <table border = "0">
+                    <table border = "0" style={{margin:'auto'}}>
                         <tbody>
+
                             <tr>
-                                <td>
-                                    Name: 
-                                </td>
-                                <td>
-                                    <input type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Name
+                                    </label>
+                                    
+                                    <td>
+                                        <input className = "inp" size = "45" type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
+                                    </td>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Email: 
-                                </td>
-                                <td>
-                                    <input type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
-                                </td>
+                                <div>
+                                    <lable className = "hdng">
+                                        Email
+                                    </lable>
+                                    <td>
+                                        <input className ="inp" size = "45" type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} required/>
+                                    </td>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Password: 
-                                </td>
-                                <td>
-                                    <input type = "password" name = "password" onChange = {this.handleInput} required />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Password
+                                    </label>
+                                    <td>
+                                        <input className ="inp" size = "45" type = "password" name = "password" onChange = {this.handleInput} required />
+                                    </td>
+                                </div>
                             </tr>
-
                             
                             <tr>
-                                <td>
-                                    Restaurant Name: 
-                                </td>
-                                <td>
-                                    <input type = "text" name = "restaurantName" onChange = {this.handleInput}  value = {this.state.restaurantName} required />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Restaurant Name
+                                    </label>
+                                    <td>
+                                    <input className ="inp" size = "45" type = "text" name = "restaurantName" onChange = {this.handleInput}  value = {this.state.restaurantName} required />
+                                    </td>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Restaurant Zip: 
-                                </td>
-                                <td>
-                                    <input type = "number" name = "restaurantZip" onChange = {this.handleInput}  value = {this.state.restaurantZip}required />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Restaurant Zip
+                                    </label>
+                                    <td>
+                                        <input className = "inp" size = "45" type = "number" name = "restaurantZip" onChange = {this.handleInput}  value = {this.state.restaurantZip}required />
+                                    </td>
+                                </div>
                             </tr>
 
                             <tr>
                                 <td colSpan = "2" align = "center">
-                                    <input type = "submit" name = "signup" value = "SIGN UP"/>
+                                    <input className = "bttn" type = "submit" name = "signup" value = "SIGN UP"/>
                                 </td> 
                             </tr>
                         </tbody>

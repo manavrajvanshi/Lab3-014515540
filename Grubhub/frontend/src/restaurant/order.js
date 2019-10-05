@@ -2,7 +2,9 @@ import React from 'react';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import axios from 'axios';
+import '../App.css';
 
+let ree;
 export default class Order extends React.Component{
 //cookie.load('buyerData').bid
     constructor(props){
@@ -65,6 +67,9 @@ export default class Order extends React.Component{
         axios.post('http://localhost:3001/buyer/placeOrder',data)
         .then(response => {
             console.log(response.data);
+            alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
+            ree =  <Redirect to ="/buyerOrderStatus"/>;
+            this.setState({});
         }).catch(error => console.log(error));
     }
     
@@ -101,24 +106,25 @@ export default class Order extends React.Component{
         for( let item in this.data){
             sections.add(this.data[item].section)
         }
-        itemsArray.push(
-        <tr key ="..">
-            <th>Item</th>
-            <th>Description</th>
-            <th>Price</th>
-            <th>Quantity</th>
-        </tr>
-        );
+        
         if(this.data.length > 0){
             sections.forEach(
                 section =>{
                     itemsArray.push(
                         <tr key = {section}>
-                            <th>
+                            <th colSpan = "4">
                                 {section}
                             </th>
                         </tr>
-                    )
+                    );
+                    itemsArray.push(
+                        <tr key ="..">
+                            <th>Item</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                        </tr>
+                        );
                     this.data.forEach(
                         element =>{
                             if (element.section === section){
@@ -126,8 +132,8 @@ export default class Order extends React.Component{
                                     <tr key = {element.iid}>
                                         <td>{element.name}</td>
                                         <td>{element.description}</td>
-                                        <td>{element.price}</td>
-                                        <td><input type = "number" name = {element.name}
+                                        <td>${element.price}</td>
+                                        <td><input className = "inputField" type = "number" name = {element.name}
                                             value = {this.state.quantity[element.name]}
                                             onChange = {this.handleQuantity} /></td>
                                     </tr>
@@ -147,9 +153,11 @@ export default class Order extends React.Component{
             return re
         }
         return(
-            <div>
+
+            <div className = "menuContainer">
+                {ree}
                 <form >
-                    <table>
+                    <table className = "menu">
                         <tbody>
                             {this.createTable()}
                         </tbody>
@@ -159,7 +167,7 @@ export default class Order extends React.Component{
                 </br>
                 <div>
                     {this.state.totalStatement}
-                    { <button  onClick ={this.placeOrder} >Order</button>}
+                    { <button className = "bttn" onClick ={this.placeOrder} >Order</button>}
                     
                 </div>
             </div>

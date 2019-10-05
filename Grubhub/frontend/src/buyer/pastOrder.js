@@ -2,6 +2,7 @@ import React from 'react';
 import cookie from 'react-cookies';
 import axios from 'axios';
 
+
 let flag = false;
 let orderTable=[];
 export default class PastOrder extends React.Component{
@@ -40,8 +41,8 @@ export default class PastOrder extends React.Component{
 
                             orderTable.push(
                                 <tr>
-                                    <th>Item</th>
-                                    <th>Quantity</th>
+                                    <th colSpan = "2">Item</th>
+                                    <th colSpan = "2">Quantity</th>
                                 </tr>
                             )
 
@@ -49,8 +50,8 @@ export default class PastOrder extends React.Component{
                                 console.log(item);
                                 orderTable.push(
                                     <tr>
-                                        <td>{item.itemName}</td>
-                                        <td>{item.qty}</td>
+                                        <td colSpan = "2">{item.itemName}</td>
+                                        <td colSpan = "2">{item.qty}</td>
                                     </tr>
                                 )
                             }
@@ -77,11 +78,11 @@ export default class PastOrder extends React.Component{
             )
         }
         return(
-            <div>
-                <table>
+            <div className = "orderContainer">
+                <table className = "order">
                     <thead>
                         <tr>
-                            <td>Your Past Orders</td>
+                            <td class = "heading" colspan = "4">Your Past Orders</td>
                         </tr>
                     </thead>
                     <tbody>

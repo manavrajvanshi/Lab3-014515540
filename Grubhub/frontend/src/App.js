@@ -2,6 +2,7 @@ import React from 'react';
 import {BrowserRouter,Route} from 'react-router-dom';
 
 import {Navbar} from './navbar/navbar.js';
+import Welcome from './navbar/welcome.js';
 import BuyerLogin from './buyer/login.js';
 import BuyerSignup from './buyer/signup.js';
 import BuyerHome from './buyer/home.js';
@@ -26,6 +27,7 @@ function App() {
     <BrowserRouter>
         <div>    
           <Route path = "/" component={Navbar}/>
+          <Route path = "/welcome" component={Welcome}/>
           
           <Route path = "/buyerLogin" component={BuyerLogin}/>
           <Route path = "/buyerSignup" component={BuyerSignup}/>

@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import '../App.js'
 let re = null;
 
 export default class OwnerUpdate extends React.Component{
@@ -74,81 +75,96 @@ export default class OwnerUpdate extends React.Component{
     
     render(){
         if(cookie.load('authCookie') !== "authenticated" ){
-            re = <Redirect to = "/"/>
+            re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
         }
         return(
-            <div>
+            <div className = "updateContainer">
                 {re}
-                <form onSubmit = {this.update}>
-                    <table border = "0">
+                <form onSubmit = {this.update} >
+                    <table border = "0" style={{margin:'auto'}}>
                         <tbody>
                             <tr>
-                                <td>
-                                   Owner Name: 
-                                </td>
-                                <td>
-                                    <input type = "text" name = "ownerName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.ownerName} autoFocus    />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Owner Name
+                                    </label>
+                                    <td>
+                                        <input className = "inp"size = "45" type = "text" name = "ownerName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.ownerName} autoFocus    />
+                                    </td>
+                                </div>
+                            </tr>
+                            
+                            
+                            <tr>
+                                <div>
+                                    <label className = "hdng">
+                                        Owner Email
+                                    </label>
+                                    <tr>
+                                        <input className = "inp" size = "45" type = "email" name = "ownerEmail" onChange = {this.handleInput} value = {this.state.ownerEmail} />
+                                    </tr>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Owner Email: 
-                                </td>
-                                <td>
-                                    <input type = "email" name = "ownerEmail" onChange = {this.handleInput} value = {this.state.ownerEmail} />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Password
+                                    </label>
+                                    <tr>
+                                        <input className = "inp" size = "45" type = "password" name = "ownerPassword" onChange = {this.handleInput}  />
+                                    </tr>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Owner Password: 
-                                </td>
-                                <td>
-                                    <input type = "password" name = "ownerPassword" onChange = {this.handleInput}  />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Owner Phone
+                                    </label>
+                                    <tr>
+                                        <input className = "inp" size = "45" type = "number" name = "ownerPhone" onChange = {this.handleInput} value = {this.state.ownerPhone} />
+                                    </tr>
+                                </div>
+                            </tr>
+                                
+                            <tr>
+                                <div>
+                                    <label className = "hdng">
+                                    Restaurant Name
+                                    </label>
+                                    <tr>
+                                        <input className = "inp" size = "45" type = "text" name = "restaurantName" onChange = {this.handleInput} value = {this.state.restaurantName} />  
+                                    </tr>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Owner Phone: 
-                                </td>
-                                <td>
-                                    <input type = "number" name = "ownerPhone" onChange = {this.handleInput} value = {this.state.ownerPhone} />
-                                </td>
+                                <div>
+                                    <label className = "hdng">
+                                        Restaurant Zip
+                                    </label>
+                                    <tr>
+                                        <input className = "inp"size = "45" type = "text" name = "restaurantZip" onChange = {this.handleInput} value = {this.state.restaurantZip} />   
+                                    </tr>
+                                </div>
                             </tr>
 
                             <tr>
-                                <td>
-                                    Restaurant Name: 
-                                </td>
-                                <td>
-                                    <input type = "text" name = "restaurantName" onChange = {this.handleInput} value = {this.state.restaurantName} />
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Restaurant Zip: 
-                                </td>
-                                <td>
-                                    <input type = "text" name = "restaurantZip" onChange = {this.handleInput} value = {this.state.restaurantZip} />
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    Cuisine: 
-                                </td>
-                                <td>
-                                    <input type = "text" name = "cuisine" onChange = {this.handleInput} value = {this.state.cuisine} />
-                                </td>
+                                <div>
+                                    <label className= "hdng">
+                                        Cuisine
+                                    </label>
+                                    <tr>
+                                        <input className = "inp" size = "45" type = "text" name = "cuisine" onChange = {this.handleInput} value = {this.state.cuisine} />
+                                    </tr>
+                                </div>
                             </tr>
 
                             <tr>
                                 <td colSpan = "2" align = "center">
-                                    <input type = "submit" name = "update" value = "UPDATE"/>
+                                    <input className = "bttn"type = "submit" name = "update" value = "UPDATE"/>
                                 </td> 
                             </tr>
                         </tbody>

@@ -2,6 +2,7 @@ import React from 'react';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import axios from 'axios';
+import '../App.js';
 
 let re = null;
 export default class Menu extends React.Component{
@@ -114,11 +115,11 @@ export default class Menu extends React.Component{
         );
         itemsArray.push(   
             <tr>            
-                <td><input type = "text" name = "item" onChange = {this.handleInput} value = {this.state.item}/></td>
-                <td><input type = "text" name = "description" onChange = {this.handleInput} value = {this.state.description}/></td>
-                <td><input type = "text" name = "section" onChange = {this.handleInput} value = {this.state.section}/></td>
-                <td><input type = "text" name = "price" onChange = {this.handleInput} value = {this.state.price}/></td>
-                <td><input type = "Submit" value = "Add"/></td>
+                <td><input class = "inp" type = "text" name = "item" onChange = {this.handleInput} value = {this.state.item}/></td>
+                <td><input class = "inp" type = "text" name = "description" onChange = {this.handleInput} value = {this.state.description}/></td>
+                <td><input class = "inp" type = "text" name = "section" onChange = {this.handleInput} value = {this.state.section}/></td>
+                <td><input class = "inp" type = "text" name = "price" onChange = {this.handleInput} value = {this.state.price}/></td>
+                <td><input class = "bttn" type = "Submit" value = "Add"/></td>
             </tr>
         );
 
@@ -129,17 +130,18 @@ export default class Menu extends React.Component{
 
                     itemsArray.push(
                         <tr>
-                            <th>
+                            <th class = "hdng" colSpan = "3"> 
                                 {section}
                             </th>
                             <th>
-                                <button onClick = {this.deleteSection} value = {section}>Remove Section</button>
+                                <button className ="inp" onClick = {this.deleteSection} value = {section}>Remove Section</button>
                             </th>
                             <th>
-                                <button onClick = {this.updateSection} value = {section}>Update Section</button>
+                                <button className ="inp" onClick = {this.updateSection} value = {section}>Update Section</button>
                             </th>
                         </tr>
                     )
+
                     this.data.forEach(
                         element =>{
                             if (element.section === section){
@@ -147,11 +149,11 @@ export default class Menu extends React.Component{
 
                                 itemsArray.push(
                                     <tr>
-                                        <td>{element.name}</td>
-                                        <td>{element.description}</td>
-                                        <td>{element.section}</td>
-                                        <td>{element.price}</td>
-                                        <td><button value = {element.iid} onClick = {this.handleDelete}>Delete</button></td>
+                                        <td className = "hdng">{element.name}</td>
+                                        <td className = "hdng">{element.description}</td>
+                                        <td className = "hdng">{element.section}</td>
+                                        <td className = "hdng">{element.price}</td>
+                                        <td className = "hdng"><button class = "bttn" value = {element.iid} onClick = {this.handleDelete}>Delete</button></td>
                                     </tr>
                                 )
                             }
@@ -172,10 +174,10 @@ export default class Menu extends React.Component{
             
         }
         return (
-            <div>
+            <div className = "menuContainer">
                 {re}
                 <form onSubmit = {this.addItem}>
-                    <table>
+                    <table className = "menu">
                         <tbody>
                             {this.createTable()}
                         </tbody>

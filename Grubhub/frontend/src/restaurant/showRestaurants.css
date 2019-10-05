@@ -1,0 +1,84 @@
+.resultContainer{
+    max-width: 420px;
+    width: auto;
+    margin: 0 auto;
+    margin-top: 40px;
+    padding-bottom: 10px;
+    padding-top: 30px;
+    text-align: center;
+    
+    
+}
+
+.profilePic{
+    border-radius: 50%;
+    padding-bottom: 10px;
+    height:175px;
+    width: 175px;
+}
+
+.inputField{
+    
+    transition: border-color .1s ease;
+    font-family: graphik;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.4;
+    display: block;
+    width: 90%;
+    border: 1px solid #8f8fa1;
+    border-radius: 4px;
+    color: #000;
+    background: #fff;
+    box-shadow: none;
+    padding: 10px 16px;
+    
+    margin-bottom: 10px;
+    
+}
+
+.inputButton{
+    border-radius: 8px;
+    padding: 200px 16px 7px;
+    text-align: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    background: 0 0;
+    border: 1px solid transparent;
+    background-color: #E62434;
+    color:white;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    font-weight: bold;
+    width:90%;
+    margin-top:30px;
+}
+
+.heading{
+    font-weight: bold;
+    margin: 20px;
+}
+
+.restaurantList{
+    
+    border-collapse: collapse;
+    width: 100%;
+    margin:auto;
+  }
+  
+  .restaurantList td, #customers th {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+  
+  .restaurantList tr:nth-child(even){background-color: #f2f2f2;}
+  
+  .restaurantList tr:hover {background-color: #ddd;}
+  
+  .restaurantList th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: center;
+    background-color: #E62434;
+    color: white;
+  }

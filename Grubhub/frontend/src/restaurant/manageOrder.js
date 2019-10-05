@@ -2,7 +2,7 @@ import React from 'react';
 import cookie from 'react-cookies';
 import axios from 'axios';
 import {Redirect} from 'react-router';
-
+import '../App.css';
 let re = null;
 let flag = false;
 let orderTable=[];
@@ -48,10 +48,10 @@ export default class ManageOrder extends React.Component{
 
                             orderTable.push(
                                 <tr>
-                                    <th>Item</th>
+                                    <th colSpan = "2">Item</th>
                                     <th>Quantity</th>
                                     <th>
-                                        <select name = {oid} onChange = {this.handleStatusChange}>
+                                        <select className = "inp" name = {oid} onChange = {this.handleStatusChange}>
                                             <option defaultValue value ={status}>Set Status</option>
                                             <option value="New">New</option>
                                             <option value="Preparing">Preparing</option>
@@ -67,8 +67,8 @@ export default class ManageOrder extends React.Component{
                                 //console.log(item);
                                 orderTable.push(
                                     <tr>
-                                        <td>{item.itemName}</td>
-                                        <td>{item.qty}</td>
+                                        <td colSpan = "2">{item.itemName}</td>
+                                        <td colSpan = "2">{item.qty}</td>
                                     </tr>
                                 )
                             }
@@ -122,7 +122,7 @@ export default class ManageOrder extends React.Component{
     render(){
 
         if(cookie.load('authCookie') !== "authenticated" ){
-            re = <Redirect to = "/"/>
+            re = <Redirect to = "/welcome"/>
         }
         if(!flag){
             return(
@@ -132,9 +132,9 @@ export default class ManageOrder extends React.Component{
             )
         }
         return(
-            <div>
+            <div className = "menuContainer">
                 {re}
-                <table>
+                <table className = "menu">
                     
                     <tbody>
                         {orderTable}

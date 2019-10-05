@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
-import './login.css';
+import '../App.css';
 
 let redirect = null;
         
@@ -67,7 +67,7 @@ export default class BuyerLogin extends React.Component{
         return(
             <div className = "loginContainer" >
                 {redirect}
-                <h2 className = "heading">Sign in with your Grubhub buyer account</h2>
+                <h2 className = "hdng">Sign in with your Grubhub buyer account</h2>
                 
                 <form onSubmit = {this.login} className = "loginForm" >
                     <table border = "0" style={{margin:'auto'}}>
@@ -80,7 +80,7 @@ export default class BuyerLogin extends React.Component{
                                     </label>
             
                                     <td>
-                                        <input className ="inputField" type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} size = "45" required/>
+                                        <input className ="inp" type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} size = "45" required/>
                                     </td>
                                 </div>
                             </tr>
@@ -91,7 +91,7 @@ export default class BuyerLogin extends React.Component{
                                         Password 
                                     </label>
                                     <td>
-                                        <input className ="inputField" type = "password" name = "password" onChange = {this.handleInput} size = "45" required/>
+                                        <input className ="inp" type = "password" name = "password" onChange = {this.handleInput} size = "45" required/>
                                     </td>
                                 </div>
                                 
@@ -99,7 +99,7 @@ export default class BuyerLogin extends React.Component{
 
                             <tr>
                                 <td colSpan = "2" align = "center">
-                                    <input className = "inputButton" type = "submit" name = "signin" value = "SIGN IN"/>
+                                    <input className = "bttn" type = "submit" name = "signin" value = "SIGN IN"/>
                                 </td> 
                             </tr>
                         </tbody>

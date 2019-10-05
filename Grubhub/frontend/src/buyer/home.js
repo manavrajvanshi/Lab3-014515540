@@ -4,6 +4,8 @@ import {Redirect} from 'react-router';
 import axios from 'axios';
 import ShowRestaurants from '../restaurant/showRestaurants.js'
 
+import '../App.css';
+
 let re = null;
 let buyer,image ;
 let restaurantsTable=null;
@@ -40,7 +42,7 @@ class BuyerHome extends React.Component{
                 }
             );
         }else{
-            re = <Redirect to = "/"/>
+            re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
         }
     }
@@ -92,22 +94,21 @@ class BuyerHome extends React.Component{
         }
         return(
             
-            <div>
+            <div className = "homeContainer" style = {{paddingBottom:"40px"}}>
                 {re}
-                <div name = "profile">
-                    <img src = {image} width ="200" height = "200" alt = 'Profile'/>
+                
+                    <img src = {image} width ="200" height = "200" alt = 'Profile' className = "profilePic"/>
                     <p>Welcome {buyer.name}</p>
-                    <p>Your E-mail: {buyer.email}</p>
-                    <p>Your Contact Number: {buyer.phone}</p>
-                </div>
+                    <p>Email: {buyer.email}</p>
+                    <p>M: {buyer.phone}</p>
+             
+                    <input class = "inp" size = "45" type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
+                    <input class = "inp" size = "45" type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
+                    <button class = "bttn" onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
+                    {restaurantsTable}
+               
 
-                <div name = "search">
-                    <input type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
-                    <input type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
-                    <button onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
-                </div>
-
-               {restaurantsTable}
+               
                 
             </div>
         );
