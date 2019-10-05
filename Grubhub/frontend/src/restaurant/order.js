@@ -62,15 +62,25 @@ export default class Order extends React.Component{
 
         }
 
-        //console.log(data);
-        
-        axios.post('http://localhost:3001/buyer/placeOrder',data)
-        .then(response => {
+        for(let key in data.quantity){
+            if(data.quantity[key] <= 0){
+                delete data.quantity[key]
+            }
+        }
+
+        console.log(data.quantity);
+        if( Object.keys(data.quantity).length !== 0){
+            axios.post('http://localhost:3001/buyer/placeOrder',data)
+            .then(response => {
             console.log(response.data);
             alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
             ree =  <Redirect to ="/buyerOrderStatus"/>;
             this.setState({});
-        }).catch(error => console.log(error));
+            }).catch(error => console.log(error));
+        }else{
+            alert("Please Select Quantity > 1");
+        }
+        
     }
     
     componentDidMount(){
@@ -112,13 +122,14 @@ export default class Order extends React.Component{
                 section =>{
                     itemsArray.push(
                         <tr key = {section}>
-                            <th colSpan = "4">
+                            <th colSpan = "5">
                                 {section}
                             </th>
                         </tr>
                     );
                     itemsArray.push(
-                        <tr key ="..">
+                        <tr key ={1+section}>
+                            <th>Item Image</th>
                             <th>Item</th>
                             <th>Description</th>
                             <th>Price</th>
@@ -130,6 +141,7 @@ export default class Order extends React.Component{
                             if (element.section === section){
                                 itemsArray.push(
                                     <tr key = {element.iid}>
+                                        <td><img className = "itemImage" src = {"http://localhost:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'food'/></td>
                                         <td>{element.name}</td>
                                         <td>{element.description}</td>
                                         <td>${element.price}</td>
@@ -167,7 +179,8 @@ export default class Order extends React.Component{
                 </br>
                 <div>
                     {this.state.totalStatement}
-                    { <button className = "bttn" onClick ={this.placeOrder} >Order</button>}
+                    <br></br>
+                    {<button style = {{width:"40%"}}className = "bttn" onClick ={this.placeOrder} >Order</button>}
                     
                 </div>
             </div>

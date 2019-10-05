@@ -102,9 +102,9 @@ class BuyerHome extends React.Component{
                     <p>Email: {buyer.email}</p>
                     <p>M: {buyer.phone}</p>
              
-                    <input class = "inp" size = "45" type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
-                    <input class = "inp" size = "45" type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
-                    <button class = "bttn" onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
+                    <input className = "inp" size = "45" type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
+                    <input className = "inp" size = "45" type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
+                    <button className = "bttn" onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
                     {restaurantsTable}
                
 

@@ -17,6 +17,7 @@ const storage = multer.diskStorage({
     filename: function(req, file, cb){
         
         let currentUserCookie = JSON.parse(req.cookies.buyerData);
+        console.log(req.body)
         
         cb(null, JSON.stringify(currentUserCookie.bid)+'.jpg' );
     }
@@ -194,6 +195,7 @@ router.post('/home',(req, res)=> {
 
 
 router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,res) =>{
+    //console.log(req.body.tesst);
     res.redirect('http://localhost:3000/buyerHome');
     
 })
@@ -307,7 +309,7 @@ router.post('/getCurrentOrders',(req,res) => {
        let orderdetails = [];
        let query = `SELECT orders.oid, restaurantName, itemName, qty, total, status
        FROM( (orders INNER JOIN orderdetails ON orders.oid = orderdetails.oid) INNER JOIN 
-       restaurants ON restaurants.rid = orders.rid) WHERE bid = '${bid}' AND status<>'Delivered' AND status <> 'Cancelled'`;
+       restaurants ON restaurants.rid = orders.rid) WHERE bid = '${bid}' AND status<>'Delivered' AND status <> 'Cancelled' order by orders.oid DESC`;
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
                 console.log("Error in first if. Check Backend -> buyer -> getCurrentOrders ")
@@ -378,7 +380,7 @@ router.post('/getPastOrders',(req,res) => {
        let orderdetails = [];
        let query = `SELECT orders.oid, restaurantName, itemName, qty, total, status
        FROM( (orders INNER JOIN orderdetails ON orders.oid = orderdetails.oid) INNER JOIN 
-       restaurants ON restaurants.rid = orders.rid) WHERE bid = '${bid}' AND (status ='Delivered' OR status = 'Cancelled')`;
+       restaurants ON restaurants.rid = orders.rid) WHERE bid = '${bid}' AND (status ='Delivered' OR status = 'Cancelled') order by orders.oid desc`;
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
                 console.log("Error in first if. Check Backend -> buyer -> getPastOrders ")

@@ -59,7 +59,7 @@ export default class ShowRestaurants extends React.Component{
             <div className = "resultContainer">
                 {re}
                 
-                <table className = "restaurantList" border ="1"  cellpadding="10" style = {{textAlign :"center"}}>
+                <table className = "restaurantList" border ="1"  cellPadding="10" style = {{textAlign :"center"}}>
                     <thead>
                         <tr>
                             <th>Restaurants serving {this.props.searchItem}</th>

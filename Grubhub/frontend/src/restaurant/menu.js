@@ -1,9 +1,11 @@
 import React from 'react';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
+import Cookies from 'universal-cookie';
 import axios from 'axios';
-import '../App.js';
 
+import '../App.js';
+const cookies = new Cookies();
 let re = null;
 export default class Menu extends React.Component{
 
@@ -14,13 +16,42 @@ export default class Menu extends React.Component{
             name:'',
             description : '',
             price: '',
+            selectedFile: null
         }
         this.data = [];
         this.deleteSection = this.deleteSection.bind(this);
         this.handleInput = this.handleInput.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
         this.addItem = this.addItem.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
+        this.onImageChange = this.onImageChange.bind(this);
         
+    }
+    onImageChange(e){
+        this.setState({
+            selectedFile: e.target.files[0],
+        },()=>{
+            console.log(this.state.selectedFile);
+        })
+    }
+
+    uploadImage(e){
+        cookies.set('item', e.target.value);
+        console.log(e.target.value);
+        const data = new FormData();
+        data.append('itemImage', this.state.selectedFile);
+        axios.post("http://localhost:3001/restaurant/itemImage", data)
+        .then(res => { 
+            
+            this.setState({
+                selectedFile: null,
+            },()=>{
+                window.location.reload();
+            })
+       
+      }).catch(error => {
+          console.log("ERRRROOORRR");
+        });
     }
     deleteSection(e){
         let data = {
@@ -57,6 +88,8 @@ export default class Menu extends React.Component{
         .catch(error => console.log("Error"));
     }
 
+    
+
     addItem (e){
         e.preventDefault();
 
@@ -84,6 +117,8 @@ export default class Menu extends React.Component{
         
     }
 
+
+
     componentDidMount(){
         axios.defaults.withCredentials = true;
 
@@ -96,6 +131,7 @@ export default class Menu extends React.Component{
     }
 
     createTable(){
+       
         let itemsArray = [];    
 
         let sections = new Set();
@@ -106,20 +142,23 @@ export default class Menu extends React.Component{
         itemsArray.push(
             
         <tr>
-            <th>Item</th>
+            <th>Item Image</th>
+            <th>Item Name</th>
             <th>Description</th>
             <th>Section</th>
             <th>Price</th>
             <th>Add / Delete</th>
+            <th>Image Upload</th>
         </tr>
         );
         itemsArray.push(   
-            <tr>            
+            <tr> 
+                <td></td>           
                 <td><input class = "inp" type = "text" name = "item" onChange = {this.handleInput} value = {this.state.item}/></td>
                 <td><input class = "inp" type = "text" name = "description" onChange = {this.handleInput} value = {this.state.description}/></td>
                 <td><input class = "inp" type = "text" name = "section" onChange = {this.handleInput} value = {this.state.section}/></td>
                 <td><input class = "inp" type = "text" name = "price" onChange = {this.handleInput} value = {this.state.price}/></td>
-                <td><input class = "bttn" type = "Submit" value = "Add"/></td>
+                <td colSpan = "2"><input class = "bttn" type = "Submit" value = "Add Item"/></td>
             </tr>
         );
 
@@ -136,7 +175,7 @@ export default class Menu extends React.Component{
                             <th>
                                 <button className ="inp" onClick = {this.deleteSection} value = {section}>Remove Section</button>
                             </th>
-                            <th>
+                            <th colSpan = "3">
                                 <button className ="inp" onClick = {this.updateSection} value = {section}>Update Section</button>
                             </th>
                         </tr>
@@ -145,15 +184,17 @@ export default class Menu extends React.Component{
                     this.data.forEach(
                         element =>{
                             if (element.section === section){
-                                // console.log(element.name)
+                                 //console.log(element)
 
                                 itemsArray.push(
                                     <tr>
+                                        <td><img className = "itemImage" src = {"http://localhost:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'food'/></td>
                                         <td className = "hdng">{element.name}</td>
                                         <td className = "hdng">{element.description}</td>
                                         <td className = "hdng">{element.section}</td>
                                         <td className = "hdng">{element.price}</td>
                                         <td className = "hdng"><button class = "bttn" value = {element.iid} onClick = {this.handleDelete}>Delete</button></td>
+                                        <td><input onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br><button value = {element.iid} onClick = {this.uploadImage}>Image Upload</button></td>
                                     </tr>
                                 )
                             }
@@ -176,7 +217,11 @@ export default class Menu extends React.Component{
         return (
             <div className = "menuContainer">
                 {re}
+                <h4 className = "hdng">Add Items to the menu. Sections will be added & removed automatically.</h4>
                 <form onSubmit = {this.addItem}>
+                
+
+                    
                     <table className = "menu">
                         <tbody>
                             {this.createTable()}

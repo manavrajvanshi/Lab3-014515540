@@ -2,7 +2,7 @@ var express = require('express');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const multer = require('multer');
-
+var cors = require('cors');
 const ownerStorage = multer.diskStorage({
     destination: 'images/owner/',
     filename: function(req, file, cb){
@@ -38,7 +38,7 @@ const pool  = mysql.createPool({
 
 
 let router = express.Router();
-
+router.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 router.post('/signup', (req,res) =>{
     let name = req.body.name;
@@ -221,6 +221,25 @@ router.post('/home',(req, res)=> {
         }           
     });  
 })
+const imageStorage = multer.diskStorage({
+    destination: 'images/item/',
+    filename: function(req, file, cb){
+        
+        let currentItemCookie = JSON.parse(req.cookies.item);
+        console.log(currentItemCookie);
+        
+        cb(null, JSON.stringify(currentItemCookie)+'.jpg' );
+    }
+});
+
+const imageUpload = multer({storage:imageStorage});
+
+router.post('/itemImage',imageUpload.single('itemImage'), (req,res) =>{
+    console.log(req.cookies.item);
+    res.writeHead(200);
+    res.end("Image Uploaded");
+    
+})
 
 router.post('/profilePictureUpload',ownerUpload.single('ownerProfilePicture'), (req,res) =>{
     res.redirect('http://localhost:3000/ownerHome');
@@ -264,6 +283,9 @@ router.get('/menu', (req,res) => {
         
     }
 });
+
+
+
 
 router.post('/addItem', (req, res)=>{
 

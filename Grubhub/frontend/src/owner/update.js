@@ -10,13 +10,13 @@ export default class OwnerUpdate extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            ownerName : '',
-            ownerEmail : '',
+            ownerName : cookie.load('ownerData').ownerName,
+            ownerEmail : cookie.load('ownerData').ownerEmail,
             ownerPassword : '',
-            ownerPhone : '',
-            cuisine : '',
-            restaurantName : '',
-            restaurantZip : ''
+            ownerPhone : cookie.load('ownerData').ownerPhone,
+            cuisine : cookie.load('ownerData').cuisine,
+            restaurantName : cookie.load('ownerData').restaurantName,
+            restaurantZip : cookie.load('ownerData').restaurantZip
         }
         this.handleInput = this.handleInput.bind(this);
         this.update = this.update.bind(this);

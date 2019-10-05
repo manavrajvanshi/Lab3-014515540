@@ -10,10 +10,10 @@ export default class BuyerUpdate extends React.Component{
     constructor(props){
         super(props);   
         this.state = {
-            name : '',
-            email : '',
+            name : cookie.load('buyerData').name,
+            email : cookie.load('buyerData').email,
             password :'',
-            phone :''
+            phone :cookie.load('buyerData').phone
         }  
         
         this.handleInput = this.handleInput.bind(this);

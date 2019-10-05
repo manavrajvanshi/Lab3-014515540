@@ -104,7 +104,7 @@ body{
 }
 
 .menuContainer{
-  max-width: 820px;
+  max-width: 1220px;
   width: auto;
   margin: 0 auto;
   margin-top: 40px;
@@ -135,6 +135,11 @@ body{
   padding-bottom: 10px;
   height:175px;
   width: 175px;
+}
+
+.itemImage{
+  height:100px;
+  width: 100px;
 }
 
 .inp{

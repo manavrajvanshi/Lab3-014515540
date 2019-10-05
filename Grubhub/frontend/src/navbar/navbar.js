@@ -42,8 +42,8 @@ export class Navbar extends React.Component{
             if (userType === "buyer"){
                 bar =  (
                     <div className = "topnav">
-                        <a class="navbar-brand" href="http://localhost:3000/welcome">
-                        <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
+                        <a className="navbar-brand" href="http://localhost:3000/welcome">
+                        <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
                         <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
                         <a href="/pastOrder" >Past Orders</a> 
@@ -58,7 +58,7 @@ export class Navbar extends React.Component{
                 bar =  (
                     <div className = "topnav">
                         <a class="navbar-brand" href="http://localhost:3000/welcome">
-                        <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
+                        <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
                         <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
                         <a href ="/menu">View/Edit Menu</a>
@@ -74,7 +74,7 @@ export class Navbar extends React.Component{
             bar = (
                 <div className = "topnav">
                     <a class="navbar-brand" href="http://localhost:3000/welcome">
-                        <img width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
+                        <img alt ="Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                     </a>
                     
                    
