@@ -91,7 +91,7 @@ router.post('/signin',(req, res)=> {
 
                         res.writeHead(200);
                         res.end();
-                        //console.log(buyer);
+                        console.log("Logged In");
                     }
                     else{
                         res.writeHead(201);

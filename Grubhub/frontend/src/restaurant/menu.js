@@ -35,6 +35,8 @@ export default class Menu extends React.Component{
         this.showEdit = this.showEdit.bind(this);
         this.editItem = this.editItem.bind(this);
         this.handleInputEdit = this.handleInputEdit.bind(this);
+        this.handleSectionUpdate = this.handleSectionUpdate.bind(this);
+        this.showSectionEdit = this.showSectionEdit.bind(this);
     }
     editItem(element){
         
@@ -87,9 +89,37 @@ export default class Menu extends React.Component{
         }
     }
 
+    showSectionEdit(e){
+        var td = document.getElementsByName(e.target.value)[0];
+        if (td.style.display === "none") {
+            td.style.display = "";
+        } else {
+            td.style.display = "none";
+        }
+        var td = document.getElementsByName(e.target.value)[1];
+        if (td.style.display === "none") {
+            td.style.display = "";
+        } else {
+            td.style.display = "none";
+        }
+
+    }
+
     handleInputEdit(e){
         this.setState({
             [e.target.name] : e.target.value
+        })
+    }
+
+    handleInput(e){
+        this.setState({
+            [e.target.name] : e.target.value
+        })
+    }
+
+    handleSectionUpdate(e){
+        this.setState({
+            newSectionName : e.target.value
         })
     }
 
@@ -164,11 +194,7 @@ export default class Menu extends React.Component{
         .catch(error => console.log("Error"));
 
     }
-    handleInput(e){
-        this.setState({
-            [e.target.name] : e.target.value
-        })
-    }
+    
 
     
 
@@ -250,10 +276,10 @@ export default class Menu extends React.Component{
         itemsArray.push(   
             <tr> 
                 <td></td>           
-                <td><input class = "inp" type = "text" name = "item" onChange = {this.handleInput} value = {this.state.item}/></td>
-                <td><input class = "inp" type = "text" name = "description" onChange = {this.handleInput} value = {this.state.description}/></td>
-                <td><input class = "inp" type = "text" name = "section" onChange = {this.handleInput} value = {this.state.section}/></td>
-                <td><input class = "inp" type = "text" name = "price" onChange = {this.handleInput} value = {this.state.price}/></td>
+                <td><input class = "inp" type = "text" name = "item" placeholder = "Item Name" onChange = {this.handleInput} value = {this.state.item}/></td>
+                <td><input class = "inp" type = "text" name = "description" placeholder = "Item Description" onChange = {this.handleInput} value = {this.state.description}/></td>
+                <td><input class = "inp" type = "text" name = "section" placeholder = "Section" onChange = {this.handleInput} value = {this.state.section}/></td>
+                <td><input class = "inp" type = "text" name = "price" placeholder = "Price" onChange = {this.handleInput} value = {this.state.price}/></td>
                 <td colSpan = "2"><input class = "bttn" type = "Submit" value = "Add Item"/></td>
             </tr>
         );
@@ -269,13 +295,14 @@ export default class Menu extends React.Component{
                                 {section}
                             </th>
                             <th>
-                                <button className ="inp" onClick = {this.deleteSection} value = {section}>Remove Section</button>
+                                <button className = "inp" value = {section} onClick = {this.showSectionEdit}>Edit Section</button>
                             </th>
                             <th colSpan = "2">
-                                <input className = "inp" onChange = {this.handleInput} name = {section} />
+                                <input className = "inp" onChange = {this.handleSectionUpdate} placeholder = "Enter New Section Name" name = {section} style = {{display:"none"}} />
+                                <button className = "inp" value = {section} onClick = {this.updateSection} name = {section} style = {{display:"none"}}>Update</button>
                             </th>
                             <th>
-                                <button className ="inp" onClick = {this.updateSection} name = {section}>Update Section</button>
+                                <button className ="inp" onClick = {this.deleteSection} value = {section}>Remove Section</button>
                             </th>
                         </tr>
                     )
@@ -292,10 +319,10 @@ export default class Menu extends React.Component{
                                         <td className = "hdng">{element.description}</td>
                                         <td className = "hdng">{element.section}</td>
                                         <td className = "hdng">{element.price}</td>
-                                        <td className = "hdng"><button class = "bttn" value = {element.iid} onClick = {this.handleDelete}>Delete</button></td>
-                                        <td><input onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br>
-                                            <button value = {element.iid} onClick = {this.uploadImage}>Image Upload</button><br></br>
-                                            <button value = {element.iid} onClick = {this.showEdit}>Edit</button>
+                                        <td className = "hdng"><input className = "inp" onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br>
+                                            <button className = "bttn" value = {element.iid} onClick = {this.uploadImage}>Image Upload</button></td>
+                                        <td><button class = "bttn" value = {element.iid} onClick = {this.handleDelete}>Delete Item</button><br></br>
+                                            <button className = "bttn" value = {element.iid} onClick = {this.showEdit}>Edit Item</button>
                                         </td>
                                     </tr>
                                 )
@@ -307,7 +334,7 @@ export default class Menu extends React.Component{
                                         <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.description} onChange = {this.handleInputEdit} name = "descriptionUpdate"/></td>
                                         <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.section} onChange = {this.handleInputEdit} name = "sectionUpdate"/></td>
                                         <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.price} onChange = {this.handleInputEdit} name = "priceUpdate"/></td>
-                                        <td colSpan = "2"><button class = "bttn" onClick = {()=>this.editItem(element)}>Edit</button></td>
+                                        <td colSpan = "2"><button class = "bttn" onClick = {()=>this.editItem(element)}>Update</button></td>
                                     </tr>
                                     
                                 )

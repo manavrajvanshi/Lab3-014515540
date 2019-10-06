@@ -11,6 +11,8 @@ app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 app.post('/', (req,res) => {
     let q = req.body.query;
     let calculated = eval(q);
+
+    console.log(req.body);
     console.log(`Calculation performed : ${q} = ${calculated}`);
     
     if(isNaN(calculated) || calculated === Infinity){

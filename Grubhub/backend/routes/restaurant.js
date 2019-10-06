@@ -26,7 +26,7 @@ const restaurantStorage = multer.diskStorage({
 
 const restaurantUpload = multer({storage:restaurantStorage});
 
-const pool  = mysql.createPool({
+const pool  = mysql.createConnection({
     connectionLimit : 100,
     host            : 'localhost',
     user            : 'root',
