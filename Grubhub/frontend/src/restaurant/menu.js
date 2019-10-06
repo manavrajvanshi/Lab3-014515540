@@ -166,7 +166,7 @@ export default class Menu extends React.Component{
     }
     handleInput(e){
         this.setState({
-            newSectionName : e.target.value
+            [e.target.name] : e.target.value
         })
     }
 
