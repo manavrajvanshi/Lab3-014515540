@@ -15,14 +15,20 @@ export default class Order extends React.Component{
             quantity : {},
             prices :{},
             totalStatement : 'Your Total : $0',
-            total: 0
+            total: 0,
+            deliveryAddress:''
         }
 
         this.handleQuantity = this.handleQuantity.bind(this);
         this.calculateTotal = this.calculateTotal.bind(this);
         this.placeOrder = this.placeOrder.bind(this);
+        this.handleChange = this.handleChange.bind(this);
     }
-
+    handleChange(e){
+        this.setState({
+            deliveryAddress : e.target.value
+        })
+    }
     handleQuantity(e){
         
         this.setState({
@@ -58,7 +64,8 @@ export default class Order extends React.Component{
             rid: this.props.location.state.rid,
             bid : cookie.load('buyerData').bid,
             total : this.state.total,
-            quantity : this.state.quantity
+            quantity : this.state.quantity,
+            address : this.state.deliveryAddress
 
         }
 
@@ -85,7 +92,7 @@ export default class Order extends React.Component{
     
     componentDidMount(){
 
-        if(cookie.load('authCookie')!=='authenticated'){
+        if(cookie.load('authCookieb')!=='authenticated'){
             let re = <Redirect to ="/buyerLogin"></Redirect>
             return re
         }
@@ -160,12 +167,12 @@ export default class Order extends React.Component{
     }
     render(){
         
-        if(cookie.load('authCookie')!=='authenticated'){
+        if(cookie.load('authCookieb')!=='authenticated'){
             let re = <Redirect to ="/buyerLogin"></Redirect>
             return re
         }
         return(
-
+            <div className = "searchBoxBack">
             <div className = "menuContainer">
                 {ree}
                 <form >
@@ -180,9 +187,11 @@ export default class Order extends React.Component{
                 <div>
                     {this.state.totalStatement}
                     <br></br>
+                    <input type = "text" name ="address" value = {this.state.deliveryAddress} onChange = {this.handleChange}/>
                     {<button style = {{width:"40%"}}className = "bttn" onClick ={this.placeOrder} >Order</button>}
                     
                 </div>
+            </div>
             </div>
         )
     }

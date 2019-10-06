@@ -1,7 +1,9 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import axios from 'axios';
+import {Redirect} from 'react-router-dom';
 import '../App.css';
+
 
 let flag = false;
 let orderTable=[];
@@ -69,7 +71,10 @@ export default class OrderStatus extends React.Component{
     }
 
     render(){
-
+        let ree = null;
+        if(cookie.load('authCookieb')!=='authenticated'){
+            ree = <Redirect to = "/welcome"/>
+        }
         if(!flag){
             return(
                 <div>
@@ -79,6 +84,7 @@ export default class OrderStatus extends React.Component{
         }
         return(
             <div className = "orderContainer">
+                {ree}
                 <table className = "order">
                     <thead>
                         <tr>

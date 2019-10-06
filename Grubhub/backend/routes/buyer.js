@@ -84,7 +84,7 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         delete buyer.password;
-                        res.cookie('authCookie', 'authenticated');
+                        res.cookie('authCookieb', 'authenticated');
                         res.cookie('userType', 'buyer');
                         res.cookie('userId', 'buyer'+buyer['bid']);
                         res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
@@ -224,7 +224,7 @@ router.post('/searchItem', (req,res) =>{
 
 router.post('/menu', (req,res) => {
     
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieb === 'authenticated'){
         let rid = req.body.rid;
         let query = `SELECT * FROM items WHERE rid = '${rid}'`;
 
@@ -253,13 +253,14 @@ router.post('/menu', (req,res) => {
 });
 
 router.post('/placeOrder',(req,res) => {
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieb === 'authenticated'){
         let rid = req.body.rid;
         let bid = req.body.bid;
         let quantity = req.body.quantity;
         let total = req.body.total;
+        let address = req.body.address;
 
-        let query = `INSERT INTO orders (rid, bid, total, status) VALUES ('${rid}','${bid}','${total}','new')`;
+        let query = `INSERT INTO orders (rid, bid, total, status, address) VALUES ('${rid}','${bid}','${total}','new','${address}')`;
         
         //console.log(query);
         
@@ -302,7 +303,7 @@ router.post('/placeOrder',(req,res) => {
 })
 
 router.post('/getCurrentOrders',(req,res) => {
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieb === 'authenticated'){
         let bid = req.body.bid;
        // console.log(query);
        let orders = [];
@@ -373,7 +374,7 @@ router.post('/getCurrentOrders',(req,res) => {
 
 
 router.post('/getPastOrders',(req,res) => {
-    if(req.cookies.authCookie === 'authenticated'||1){
+    if(req.cookies.authCookieb === 'authenticated'||1){
         let bid = req.body.bid;
        // console.log(query);
        let orders = [];
@@ -443,7 +444,7 @@ router.post('/getPastOrders',(req,res) => {
 })
 
 router.get('/logout',(req,res) =>{
-    res.clearCookie('authCookie');
+    res.clearCookie('authCookieb');
     res.clearCookie('userType');
     res.clearCookie('userId');
     res.clearCookie('buyerData');

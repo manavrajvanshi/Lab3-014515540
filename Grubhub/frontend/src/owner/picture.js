@@ -1,10 +1,17 @@
 import React from 'react';
+import {Redirect} from 'react-router-dom';
+import cookie from 'react-cookies';
 import '../App.css';
 
 export default class OwnerPicture extends React.Component{
     render(){
+        let ree = null;
+        if(cookie.load('authCookieo') !== 'authenticated'){
+            ree = <Redirect to ="/welcome"/>
+        }
         return(
             <div className = "pictureContainer">
+                {ree}
                 <h2 className = "hdng">Add / Update Profile Picture</h2>
                 <form style={{textAlign:"center"}} method="post" enctype="multipart/form-data" action="http://localhost:3001/restaurant/profilePictureUpload">
                     <input className = "inp" type="file" name="ownerProfilePicture"/>

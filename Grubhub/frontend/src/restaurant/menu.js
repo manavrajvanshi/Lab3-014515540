@@ -16,7 +16,13 @@ export default class Menu extends React.Component{
             name:'',
             description : '',
             price: '',
-            selectedFile: null
+            selectedFile: null,
+            newSectionName:'',
+
+            nameUpdate:'',
+            descriptionUpdate:'',
+            sectionUpdate:'',
+            priceUpdate:''
         }
         this.data = [];
         this.deleteSection = this.deleteSection.bind(this);
@@ -25,8 +31,96 @@ export default class Menu extends React.Component{
         this.addItem = this.addItem.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
         this.onImageChange = this.onImageChange.bind(this);
+        this.updateSection = this.updateSection.bind(this);
+        this.showEdit = this.showEdit.bind(this);
+        this.editItem = this.editItem.bind(this);
+        this.handleInputEdit = this.handleInputEdit.bind(this);
+    }
+    editItem(element){
+        
+        let iid = element.iid;
+        let nameUpdate = this.state.nameUpdate;
+        let descriptionUpdate = this.state.descriptionUpdate;
+        let sectionUpdate = this.state.sectionUpdate;
+        let priceUpdate = this.state.priceUpdate;
+        if(nameUpdate === ""){
+            nameUpdate = element.name;
+        }
+        if(descriptionUpdate === ""){
+            descriptionUpdate = element.description;
+        }
+        if(sectionUpdate === ""){
+            sectionUpdate = element.section;
+        }
+        if(priceUpdate === ""){
+            priceUpdate = element.price;
+        }
+        
+        let data = {
+            iid:iid,
+            nameUpdate:nameUpdate,
+            descriptionUpdate:descriptionUpdate,
+            sectionUpdate:sectionUpdate,
+            priceUpdate:priceUpdate
+        }
+
+
+        console.log(data);
+
+        axios.defaults.withCredentials = true;
+        axios.post('http://localhost:3001/restaurant/updateItem',data)
+        .then(response => {
+            if(response.status === 200 ){
+                console.log("Item Updated");
+                window.location.reload();
+            }
+        })
+        .catch(error => console.log("Error"));
         
     }
+    showEdit(e){
+        var row = document.getElementById(e.target.value);
+        if (row.style.display === "none") {
+            row.style.display = "";
+        } else {
+            row.style.display = "none";
+        }
+    }
+
+    handleInputEdit(e){
+        this.setState({
+            [e.target.name] : e.target.value
+        })
+    }
+
+    updateSection(e){
+        let oldSection = e.target.name;
+        let newSectionName = this.state.newSectionName;
+        let rid = cookie.load('ownerData').rid;
+
+        let data = {
+            oldSection:oldSection,
+            newSectionName:newSectionName,
+            rid:rid
+        }
+        if(newSectionName !== ''){
+            axios.defaults.withCredentials = true;
+            axios.post('http://localhost:3001/restaurant/updateSection',data)
+            .then(response => {
+                if(response.status === 200 ){
+                    console.log("Section Updated");
+                    window.location.reload();
+                }
+            })
+            .catch(error => console.log("Error"));
+        }else{
+            alert("Enter a Section Name")
+        }
+        
+
+        
+    }
+
     onImageChange(e){
         this.setState({
             selectedFile: e.target.files[0],
@@ -72,9 +166,11 @@ export default class Menu extends React.Component{
     }
     handleInput(e){
         this.setState({
-            [e.target.name] : e.target.value
+            newSectionName : e.target.value
         })
     }
+
+    
 
     handleDelete(e){
         axios.defaults.withCredentials = true;
@@ -175,8 +271,11 @@ export default class Menu extends React.Component{
                             <th>
                                 <button className ="inp" onClick = {this.deleteSection} value = {section}>Remove Section</button>
                             </th>
-                            <th colSpan = "3">
-                                <button className ="inp" onClick = {this.updateSection} value = {section}>Update Section</button>
+                            <th colSpan = "2">
+                                <input className = "inp" onChange = {this.handleInput} name = {section} />
+                            </th>
+                            <th>
+                                <button className ="inp" onClick = {this.updateSection} name = {section}>Update Section</button>
                             </th>
                         </tr>
                     )
@@ -194,8 +293,23 @@ export default class Menu extends React.Component{
                                         <td className = "hdng">{element.section}</td>
                                         <td className = "hdng">{element.price}</td>
                                         <td className = "hdng"><button class = "bttn" value = {element.iid} onClick = {this.handleDelete}>Delete</button></td>
-                                        <td><input onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br><button value = {element.iid} onClick = {this.uploadImage}>Image Upload</button></td>
+                                        <td><input onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br>
+                                            <button value = {element.iid} onClick = {this.uploadImage}>Image Upload</button><br></br>
+                                            <button value = {element.iid} onClick = {this.showEdit}>Edit</button>
+                                        </td>
                                     </tr>
+                                )
+
+                                itemsArray.push(
+                                    <tr style = {{display:"none"}} id = {element.iid}>
+                                        <td className = "hdng">Enter Details</td>
+                                        <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.name} onChange = {this.handleInputEdit} name = "nameUpdate"/></td>
+                                        <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.description} onChange = {this.handleInputEdit} name = "descriptionUpdate"/></td>
+                                        <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.section} onChange = {this.handleInputEdit} name = "sectionUpdate"/></td>
+                                        <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.price} onChange = {this.handleInputEdit} name = "priceUpdate"/></td>
+                                        <td colSpan = "2"><button class = "bttn" onClick = {()=>this.editItem(element)}>Edit</button></td>
+                                    </tr>
+                                    
                                 )
                             }
                         }
@@ -209,7 +323,7 @@ export default class Menu extends React.Component{
     
     render(){
         
-        if(cookie.load('authCookie') !== 'authenticated'){
+        if(cookie.load('authCookieo') !== 'authenticated'){
             re = <Redirect to = '/ownerLogin'/>
         }else{
             

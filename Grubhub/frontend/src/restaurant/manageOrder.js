@@ -35,20 +35,22 @@ export default class ManageOrder extends React.Component{
                         let orders = this.state.orders;
                          
                         for(let order of orders){
-                            let {oid,itemList,buyerName,status,total} = order;
+                            let {oid,itemList,buyerName,status,total,address} = order;
                             orderTable.push(
                                 <tr>
-                                    <th>Order ID {oid}</th>
+                                    
                                     <th>Buyer Name: {buyerName}</th>
                                     <th>Total: ${total } </th>
                                     <th>Status: {status}</th>
+                                    <th>Delivery Address</th>
                                     
                                 </tr>
                             )
 
                             orderTable.push(
                                 <tr>
-                                    <th colSpan = "2">Item</th>
+                                    <th>Item</th>
+
                                     <th>Quantity</th>
                                     <th>
                                         <select className = "inp" name = {oid} onChange = {this.handleStatusChange}>
@@ -60,6 +62,7 @@ export default class ManageOrder extends React.Component{
                                             <option value="Cancelled">Cancelled</option>
                                         </select>
                                     </th>
+                                    <th>{address}</th>
                                 </tr>
                             )
 
@@ -67,8 +70,9 @@ export default class ManageOrder extends React.Component{
                                 //console.log(item);
                                 orderTable.push(
                                     <tr>
-                                        <td colSpan = "2">{item.itemName}</td>
-                                        <td colSpan = "2">{item.qty}</td>
+                                        <td >{item.itemName}</td>
+                                        <td >{item.qty}</td>
+                                        
                                     </tr>
                                 )
                             }
@@ -121,7 +125,7 @@ export default class ManageOrder extends React.Component{
     }
     render(){
 
-        if(cookie.load('authCookie') !== "authenticated" ){
+        if(cookie.load('authCookieo') !== "authenticated" ){
             re = <Redirect to = "/welcome"/>
         }
         if(!flag){

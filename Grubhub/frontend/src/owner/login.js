@@ -38,7 +38,7 @@ export default class OwnerLogin extends React.Component{
 
                     if(response.status === 200){
                         console.log(cookie.load('ownerData'));
-                        if( cookie.load('authCookie') === "authenticated"){
+                        if( cookie.load('authCookieo') === "authenticated"){
                             this.setState({
                                 auth : true
                             })
@@ -62,7 +62,7 @@ export default class OwnerLogin extends React.Component{
     render(){
 
         let redirect = null;
-        if (cookie.load('authCookie')==="authenticated"){
+        if (cookie.load('authCookieo')==="authenticated"){
             redirect = <Redirect to = "/ownerHome"/>
         }
         return(

@@ -65,7 +65,7 @@ export default class BuyerUpdate extends React.Component{
         
     }
     render(){
-        if(cookie.load('authCookie') !== "authenticated" ){
+        if(cookie.load('authCookieb') !== "authenticated" ){
             re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
         }

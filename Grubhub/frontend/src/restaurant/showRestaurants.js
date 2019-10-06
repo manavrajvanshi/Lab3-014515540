@@ -1,5 +1,6 @@
 import React from 'react';
 import {Redirect} from 'react-router';
+import cookie from 'react-cookies';
 import '../App.css'
 let re;
 export default class ShowRestaurants extends React.Component{
@@ -18,6 +19,10 @@ export default class ShowRestaurants extends React.Component{
         this.setState({});
     }
     render(){
+        let ree = null;
+        if(cookie.load('authCookieb') !== 'authenticated'){
+            ree = <Redirect to = "/welcome"/>
+        }
         let restaurantsTable = [];
         let foundFlag = false;
         //console.log(this.props.cuisineFilter);
@@ -58,7 +63,7 @@ export default class ShowRestaurants extends React.Component{
         return(
             <div className = "resultContainer">
                 {re}
-                
+                {ree}
                 <table className = "restaurantList" border ="1"  cellPadding="10" style = {{textAlign :"center"}}>
                     <thead>
                         <tr>

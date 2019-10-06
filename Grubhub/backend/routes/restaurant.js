@@ -100,7 +100,7 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         delete owner.ownerPassword;
-                        res.cookie('authCookie', 'authenticated');
+                        res.cookie('authCookieo', 'authenticated');
                         res.cookie('userType', 'owner');
                         res.cookie('rid', owner['rid']);
                         res.cookie('ownerData',JSON.stringify(owner),{encode:String});
@@ -254,7 +254,7 @@ router.post('/restaurantPictureUpload',restaurantUpload.single('restaurantPictur
 
 router.get('/menu', (req,res) => {
     
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieo === 'authenticated'){
         let ownerData = req.cookies.ownerData;
         let rid = JSON.parse(ownerData).rid;
         let query = `SELECT * FROM items WHERE rid = '${rid}'`;
@@ -295,7 +295,7 @@ router.post('/addItem', (req, res)=>{
     let section = req.body.section;
     let rid = req.body.rid;
 
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieo === 'authenticated'){
         let query = `INSERT INTO items (description,price,name,section,rid) VALUES 
         ('${description}',${price},'${name}','${section}',${rid})`;
         
@@ -318,7 +318,7 @@ router.post('/addItem', (req, res)=>{
 })
 
 router.post('/deleteMenuItem', (req,res) => {
-    if( req.cookies.authCookie === 'authenticated'){
+    if( req.cookies.authCookieo === 'authenticated'){
         let iid = req.body.iid;
         let query = `DELETE FROM items WHERE iid = '${iid}'`;
         pool.query(query, function (queryError, results, fields) {
@@ -335,7 +335,7 @@ router.post('/deleteMenuItem', (req,res) => {
     }
 })
 router.post('/deleteSection', (req,res) =>{
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let section = req.body.section;
         
@@ -356,7 +356,7 @@ router.post('/deleteSection', (req,res) =>{
     }
 })
 router.post('/addSection',(req,res) => {
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let sectionName = req.body.sectionName;
 
@@ -378,12 +378,12 @@ router.post('/addSection',(req,res) => {
 })
 
 router.post('/viewOrders', (req,res) => {
-    if(req.cookies.authCookie === 'authenticated'||1){
+    if(req.cookies.authCookieo === 'authenticated'||1){
        let rid = req.body.rid;
        // console.log(query);
        
        let query = `SELECT buyers.name, orders.oid,orderdetails.itemName, orderdetails.qty, 
-       orders.total, orders.status, buyers.bid
+       orders.total, orders.status, buyers.bid, orders.address
        FROM( (buyers INNER JOIN orders ON buyers.bid = orders.bid) INNER JOIN
        orderdetails ON orderdetails.oid = orders.oid) WHERE orders.rid = ${rid} and status<>'Delivered' and status <> 'Cancelled'`;
 
@@ -408,12 +408,14 @@ router.post('/viewOrders', (req,res) => {
                         
                         let itemList = [];
                         let buyerName ='';
+                        let address = '';
                         let total ;
                         let status;
                         for( let order of orders){
                             if( order.oid === oid){
                                 buyerName = order.name;
                                 total = order.total;
+                                address = order.address;
                                 status = order.status;
                                 itemList.push({'itemName':order.itemName, 'qty':order.qty})
                             }
@@ -425,7 +427,8 @@ router.post('/viewOrders', (req,res) => {
                                 'itemList' : itemList,
                                 'buyerName' : buyerName,
                                 'status' : status,
-                                'total' : total
+                                'total' : total,
+                                'address':address
                             }
                         );
                         
@@ -448,7 +451,7 @@ router.post('/viewOrders', (req,res) => {
 })
 
 router.post('/oldOrder', (req,res) => {
-    if(req.cookies.authCookie === 'authenticated'||1){
+    if(req.cookies.authCookieo === 'authenticated'||1){
        let rid = req.body.rid;
        // console.log(query);
        
@@ -517,15 +520,37 @@ router.post('/oldOrder', (req,res) => {
     }
 })
 
+router.post('/updateSection', (req,res) => {
+    if(req.cookies.authCookieo === 'authenticated'){
+        let rid = req.body.rid;
+        let oldSection = req.body.oldSection;
+        let newSectionName = req.body.newSectionName;
+
+        let query = `UPDATE items SET section = '${newSectionName}' WHERE section = '${oldSection}' and rid = '${rid}'`;
+        
+        pool.query(query, function (queryError, results, fields) {
+            if (queryError){
+                console.log("Error in first if. Check Backend -> restaurant -> updateSection ");
+                res.writeHead(400);
+                res.end("Status Not Updated");
+            }else{
+                res.writeHead(200);
+                res.end('Section Updated');       
+            }           
+        });
+
+    }
+})
+
 router.post('/updateStatus',(req,res) =>{
-    if(req.cookies.authCookie === 'authenticated'){
+    if(req.cookies.authCookieo === 'authenticated'){
         let oid = req.body.oid;
         let status = req.body.status;
         let query = `UPDATE orders SET status = '${status}' where oid = '${oid}'`;
         
         pool.query(query, function (queryError, results, fields) {
             if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> updateSection ");
+                console.log("Error in first if. Check Backend -> restaurant -> updateStatus ");
                 res.writeHead(400);
                 res.end("Status Not Updated");
             }else{
@@ -536,8 +561,30 @@ router.post('/updateStatus',(req,res) =>{
 
     }
 })
+
+router.post('/updateItem', (req,res) =>{
+    let name = req.body.nameUpdate;
+    let description = req.body.descriptionUpdate;
+    let price = req.body.priceUpdate;
+    let section = req.body.sectionUpdate;
+    let iid = req.body.iid;
+
+    let query = `UPDATE items SET name = '${name}',description = '${description}',
+            price = '${price}', section = '${section}' WHERE iid = '${iid}'`;
+    pool.query(query, function (queryError, results, fields) {
+        if (queryError){
+            console.log("Error in first if. Check Backend -> restaurant -> updateItem ");
+            res.writeHead(400);
+            res.end("Status Not Updated");
+        }else{
+            res.writeHead(200);
+            res.end('Item Updated');       
+        }           
+    });
+})
+
 router.get('/logout',(req,res) =>{
-    res.clearCookie('authCookie');
+    res.clearCookie('authCookieo');
     res.clearCookie('userType');
     res.clearCookie('userId');
     res.clearCookie('ownerData');

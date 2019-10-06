@@ -23,7 +23,7 @@ class BuyerHome extends React.Component{
     }
 
     componentDidMount(){
-        if(cookie.load('authCookie') === "authenticated" ){  
+        if(cookie.load('authCookieb') === "authenticated" ){  
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             let data = {
@@ -93,22 +93,24 @@ class BuyerHome extends React.Component{
             restaurantsTable = null;
         }
         return(
-            
-            <div className = "homeContainer" style = {{paddingBottom:"40px"}}>
-                {re}
-                
-                    <img src = {image} width ="200" height = "200" alt = 'Profile' className = "profilePic"/>
-                    <p>Welcome {buyer.name}</p>
-                    <p>Email: {buyer.email}</p>
-                    <p>M: {buyer.phone}</p>
-             
-                    <input className = "inp" size = "45" type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
-                    <input className = "inp" size = "45" type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
-                    <button className = "bttn" onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
-                    {restaurantsTable}
-               
+            <div className = "searchBoxBack">
 
-               
+        
+                <div className = "homeContainer" style = {{paddingBottom:"40px"}}>
+                    {re}
+                    
+                        <img src = {image} width ="200" height = "200" alt = 'Profile' className = "profilePic"/>
+                        <p>Welcome {buyer.name}</p>
+                        <p>Email: {buyer.email}</p>
+                        <p>M: {buyer.phone}</p>
+                
+                        <input className = "inp" size = "45" type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now" onChange = {this.handleInput}/>
+                        <input pattern = "[A-Za-z]*" className = "inp" size = "45" type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />
+                        <button className = "bttn" onClick = {this.search}><span role="img" aria-label="search">&#128269;</span></button>
+                        {restaurantsTable}
+                
+
+                </div>
                 
             </div>
         );

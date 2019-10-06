@@ -253,3 +253,9 @@ body{
   background-color: #E62434;
   color: white;
 }
+
+.searchBoxBack{
+  background-image: url("https://res.cloudinary.com/grubhub-marketing/image/upload/f_auto,fl_lossy,q_80/v1538431627/Homepage_Desktop_0018_Pizza_2x_qshvvo.jpg");
+  background-repeat: repeat-y;
+  position: relative;
+}

@@ -8,7 +8,7 @@ let owner, image;
 export default class OwnerHome extends React.Component{
 
     componentDidMount(){
-        if(cookie.load('authCookie') === "authenticated" ){
+        if(cookie.load('authCookieo') === "authenticated" ){
             
             axios.defaults.withCredentials = true;
             //make a post request with the user data
@@ -42,16 +42,17 @@ export default class OwnerHome extends React.Component{
             return <div></div>
         }
         return(
-            <div className = "homeContainer">
-                {re}
-                <div class = "heading">
-                    <img src = {image} width ="200" height = "200" alt = 'Profile'className = "profilePic"/>
-                    <p>Welcome {owner.ownerName}</p>
-                    <p>Your E-mail: {owner.ownerEmail}</p>
-                    <p>Your Contact Number: {owner.ownerPhone}</p>
+            <div className = "searchBoxBack" >
+                <div className = "homeContainer">
+                    {re}
+                    <div class = "heading">
+                        <img src = {image} width ="200" height = "200" alt = 'Profile'className = "profilePic"/>
+                        <p>Welcome {owner.ownerName}</p>
+                        <p>Your E-mail: {owner.ownerEmail}</p>
+                        <p>Your Contact Number: {owner.ownerPhone}</p>
+                    </div>
+                    
                 </div>
-                
-                
             </div>
         );
     }

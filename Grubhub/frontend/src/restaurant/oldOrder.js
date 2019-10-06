@@ -81,7 +81,7 @@ export default class OldOrder extends React.Component{
     }
     render(){
 
-        if(cookie.load('authCookie') !== "authenticated" ){
+        if(cookie.load('authCookieo') !== "authenticated" ){
             re = <Redirect to = "/welcome"/>
         }
         if(!flag){

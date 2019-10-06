@@ -17,7 +17,8 @@ export class Navbar extends React.Component{
         }else{
             url ='http://localhost:3001/restaurant/logout';
         }
-        cookie.remove('authCookie');
+        cookie.remove('authCookieb');
+        cookie.remove('authCookieo');
         cookie.remove('userType');
         cookie.remove('userId');
         cookie.remove('buyerData');
@@ -31,12 +32,13 @@ export class Navbar extends React.Component{
     }
     render(){
         let bar;
-        let authCookie = cookie.load('authCookie');
+        let authCookieb = cookie.load('authCookieb');
+        let authCookieo = cookie.load('authCookieo');
         let userType = cookie.load('userType');
         //let userId = cookie.load('userId');
         
 
-        if(authCookie === "authenticated"){
+        if(authCookieb === "authenticated" || authCookieo === "authenticated"){
             
             
             if (userType === "buyer"){

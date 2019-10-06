@@ -74,7 +74,7 @@ export default class OwnerUpdate extends React.Component{
     }
     
     render(){
-        if(cookie.load('authCookie') !== "authenticated" ){
+        if(cookie.load('authCookieo') !== "authenticated" ){
             re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
         }

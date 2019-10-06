@@ -9,7 +9,7 @@ let re = null;
 class BuyerPicture extends React.Component{
     
     render(){
-        if(cookie.load('authCookie') !== "authenticated" ){
+        if(cookie.load('authCookieb') !== "authenticated" ){
             re = <Redirect to = "/buyerLogin"/>
             console.log("Inside Else");
         }

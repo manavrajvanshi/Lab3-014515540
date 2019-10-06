@@ -1,7 +1,7 @@
 import React from 'react';
 import cookie from 'react-cookies';
 import axios from 'axios';
-
+import {Redirect} from 'react-router-dom';
 
 let flag = false;
 let orderTable=[];
@@ -69,16 +69,20 @@ export default class PastOrder extends React.Component{
     }
 
     render(){
-
+        let ree = null;
+        if(cookie.load('authCookieb')!=='authenticated'){
+            ree= <Redirect to = "/welcome"/>
+        }
         if(!flag){
             return(
                 <div>
-                    Loading your Past orders....
+                    No Past Orders Found...
                 </div>
             )
         }
         return(
             <div className = "orderContainer">
+                {ree}
                 <table className = "order">
                     <thead>
                         <tr>

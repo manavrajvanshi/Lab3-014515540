@@ -42,7 +42,7 @@ export default class BuyerLogin extends React.Component{
                 .then(response => {
                     if(response.status === 200){
                         console.log("cookie: ",cookie.load('buyerData'));
-                        if( cookie.load('authCookie') === "authenticated"){
+                        if( cookie.load('authCookieb') === "authenticated"){
                             this.setState({
                                 auth:true
                             })
@@ -61,7 +61,7 @@ export default class BuyerLogin extends React.Component{
         
     }
     render(){
-        if (cookie.load('authCookie')==="authenticated"){
+        if (cookie.load('authCookieb')==="authenticated"){
             redirect = <Redirect to = "/buyerHome"/>
         }
         return(
