@@ -314,7 +314,7 @@ export default class Menu extends React.Component{
 
                                 itemsArray.push(
                                     <tr>
-                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'food'/></td>
+                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'Upload an Image'/></td>
                                         <td className = "hdng">{element.name}</td>
                                         <td className = "hdng">{element.description}</td>
                                         <td className = "hdng">{element.section}</td>

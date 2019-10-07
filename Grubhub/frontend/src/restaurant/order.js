@@ -150,7 +150,7 @@ export default class Order extends React.Component{
                             if (element.section === section){
                                 itemsArray.push(
                                     <tr key = {element.iid}>
-                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'food'/></td>
+                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'Picture Not Uploaded by Owner'/></td>
                                         <td>{element.name}</td>
                                         <td>{element.description}</td>
                                         <td>${element.price}</td>
