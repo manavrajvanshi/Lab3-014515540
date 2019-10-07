@@ -3,9 +3,9 @@
 Steps to Run the application
 
 1) Navigate to the Grubhub/frontend directory
-2) Run npm init
+2) Run npm install
 3) Navigate to the Grubhub/backend directory
-4) Run npm init
+4) Run npm install
 5) Navigate to the Grubhub/backend directory
 6) Run node index.js
 7) Navigate to the Grubhub/frontend directory
