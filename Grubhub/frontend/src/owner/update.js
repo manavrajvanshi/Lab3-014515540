@@ -46,7 +46,7 @@ export default class OwnerUpdate extends React.Component{
             // console.log("HEREEEE")
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://localhost:3001/restaurant/update',data)
+            axios.post('http://3.17.10.253:3001/restaurant/update',data)
                 .then(response => {
                     console.log(response.data);
                     this.forceUpdate();
@@ -124,7 +124,7 @@ export default class OwnerUpdate extends React.Component{
                                         Owner Phone
                                     </label>
                                     <tr>
-                                        <input className = "inp" size = "45" type = "number" name = "ownerPhone" onChange = {this.handleInput} value = {this.state.ownerPhone} />
+                                        <input className = "inp" size = "45" type = "text" name = "ownerPhone" pattern="[0-9]{10}" title="10 Digits Only" onChange = {this.handleInput} value = {this.state.ownerPhone} />
                                     </tr>
                                 </div>
                             </tr>

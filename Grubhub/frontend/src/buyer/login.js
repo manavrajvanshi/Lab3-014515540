@@ -38,7 +38,7 @@ export default class BuyerLogin extends React.Component{
         }else{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://localhost:3001/buyer/signin',data)
+            axios.post('http://3.17.10.253:3001/buyer/signin',data)
                 .then(response => {
                     if(response.status === 200){
                         console.log("cookie: ",cookie.load('buyerData'));

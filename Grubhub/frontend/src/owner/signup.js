@@ -40,7 +40,7 @@ export default class OwnerSignup extends React.Component{
         }else{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://localhost:3001/restaurant/signup',data)
+            axios.post('http://3.17.10.253:3001/restaurant/signup',data)
                 .then(response => {
                     if(response.status === 200){
                         alert("Sucessfully Signed Up, please update your profile after logging in.");

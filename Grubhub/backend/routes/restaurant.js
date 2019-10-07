@@ -38,7 +38,7 @@ const pool  = mysql.createConnection({
 
 
 let router = express.Router();
-router.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+router.use(cors({ origin: 'http://3.17.10.253:3000', credentials: true }));
 
 router.post('/signup', (req,res) =>{
     let name = req.body.name;
@@ -242,12 +242,12 @@ router.post('/itemImage',imageUpload.single('itemImage'), (req,res) =>{
 })
 
 router.post('/profilePictureUpload',ownerUpload.single('ownerProfilePicture'), (req,res) =>{
-    res.redirect('http://localhost:3000/ownerHome');
+    res.redirect('http://3.17.10.253:3000/ownerHome');
     
 })
 
 router.post('/restaurantPictureUpload',restaurantUpload.single('restaurantPicture'), (req,res) =>{
-    res.redirect('http://localhost:3000/ownerHome');
+    res.redirect('http://3.17.10.253:3000/ownerHome');
     
 })
 
@@ -352,7 +352,7 @@ router.post('/deleteSection', (req,res) =>{
             }           
         });
     }else{
-        res.redirect('http://localhost:3000/ownerLogin');
+        res.redirect('http://3.17.10.253:3000/ownerLogin');
     }
 })
 router.post('/addSection',(req,res) => {
@@ -373,7 +373,7 @@ router.post('/addSection',(req,res) => {
             }           
         });
     }else{
-        res.redirect('http://localhost:3000/ownerLogin');
+        res.redirect('http://3.17.10.253:3000/ownerLogin');
     }
 })
 
@@ -588,7 +588,7 @@ router.get('/logout',(req,res) =>{
     res.clearCookie('userType');
     res.clearCookie('userId');
     res.clearCookie('ownerData');
-    res.redirect("http://localhost:3000/");
+    res.redirect("http://3.17.10.253:3000/");
 });
 
 module.exports = router;

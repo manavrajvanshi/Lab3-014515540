@@ -33,7 +33,7 @@ export default class OwnerLogin extends React.Component{
             
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://localhost:3001/restaurant/signin',data)
+            axios.post('http://3.17.10.253:3001/restaurant/signin',data)
                 .then(response => {
 
                     if(response.status === 200){

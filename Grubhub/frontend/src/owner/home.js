@@ -16,10 +16,10 @@ export default class OwnerHome extends React.Component{
                 "rid" : cookie.load('ownerData').rid
             }
             
-            axios.post('http://localhost:3001/restaurant/home',data)
+            axios.post('http://3.17.10.253:3001/restaurant/home',data)
                 .then(response => {
                     owner = response.data;
-                    image = "http://localhost:3001/owner/"+data.rid+".jpg";
+                    image = "http://3.17.10.253:3001/owner/"+data.rid+".jpg";
                     this.setState({
                         imageRendered : true
                     })
@@ -46,7 +46,7 @@ export default class OwnerHome extends React.Component{
                 <div className = "homeContainer">
                     {re}
                     <div class = "heading">
-                        <img src = {image} width ="200" height = "200" alt = 'Profile'className = "profilePic"/>
+                        <img src = {image} width ="200" height = "200" alt = 'Please Upload A Profile Pic'className = "profilePic"/>
                         <p>Welcome {owner.ownerName}</p>
                         <p>Your E-mail: {owner.ownerEmail}</p>
                         <p>Your Contact Number: {owner.ownerPhone}</p>

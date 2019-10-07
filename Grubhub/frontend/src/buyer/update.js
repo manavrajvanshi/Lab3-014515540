@@ -42,7 +42,7 @@ export default class BuyerUpdate extends React.Component{
             
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://localhost:3001/buyer/update',data)
+            axios.post('http://3.17.10.253:3001/buyer/update',data)
                 .then(response => {
                     if(response.status === 200){
                         alert("Profile Updated");
@@ -115,7 +115,7 @@ export default class BuyerUpdate extends React.Component{
                                         Phone
                                     </label>
                                     <td>
-                                        <input className = "inp" size = "45" type = "number" name = "phone" onChange = {this.handleInput} value = {this.state.phone} />
+                                        <input className = "inp" size = "45" type = "text" name = "phone" pattern="[0-9]{10}" title="10 Digits Only" onChange = {this.handleInput} value = {this.state.phone} />
                                     </td>
                                 </div>
                             </tr>

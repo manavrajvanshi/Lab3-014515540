@@ -19,7 +19,7 @@ class BuyerPicture extends React.Component{
             <div className = "pictureContainer">
                 {re}
                 <h2 className = "hdng">Add / Update Profile Picture</h2>
-                <form style={{textAlign:"center"}} method="post" encType="multipart/form-data" action="http://localhost:3001/buyer/profilePictureUpload">
+                <form style={{textAlign:"center"}} method="post" encType="multipart/form-data" action="http://3.17.10.253:3001/buyer/profilePictureUpload">
                     <input className = "inp" type="file" name="buyerProfilePicture"/>
                     <input className = "bttn" type="submit" value="Upload"/>
                 </form>

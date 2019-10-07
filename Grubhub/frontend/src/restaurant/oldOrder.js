@@ -23,7 +23,7 @@ export default class OldOrder extends React.Component{
         let data = {
             rid : cookie.load('ownerData').rid
         }
-        axios.post('http://localhost:3001/restaurant/oldOrder',data)
+        axios.post('http://3.17.10.253:3001/restaurant/oldOrder',data)
             .then(response => {
                 if(response.status === 200){
                     flag = true;

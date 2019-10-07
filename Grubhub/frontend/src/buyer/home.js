@@ -30,10 +30,10 @@ class BuyerHome extends React.Component{
                 "bid" : cookie.load('buyerData').bid
             }
             
-            axios.post('http://localhost:3001/buyer/home',data)
+            axios.post('http://3.17.10.253:3001/buyer/home',data)
                 .then(response => {
                     buyer = response.data;
-                    image = "http://localhost:3001/buyer/"+data.bid+".jpg";
+                    image = "http://3.17.10.253:3001/buyer/"+data.bid+".jpg";
                     this.setState({
                         imageRendered : true
                     })
@@ -53,7 +53,7 @@ class BuyerHome extends React.Component{
             'searchItem' : this.state.searchItem
         }
         if(this.state.searchItem !== ''){
-            axios.post('http://localhost:3001/buyer/searchItem',data)
+            axios.post('http://3.17.10.253:3001/buyer/searchItem',data)
         .then(response => {
             if(response.status === 200){
                 //console.log(response.data);

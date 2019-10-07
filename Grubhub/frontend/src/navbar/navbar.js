@@ -13,9 +13,9 @@ export class Navbar extends React.Component{
     handleLogout(){
         let url;
         if(cookie.load('userType')==="buyer"){
-            url ='http://localhost:3001/buyer/logout';
+            url ='http://3.17.10.253:3001/buyer/logout';
         }else{
-            url ='http://localhost:3001/restaurant/logout';
+            url ='http://3.17.10.253:3001/restaurant/logout';
         }
         cookie.remove('authCookieb');
         cookie.remove('authCookieo');
@@ -44,7 +44,7 @@ export class Navbar extends React.Component{
             if (userType === "buyer"){
                 bar =  (
                     <div className = "topnav">
-                        <a className="navbar-brand" href="http://localhost:3000/welcome">
+                        <a className="navbar-brand" href="http://3.17.10.253:3000/welcome">
                         <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
                         <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
@@ -59,7 +59,7 @@ export class Navbar extends React.Component{
                 //console.log(cookie.load('ownerData').restaurantName);
                 bar =  (
                     <div className = "topnav">
-                        <a class="navbar-brand" href="http://localhost:3000/welcome">
+                        <a class="navbar-brand" href="http://3.17.10.253:3000/welcome">
                         <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
                         <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
@@ -75,7 +75,7 @@ export class Navbar extends React.Component{
         }else{
             bar = (
                 <div className = "topnav">
-                    <a class="navbar-brand" href="http://localhost:3000/welcome">
+                    <a className="navbar-brand" href="http://3.17.10.253:3000/welcome">
                         <img alt ="Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                     </a>
                     

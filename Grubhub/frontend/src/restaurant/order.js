@@ -76,14 +76,16 @@ export default class Order extends React.Component{
         }
 
         console.log(data.quantity);
-        if( Object.keys(data.quantity).length !== 0){
-            axios.post('http://localhost:3001/buyer/placeOrder',data)
+        if( Object.keys(data.quantity).length !== 0 && this.state.deliveryAddress !== ''){
+            axios.post('http://3.17.10.253:3001/buyer/placeOrder',data)
             .then(response => {
             console.log(response.data);
             alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
             ree =  <Redirect to ="/buyerOrderStatus"/>;
             this.setState({});
             }).catch(error => console.log(error));
+        }else if(this.state.deliveryAddress === ''){
+            alert("Please Enter the delivery address.")
         }else{
             alert("Please Select Quantity > 1");
         }
@@ -102,7 +104,7 @@ export default class Order extends React.Component{
             rid: rid
         }
         //console.log(data);
-        axios.post('http://localhost:3001/buyer/menu',data)
+        axios.post('http://3.17.10.253:3001/buyer/menu',data)
         .then(response => {
             this.data = response.data;
             let pricesList = {}
@@ -148,11 +150,11 @@ export default class Order extends React.Component{
                             if (element.section === section){
                                 itemsArray.push(
                                     <tr key = {element.iid}>
-                                        <td><img className = "itemImage" src = {"http://localhost:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'food'/></td>
+                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'food'/></td>
                                         <td>{element.name}</td>
                                         <td>{element.description}</td>
                                         <td>${element.price}</td>
-                                        <td><input className = "inputField" type = "number" name = {element.name}
+                                        <td><input className = "inp" type = "number" min = "0" name = {element.name}
                                             value = {this.state.quantity[element.name]}
                                             onChange = {this.handleQuantity} /></td>
                                     </tr>
@@ -186,8 +188,8 @@ export default class Order extends React.Component{
                 </br>
                 <div>
                     {this.state.totalStatement}
-                    <br></br>
-                    <input type = "text" name ="address" value = {this.state.deliveryAddress} onChange = {this.handleChange}/>
+                    <br></br><br></br>
+                    <input className = "inp" type = "text" name ="address" placeholder = "Enter the Delivery address (240 Chars)" value = {this.state.deliveryAddress} onChange = {this.handleChange}/>
                     {<button style = {{width:"40%"}}className = "bttn" onClick ={this.placeOrder} >Order</button>}
                     
                 </div>

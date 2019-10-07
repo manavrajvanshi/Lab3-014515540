@@ -196,7 +196,7 @@ router.post('/home',(req, res)=> {
 
 router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,res) =>{
     //console.log(req.body.tesst);
-    res.redirect('http://localhost:3000/buyerHome');
+    res.redirect('http://3.17.10.253:3000/buyerHome');
     
 })
 
@@ -448,7 +448,7 @@ router.get('/logout',(req,res) =>{
     res.clearCookie('userType');
     res.clearCookie('userId');
     res.clearCookie('buyerData');
-    res.redirect("http://localhost:3000/");
+    res.redirect("http://3.17.10.253:3000/");
 }) 
 
 module.exports = router;
