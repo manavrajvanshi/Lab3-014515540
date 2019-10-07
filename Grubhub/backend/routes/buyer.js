@@ -6,10 +6,10 @@ const multer = require('multer');
 
 const pool  = mysql.createPool({
     connectionLimit : 100,
-    host            : 'localhost',
+    host            : 'grubhubproject.c22vppsjstv3.us-east-2.rds.amazonaws.com',
     user            : 'root',
     password        : 'rootroot',
-    database        : 'grubhubProject'
+    database        : 'grubhubproject'
 });
 
 const storage = multer.diskStorage({
