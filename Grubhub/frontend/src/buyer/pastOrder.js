@@ -3,6 +3,9 @@ import cookie from 'react-cookies';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 let flag = false;
 let orderTable=[];
 export default class PastOrder extends React.Component{
@@ -19,7 +22,7 @@ export default class PastOrder extends React.Component{
         let data = {
             bid : cookie.load('buyerData').bid
         }
-        axios.post('http://3.17.10.253:3001/buyer/getPastOrders',data)
+        axios.post(nodeAddress+'buyer/getPastOrders',data)
             .then(response => {
                 if(response.status === 200){
                     flag = true;

@@ -4,6 +4,9 @@ import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import '../App.css';
 
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 let re = null;
 export default class BuyerUpdate extends React.Component{
 
@@ -33,7 +36,7 @@ export default class BuyerUpdate extends React.Component{
             email : this.state.email,
             password : this.state.password,
             phone : this.state.phone,
-            bid : cookie.load('buyerData').bid
+            _id : cookie.load('buyerData')._id
         }
 
         if( data.name === "" || data.email === "" || data.password === ""){
@@ -42,7 +45,7 @@ export default class BuyerUpdate extends React.Component{
             
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://3.17.10.253:3001/buyer/update',data)
+            axios.post(nodeAddress+'buyer/update',data)
                 .then(response => {
                     if(response.status === 200){
                         alert("Profile Updated");

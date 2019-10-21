@@ -3,7 +3,8 @@ import cookie from 'react-cookies';
 import {Redirect} from 'react-router-dom';
 import '../App.css';
 
-
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
 let re = null;
 
 class BuyerPicture extends React.Component{
@@ -19,7 +20,7 @@ class BuyerPicture extends React.Component{
             <div className = "pictureContainer">
                 {re}
                 <h2 className = "hdng">Add / Update Profile Picture</h2>
-                <form style={{textAlign:"center"}} method="post" encType="multipart/form-data" action="http://3.17.10.253:3001/buyer/profilePictureUpload">
+                <form style={{textAlign:"center"}} method="post" encType="multipart/form-data" action={nodeAddress+'buyer/profilePictureUpload'}>
                     <input className = "inp" type="file" name="buyerProfilePicture"/>
                     <input className = "bttn" type="submit" value="Upload"/>
                 </form>

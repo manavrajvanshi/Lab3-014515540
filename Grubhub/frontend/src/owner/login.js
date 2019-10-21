@@ -4,6 +4,9 @@ import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import './login.css';
 
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 export default class OwnerLogin extends React.Component{
 
     constructor(props){
@@ -33,7 +36,7 @@ export default class OwnerLogin extends React.Component{
             
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://3.17.10.253:3001/restaurant/signin',data)
+            axios.post(nodeAddress+'restaurant/signin',data)
                 .then(response => {
 
                     if(response.status === 200){

@@ -4,6 +4,8 @@ import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 import '../App.css';
 
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
 
 let flag = false;
 let orderTable=[];
@@ -21,7 +23,7 @@ export default class OrderStatus extends React.Component{
         let data = {
             bid : cookie.load('buyerData').bid
         }
-        axios.post('http://3.17.10.253:3001/buyer/getCurrentOrders',data)
+        axios.post(nodeAddress+'buyer/getCurrentOrders',data)
             .then(response => {
                 if(response.status === 200){
                     flag = true;

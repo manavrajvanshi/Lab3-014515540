@@ -2,7 +2,11 @@ import React from 'react';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
-import './home.css'
+import './home.css';
+
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 let re = null;
 let owner, image;
 export default class OwnerHome extends React.Component{
@@ -13,13 +17,13 @@ export default class OwnerHome extends React.Component{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             let data = {
-                "rid" : cookie.load('ownerData').rid
+                "_id" : cookie.load('ownerData')._id
             }
             
-            axios.post('http://3.17.10.253:3001/restaurant/home',data)
+            axios.post(nodeAddress+'restaurant/home',data)
                 .then(response => {
                     owner = response.data;
-                    image = "http://3.17.10.253:3001/owner/"+data.rid+".jpg";
+                    image = nodeAddress+'owner/'+data._id+'.jpg';
                     this.setState({
                         imageRendered : true
                     })

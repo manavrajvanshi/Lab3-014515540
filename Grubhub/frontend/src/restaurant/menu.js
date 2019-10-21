@@ -3,8 +3,11 @@ import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
-
 import '../App.js';
+
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 const cookies = new Cookies();
 let re = null;
 export default class Menu extends React.Component{
@@ -70,7 +73,7 @@ export default class Menu extends React.Component{
         console.log(data);
 
         axios.defaults.withCredentials = true;
-        axios.post('http://3.17.10.253:3001/restaurant/updateItem',data)
+        axios.post(nodeAddress+'restaurant/updateItem',data)
         .then(response => {
             if(response.status === 200 ){
                 console.log("Item Updated");
@@ -135,7 +138,7 @@ export default class Menu extends React.Component{
         }
         if(newSectionName !== ''){
             axios.defaults.withCredentials = true;
-            axios.post('http://3.17.10.253:3001/restaurant/updateSection',data)
+            axios.post(nodeAddress+'restaurant/updateSection',data)
             .then(response => {
                 if(response.status === 200 ){
                     console.log("Section Updated");
@@ -164,7 +167,7 @@ export default class Menu extends React.Component{
         console.log(e.target.value);
         const data = new FormData();
         data.append('itemImage', this.state.selectedFile);
-        axios.post("http://3.17.10.253:3001/restaurant/itemImage", data)
+        axios.post(nodeAddress+'restaurant/itemImage', data)
         .then(res => { 
             
             this.setState({
@@ -184,7 +187,7 @@ export default class Menu extends React.Component{
         }
 
         axios.defaults.withCredentials = true;
-        axios.post('http://3.17.10.253:3001/restaurant/deleteSection',data)
+        axios.post(nodeAddress+'restaurant/deleteSection',data)
         .then(response => {
             if(response.status === 200 ){
                 console.log("Section Deleted");
@@ -200,7 +203,7 @@ export default class Menu extends React.Component{
 
     handleDelete(e){
         axios.defaults.withCredentials = true;
-        axios.post('http://3.17.10.253:3001/restaurant/deleteMenuItem',{iid:e.target.value})
+        axios.post(nodeAddress+'restaurant/deleteMenuItem',{iid:e.target.value})
         .then(response => {
             if(response.status === 200 ){
                 console.log("Item Deleted");
@@ -226,7 +229,7 @@ export default class Menu extends React.Component{
         axios.defaults.withCredentials = true;
 
         if( itemData.name !== '' && itemData.description !== '' && itemData.price !== '' && itemData.section !== ''){
-            axios.post('http://3.17.10.253:3001/restaurant/addItem',itemData)
+            axios.post(nodeAddress+'restaurant/addItem',itemData)
             .then(response => {
                 if(response.status === 200 ){
                     window.location.reload();
@@ -244,7 +247,7 @@ export default class Menu extends React.Component{
     componentDidMount(){
         axios.defaults.withCredentials = true;
 
-        axios.get('http://3.17.10.253:3001/restaurant/menu',{})
+        axios.get(nodeAddress+'restaurant/menu',{})
         .then(response => {
             this.data = response.data;
             this.setState({})
@@ -314,7 +317,7 @@ export default class Menu extends React.Component{
 
                                 itemsArray.push(
                                     <tr>
-                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'Upload an Image'/></td>
+                                        <td><img className = "itemImage" src = {nodeAddress+'item/'+element.iid+'.jpg'} width ="200" height = "200" alt = 'Upload an Image'/></td>
                                         <td className = "hdng">{element.name}</td>
                                         <td className = "hdng">{element.description}</td>
                                         <td className = "hdng">{element.section}</td>

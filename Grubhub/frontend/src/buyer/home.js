@@ -3,8 +3,12 @@ import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
 import ShowRestaurants from '../restaurant/showRestaurants.js'
-
 import '../App.css';
+
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
+
 
 let re = null;
 let buyer,image ;
@@ -27,13 +31,13 @@ class BuyerHome extends React.Component{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             let data = {
-                "bid" : cookie.load('buyerData').bid
+                "_id" : cookie.load('buyerData')._id
             }
             
-            axios.post('http://3.17.10.253:3001/buyer/home',data)
+            axios.post(nodeAddress+'buyer/home',data)
                 .then(response => {
                     buyer = response.data;
-                    image = "http://3.17.10.253:3001/buyer/"+data.bid+".jpg";
+                    image = nodeAddress+'buyer/'+data._id+'.jpg';
                     this.setState({
                         imageRendered : true
                     })
@@ -53,7 +57,7 @@ class BuyerHome extends React.Component{
             'searchItem' : this.state.searchItem
         }
         if(this.state.searchItem !== ''){
-            axios.post('http://3.17.10.253:3001/buyer/searchItem',data)
+            axios.post(nodeAddress+'buyer/searchItem',data)
         .then(response => {
             if(response.status === 200){
                 //console.log(response.data);

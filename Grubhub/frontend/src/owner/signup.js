@@ -3,6 +3,9 @@ import axios from 'axios';
 import {Redirect} from 'react-router';
 import '../App.css';
 let re = null;
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 export default class OwnerSignup extends React.Component{
 
     constructor(props){
@@ -40,7 +43,7 @@ export default class OwnerSignup extends React.Component{
         }else{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://3.17.10.253:3001/restaurant/signup',data)
+            axios.post(nodeAddress+'restaurant/signup',data)
                 .then(response => {
                     if(response.status === 200){
                         alert("Sucessfully Signed Up, please update your profile after logging in.");

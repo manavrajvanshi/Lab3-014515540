@@ -4,6 +4,9 @@ import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import '../App.css';
 
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 let redirect = null;
         
 export default class BuyerLogin extends React.Component{
@@ -38,7 +41,7 @@ export default class BuyerLogin extends React.Component{
         }else{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://3.17.10.253:3001/buyer/signin',data)
+            axios.post(nodeAddress+'buyer/signin',data)
                 .then(response => {
                     if(response.status === 200){
                         console.log("cookie: ",cookie.load('buyerData'));
@@ -55,6 +58,7 @@ export default class BuyerLogin extends React.Component{
                         alert("No User with the given credentials.");
                     }
                 }).catch(error=>{
+                    console.log("ADD: "+ nodeAddress+'buyer/signin');
                     console.log(error);
                 });
         }

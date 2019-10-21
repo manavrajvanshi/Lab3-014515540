@@ -2,7 +2,11 @@ var express = require('express');
 const bcrypt = require('bcrypt');
 const mysql = require('mysql');
 const multer = require('multer');
-
+const mongoose = require('mongoose');
+const database = require('../database/database');
+const Buyer = database.Buyer;
+let enVar = require('../enVar.js');
+const reactAddress = enVar.reactAddress;
 
 const pool  = mysql.createPool({
     connectionLimit : 100,
@@ -17,9 +21,10 @@ const storage = multer.diskStorage({
     filename: function(req, file, cb){
         
         let currentUserCookie = JSON.parse(req.cookies.buyerData);
-        console.log(req.body)
+        console.log("HEREEEEE");
+        console.log(currentUserCookie._id);
         
-        cb(null, JSON.stringify(currentUserCookie.bid)+'.jpg' );
+        cb(null, currentUserCookie._id+'.jpg' );
     }
 });
 
@@ -33,80 +38,88 @@ router.post('/signup', (req,res) =>{
     let password = req.body.password;
     
     bcrypt.hash(password, 10).then(function(hashedPassword){
-              
-        let query = `SELECT * from buyers WHERE email = '${email}'`;
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                res.writeHead(400);
-                res.end();
+
+        let query = {email : email};
+        
+        Buyer.find(query, function(err,result){
+            if(err){
                 console.log("Error in first if. Check Backend -> Buyer -> Signup ");
+                res.writeHead(400);
+                res.end("Something Happened LOL");
             }else{
+                let x = result.length;
                 console.log("Checking if email exists in buyers table.");
-                if(results.length == 0 ){
+                if( x == 0){
                     console.log("Entering the new details of buyer.");
-                    let query = `INSERT INTO buyers (name, email, password) VALUES ('${name}', '${email}','${hashedPassword}')`;
-                    pool.query(query, function (queryError, results, fields) {
-                        if (queryError){
+                    let buyer = new Buyer({name : name, email : email, password : hashedPassword});
+                    buyer.save( function(err, result){
+                        if(err){
                             res.writeHead(201);
                             res.end("Error second if. Check Backend -> Buyer -> Signup ");
                         }else{
-                            console.log("Data Entered");
+                            console.log(`${buyer} signed up`);
                             res.writeHead(200);
                             res.end("Sucessfully Signed Up!");
-                            
-                        }    
-                    });   
+                        }
+                    });
                 }else{
                     console.log("Email already exists in the table, buyer data not entered.");
                     res.writeHead(202);
                     res.end("This account already exists.");
                 }
-            }      
+            }
         });
     });
 });
 
 
 router.post('/signin',(req, res)=> {
-
+    //console.log("INSIDEEEE");
     //console.log(JSON.stringify(req.cookies));
     let email = req.body.email;
     let password = req.body.password;
-    let query = `SELECT * FROM buyers WHERE email = '${email}'`;
-    pool.query(query, function (queryError, results, fields) {
-        if (queryError){
-            console.log("Error in first if. Check Backend -> Buyer -> Signin ")
+
+    let query = {email : email};
+
+    Buyer.find(query, function(err, result){
+        if(err){
+            console.log("Error in first if. Check Backend -> Buyer -> Signin ");
+            res.writeHead(400);
+            res.end("Error");
         }else{
-            if(results.length > 0){
-                let buyer = results[0];
-                let hashedPassword = buyer['password'];
+            if(result.length > 0){
+                console.log(result);
+                let data = result[0];
+                let hashedPassword = data['password'];
                 console.log("Buyer matched, checking for password!");
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
-                        delete buyer.password;
+                        let buyer = {
+                            _id : data['_id'],
+                            name : data['name'],
+                            email : data['email'],
+                            __v : data['__v'],
+                            phone : data['phone']
+                        };
                         res.cookie('authCookieb', 'authenticated');
                         res.cookie('userType', 'buyer');
-                        res.cookie('userId', 'buyer'+buyer['bid']);
+                        res.cookie('userId', 'buyer:'+buyer['_id']);
                         res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
-
                         res.writeHead(200);
-                        res.end();
+                        res.end("Logged In");
                         console.log("Logged In");
-                    }
-                    else{
+                    }else{
                         res.writeHead(201);
                         res.end("Incorrect Password");
                         console.log("Incorrect Password");
                     }
-                    res.end(matched.toString());
                 }).catch(decryptionError => console.log(decryptionError));
-                
             }else{
                 res.writeHead(202);
                 console.log("No user with the given email found.");
                 res.end("No user with the given email found.");
-            }           
-        }           
+            }
+        }
     });  
 })
 
@@ -115,88 +128,100 @@ router.post('/update', (req,res) =>{
     let email = req.body.email;
     let password = req.body.password;
     let phone = req.body.phone;
-    let bid = req.body.bid;
-
+    let _id = req.body._id;
     let selfFlag = false;
-
-    let query = `SELECT email from buyers WHERE bid = '${bid}'`;
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> Buyer -> update ");
-            }else{
-                if(results[0].email === email){
+    let query = {_id:_id};
+    Buyer.find(query, function (err,result){
+        if(err){
+            console.log("Error in first if. Check Backend -> Buyer -> update ");
+        }else{
+            
+            if(result.length > 0 ){
+                if( result[0].email === email){
                     selfFlag = true;
+                }else{
+                    selfFlag = false;
                 }
-                else{
-                    selfFlaf = false;
-                }
-            }      
-        });
-
+            }else{
+                selfFlag = false;
+            }
+        }
+    });
     bcrypt.hash(password, 10).then(function(hashedPassword){
-        
-        let query = `SELECT * from buyers WHERE email = '${email}'`;
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
+        let query = {email:email};
+        Buyer.find(query, function (err, result){
+            if(err){
                 console.log("Error in first if. Check Backend -> Buyer -> update ");
             }else{
                 console.log("Checking if email exists in buyers table.");
 
-                if(results.length == 0 || selfFlag){
-                    let query = `UPDATE buyers SET name = '${name}', email = '${email}',password = '${hashedPassword}',phone = '${phone}' WHERE bid = ${bid};`
-                    pool.query(query, function (queryError, results, fields) {
-                        if (queryError){
+                if(result.length == 0 || selfFlag){
+                    let query = {_id:_id};
+                    let buyer = {name:name, email:email, password:hashedPassword, phone:phone};
+                    Buyer.findOneAndUpdate(query, buyer, {new : true}, function(err,result){
+                        if(err){
                             console.log("Error in if 2, Check Backend -> Buyer -> update ");
                             res.writeHead(201);
                             res.end("Records not updated, Error in if 2, Check Backend -> Buyer -> update.");
                         }else{
-                            //console.log(results);
                             console.log("Profile Updated");
+                            console.log(result);
+                            let buyer = {
+                                _id : result['_id'],
+                                name : result['name'],
+                                email : result['email'],
+                                __v : result['__v'],
+                                phone : result['phone']
+                            }
+                            res.cookie('authCookieb', 'authenticated');
+                            res.cookie('userType', 'buyer');
+                            res.cookie('userId', 'buyer:'+buyer['_id']);
+                            res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
                             res.writeHead(200);
                             res.end("Records Updated");
-                        }   
-                    }); 
-
+                        }
+                    });
                 }else{
-                    console.log("Email already exists in the table, buyer data not Updated.");
-                    res.writeHead("202");
+                    console.log("Email belongs to someone else");
+                    res.writeHead(202);
                     res.end("Email Belongs to someone else.");
                 }
-            }      
+            }
         });
-    }).catch(error => console.log(error));;
+   
+    }).catch(error => console.log(error));
 });
 
 router.post('/home',(req, res)=> {
-
-    //console.log(JSON.stringify(req.cookies));
-    let bid = req.body.bid;
-    //console.log(bid);
-    
-    let query = `SELECT * FROM buyers WHERE bid = '${bid}'`;
-    pool.query(query, function (queryError, results, fields) {
-        if (queryError){
+    let _id = req.body._id;
+    let query = {_id:_id};
+    Buyer.find(query, function(err, result){
+        if(err){
             console.log("Error in first if. Check Backend -> Buyer -> HOME ")
         }else{
-            if(results.length > 0){
-                let buyer = results[0];
-                delete buyer.password;
-                res.send(JSON.stringify(buyer));
+            if(result.length > 0){
+                let data = result[0];
+                let buyer = {
+                    _id : data['_id'],
+                    name : data['name'],
+                    email : data['email'],
+                    __v : data['__v'],
+                    phone : data['phone']
+                }
                 //console.log(buyer);
-               
-                
+                res.send(JSON.stringify(buyer));   
             }else{
-                console.log("No user with the given bid found.");
+                console.log("No user with the given _id found.");
                 res.end("You are not authenticated or user found.");
-            }           
-        }           
+            }
+        }
     });  
 })
 
 
 router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,res) =>{
     //console.log(req.body.tesst);
-    res.redirect('http://3.17.10.253:3000/buyerHome');
+    res.redirect(reactAddress+'buyerHome');
     
 })
 
@@ -448,7 +473,7 @@ router.get('/logout',(req,res) =>{
     res.clearCookie('userType');
     res.clearCookie('userId');
     res.clearCookie('buyerData');
-    res.redirect("http://3.17.10.253:3000/");
+    res.redirect(reactAddress+'welcome');
 }) 
 
 module.exports = router;

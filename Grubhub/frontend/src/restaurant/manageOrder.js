@@ -5,6 +5,10 @@ import {Redirect} from 'react-router';
 import '../App.css';
 let re = null;
 let flag = false;
+
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 let orderTable=[];
 export default class ManageOrder extends React.Component{
     constructor(props){
@@ -25,7 +29,7 @@ export default class ManageOrder extends React.Component{
         let data = {
             rid : cookie.load('ownerData').rid
         }
-        axios.post('http://3.17.10.253:3001/restaurant/viewOrders',data)
+        axios.post(nodeAddress+'restaurant/viewOrders',data)
             .then(response => {
                 if(response.status === 200){
                     flag = true;
@@ -102,7 +106,7 @@ export default class ManageOrder extends React.Component{
 
         axios.defaults.withCredentials = true;
             
-            axios.post('http://3.17.10.253:3001/restaurant/updateStatus',data)
+            axios.post(nodeAddress+'restaurant/updateStatus',data)
             .then(response => {
                 if(response.status === 200){
                     console.log(response.data);

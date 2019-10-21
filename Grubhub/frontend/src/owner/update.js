@@ -4,6 +4,8 @@ import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import '../App.js'
 let re = null;
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
 
 export default class OwnerUpdate extends React.Component{
 
@@ -34,7 +36,7 @@ export default class OwnerUpdate extends React.Component{
             ownerEmail : this.state.ownerEmail,
             ownerPassword : this.state.ownerPassword,
             ownerPhone : this.state.ownerPhone,
-            rid : cookie.load('ownerData').rid,
+            _id : cookie.load('ownerData')._id,
             cuisine : this.state.cuisine,
             restaurantName : this.state.restaurantName,
             restaurantZip : this.state.restaurantZip
@@ -46,7 +48,7 @@ export default class OwnerUpdate extends React.Component{
             // console.log("HEREEEE")
             axios.defaults.withCredentials = true;
             //make a post request with the user data
-            axios.post('http://3.17.10.253:3001/restaurant/update',data)
+            axios.post(nodeAddress+'restaurant/update',data)
                 .then(response => {
                     console.log(response.data);
                     this.forceUpdate();

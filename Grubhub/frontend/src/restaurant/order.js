@@ -4,6 +4,9 @@ import cookie from 'react-cookies';
 import axios from 'axios';
 import '../App.css';
 
+var enVar = require ('../enVar.js');
+const nodeAddress = enVar.nodeAddress;
+
 let ree;
 export default class Order extends React.Component{
 //cookie.load('buyerData').bid
@@ -77,7 +80,7 @@ export default class Order extends React.Component{
 
         console.log(data.quantity);
         if( Object.keys(data.quantity).length !== 0 && this.state.deliveryAddress !== ''){
-            axios.post('http://3.17.10.253:3001/buyer/placeOrder',data)
+            axios.post(nodeAddress+'buyer/placeOrder',data)
             .then(response => {
             console.log(response.data);
             alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
@@ -104,7 +107,7 @@ export default class Order extends React.Component{
             rid: rid
         }
         //console.log(data);
-        axios.post('http://3.17.10.253:3001/buyer/menu',data)
+        axios.post(nodeAddress+'buyer/menu',data)
         .then(response => {
             this.data = response.data;
             let pricesList = {}
@@ -150,7 +153,7 @@ export default class Order extends React.Component{
                             if (element.section === section){
                                 itemsArray.push(
                                     <tr key = {element.iid}>
-                                        <td><img className = "itemImage" src = {"http://3.17.10.253:3001/item/"+element.iid+".jpg"} width ="200" height = "200" alt = 'Picture Not Uploaded by Owner'/></td>
+                                        <td><img className = "itemImage" src = {nodeAddress+'item/'+element.iid+'.jpg'} width ="200" height = "200" alt = 'Picture Not Uploaded by Owner'/></td>
                                         <td>{element.name}</td>
                                         <td>{element.description}</td>
                                         <td>${element.price}</td>

@@ -1,7 +1,8 @@
 import React from 'react';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
-import '../App.css'
+import '../App.css';
+
 let re;
 export default class ShowRestaurants extends React.Component{
     constructor(props){
