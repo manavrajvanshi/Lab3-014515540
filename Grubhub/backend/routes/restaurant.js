@@ -13,7 +13,7 @@ const ownerStorage = multer.diskStorage({
         
         let currentUserCookie = JSON.parse(req.cookies.ownerData);
         
-        cb(null, currentUserCookie._id+'.jpg' );
+        cb(null, currentUserCookie.rid+'.jpg' );
     }
 });
 
@@ -25,7 +25,7 @@ const restaurantStorage = multer.diskStorage({
         
         let currentUserCookie = JSON.parse(req.cookies.ownerData);
         
-        cb(null, currentUserCookie._id+'.jpg' );
+        cb(null, currentUserCookie.rid+'.jpg' );
     }
 });
 
@@ -110,7 +110,7 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         let owner = {
-                            _id: data['_id'],
+                            rid: data['_id'],
                             ownerName: data['ownerName'],
                             ownerEmail: data['ownerEmail'],
                             restaurantName: data['restaurantName'],
@@ -119,7 +119,7 @@ router.post('/signin',(req, res)=> {
                         }
                         res.cookie('authCookieo', 'authenticated');
                         res.cookie('userType', 'owner');
-                        res.cookie('_id', owner['_id']);
+                        res.cookie('rid', owner['rid']);
                         res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                         res.writeHead(200);
                         res.end("Signed in successfully");
@@ -147,12 +147,12 @@ router.post('/update', (req,res) =>{
     let ownerEmail = req.body.ownerEmail;
     let ownerPassword = req.body.ownerPassword;
     let ownerPhone = req.body.ownerPhone;
-    let _id = req.body._id;
+    let rid = req.body.rid;
     let restaurantName = req.body.restaurantName;
     let restaurantZip = req.body.restaurantZip;
     let cuisine = req.body.cuisine;
     let selfFlag = false;
-    let query = {_id:_id};
+    let query = {_id:rid};
     Restaurant.find(query, function(err,result){
         if(err){
             console.log("Error in first if. Check Backend -> Buyer -> update ");
@@ -178,7 +178,7 @@ router.post('/update', (req,res) =>{
             }else{
                 console.log("Checking if email exists in restaurants table.");
                 if(result.length == 0 || selfFlag){
-                    let query = {_id:_id};
+                    let query = {_id:rid};
                     let owner = {
                         ownerName: ownerName,
                         ownerEmail: ownerEmail,
@@ -197,7 +197,7 @@ router.post('/update', (req,res) =>{
                             console.log(result);
                             let data = result;
                             let owner = {
-                                _id: data['_id'],
+                                rid: data['_id'],
                                 ownerName: data['ownerName'],
                                 ownerEmail: data['ownerEmail'],
                                 restaurantName: data['restaurantName'],
@@ -206,7 +206,7 @@ router.post('/update', (req,res) =>{
                             }
                             res.cookie('authCookieo', 'authenticated');
                             res.cookie('userType', 'owner');
-                            res.cookie('_id', owner['_id']);
+                            res.cookie('rid', owner['rid']);
                             res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                             res.writeHead(200);
                             res.end("Records Updated");
@@ -224,8 +224,8 @@ router.post('/update', (req,res) =>{
 
 
 router.post('/home',(req, res)=> {
-    let _id = req.body._id;
-    let query = { _id: _id};
+    let rid = req.body.rid;
+    let query = { _id: rid};
     Restaurant.find(query, function(err,result){
         if(err){
             console.log("Error in first if. Check Backend -> owner -> HOME ")
@@ -233,7 +233,7 @@ router.post('/home',(req, res)=> {
             if(result.length > 0){
                 let data = result[0];
                 let owner = {
-                    _id: data['_id'],
+                    rid: data['_id'],
                     ownerName: data['ownerName'],
                     ownerEmail: data['ownerEmail'],
                     restaurantName: data['restaurantName'],
@@ -286,28 +286,26 @@ router.get('/menu', (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'){
         let ownerData = req.cookies.ownerData;
         let rid = JSON.parse(ownerData).rid;
-        let query = `SELECT * FROM items WHERE rid = '${rid}'`;
-        
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
+
+       
+        Restaurant.findById(rid, function(err, result){
+            if(err){
+                console.log(err);
                 console.log("Error in first if. Check Backend -> restaurant -> menu ")
             }else{
-                // console.log(rid);
-                // console.log(query);
-                // console.log(results);
-                if(results.length > 0){
-                    let items = results;
+                if(result){
+                    let items = result.items;
+                    console.log(result);
                     res.end(JSON.stringify(items));
                 }else{
                     console.log("No items stored");
-                    console.log(results.length);
+                    console.log(result);
                     res.end();
-                }           
-            }           
+                }
+            }
         });
-
     }else{
-        console.log("asdfadsf");
+        console.log("Not Authenticated (Backend / Restaurant / menu)");
         res.writeHead(405);
         
     }
@@ -324,27 +322,45 @@ router.post('/addItem', (req, res)=>{
     let section = req.body.section;
     let rid = req.body.rid;
 
-    if(req.cookies.authCookieo === 'authenticated'){
-        let query = `INSERT INTO items (description,price,name,section,rid) VALUES 
-        ('${description}',${price},'${name}','${section}',${rid})`;
-        
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> addItem ")
-            }else{
-                
-                res.writeHead(200);
-                res.end();
-                console.log("Item Added");          
-            }           
-        });
+    //console.log(name, description, price, section, rid);
 
+    if(req.cookies.authCookieo === 'authenticated'){
+        Restaurant.findById(rid, function(err, result){
+            if(err){
+              console.log(err);
+              console.log("Error in first if. Check Backend -> restaurant -> addItem ");
+            }else{
+              let restaurant = result;
+              let item = {
+                name: name,
+                description : description,
+                section : section,
+                price: price,
+                rid : rid
+              };
+              restaurant.items.push(item);
+              restaurant.save( function(err,result){
+                if(err){
+
+                    res.writeHead(400);
+                    res.end();
+                    console.log(err);
+                    console.log("Error in second if. Check Backend -> restaurant -> addItem ");
+                }else{
+                    console.log(result);
+                    res.writeHead(200);
+                    res.end();
+                    console.log("Item Added");
+                }
+              });
+            }
+          });
     }else{
         console.log("Not Authenticated (/addItem)");
         res.writeHead(400);
-        
+        res.end();
     }
-})
+});
 
 router.post('/deleteMenuItem', (req,res) => {
     if( req.cookies.authCookieo === 'authenticated'){
@@ -384,27 +400,27 @@ router.post('/deleteSection', (req,res) =>{
         res.redirect(reactAddress + 'ownerLogin');
     }
 })
-router.post('/addSection',(req,res) => {
-    if(req.cookies.authCookieo === 'authenticated'){
-        let rid = req.body.rid;
-        let sectionName = req.body.sectionName;
+// router.post('/addSection',(req,res) => {
+//     if(req.cookies.authCookieo === 'authenticated'){
+//         let rid = req.body.rid;
+//         let sectionName = req.body.sectionName;
 
-        let query = `INSERT INTO sections VALUES ( ${rid}, '${sectionName}')`;
+//         let query = `INSERT INTO sections VALUES ( ${rid}, '${sectionName}')`;
         
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> addSection ");
-                res.writeHead(400);
-                res.end("Section not added");
-            }else{
-                res.writeHead(200);
-                res.end('Section added sucessfully');       
-            }           
-        });
-    }else{
-        res.redirect(reactAddress + 'ownerLogin');
-    }
-})
+//         pool.query(query, function (queryError, results, fields) {
+//             if (queryError){
+//                 console.log("Error in first if. Check Backend -> restaurant -> addSection ");
+//                 res.writeHead(400);
+//                 res.end("Section not added");
+//             }else{
+//                 res.writeHead(200);
+//                 res.end('Section added sucessfully');       
+//             }           
+//         });
+//     }else{
+//         res.redirect(reactAddress + 'ownerLogin');
+//     }
+// })
 
 router.post('/viewOrders', (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'||1){

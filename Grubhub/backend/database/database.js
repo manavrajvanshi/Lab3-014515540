@@ -3,7 +3,7 @@ let Schema = mongoose.Schema;
 let url = 'mongodb+srv://root:rootroot@cluster0-dqihd.mongodb.net/grubhubproject?retryWrites=true&w=majority';
 mongoose.connect(url, {useNewUrlParser: true});
 
-
+///////////////////////////////////////////
 const buyerSchema = new Schema(
     {
         name: String,
@@ -15,6 +15,14 @@ const buyerSchema = new Schema(
         collection : 'buyers'
     }
 );
+//////////////////////////////////////////
+let itemSchema = new Schema({
+    name: String,
+    description: String,
+    section: String,
+    price: Number,
+    rid : Schema.Types.ObjectId
+});
 
 const restaurantSchema = new Schema(
     {
@@ -24,13 +32,14 @@ const restaurantSchema = new Schema(
         ownerPhone: Number,
         restaurantName: String,
         restaurantZip: Number,
-        cuisine: String
+        cuisine: String,
+        items : [itemSchema]
     },
     {
         collection : 'restaurants'
     }
 );
-
+///////////////////////////////////////
 const orders = new Schema(
     {
         name: String,
@@ -42,7 +51,7 @@ const orders = new Schema(
         collection : 'buyers'
     }
 );
-
+////////////////////////////////////////
 const buyer = mongoose.model('buyer', buyerSchema);
 const restaurant = mongoose.model('restaurant', restaurantSchema);
 

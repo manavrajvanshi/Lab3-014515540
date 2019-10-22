@@ -17,13 +17,13 @@ export default class OwnerHome extends React.Component{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             let data = {
-                "_id" : cookie.load('ownerData')._id
+                "rid" : cookie.load('ownerData').rid
             }
             
             axios.post(nodeAddress+'restaurant/home',data)
                 .then(response => {
                     owner = response.data;
-                    image = nodeAddress+'owner/'+data._id+'.jpg';
+                    image = nodeAddress+'owner/'+data.rid+'.jpg';
                     this.setState({
                         imageRendered : true
                     })

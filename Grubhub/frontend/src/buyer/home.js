@@ -31,13 +31,13 @@ class BuyerHome extends React.Component{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             let data = {
-                "_id" : cookie.load('buyerData')._id
+                "bid" : cookie.load('buyerData').bid
             }
             
             axios.post(nodeAddress+'buyer/home',data)
                 .then(response => {
                     buyer = response.data;
-                    image = nodeAddress+'buyer/'+data._id+'.jpg';
+                    image = nodeAddress+'buyer/'+data.bid+'.jpg';
                     this.setState({
                         imageRendered : true
                     })

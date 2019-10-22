@@ -36,7 +36,7 @@ export default class OwnerUpdate extends React.Component{
             ownerEmail : this.state.ownerEmail,
             ownerPassword : this.state.ownerPassword,
             ownerPhone : this.state.ownerPhone,
-            _id : cookie.load('ownerData')._id,
+            rid : cookie.load('ownerData').rid,
             cuisine : this.state.cuisine,
             restaurantName : this.state.restaurantName,
             restaurantZip : this.state.restaurantZip

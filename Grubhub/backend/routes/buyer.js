@@ -22,9 +22,9 @@ const storage = multer.diskStorage({
         
         let currentUserCookie = JSON.parse(req.cookies.buyerData);
         console.log("HEREEEEE");
-        console.log(currentUserCookie._id);
+        console.log(currentUserCookie.bid);
         
-        cb(null, currentUserCookie._id+'.jpg' );
+        cb(null, currentUserCookie.bid+'.jpg' );
     }
 });
 
@@ -95,7 +95,7 @@ router.post('/signin',(req, res)=> {
                 bcrypt.compare(password, hashedPassword).then(function(matched) {
                     if(matched){
                         let buyer = {
-                            _id : data['_id'],
+                            bid : data['_id'],
                             name : data['name'],
                             email : data['email'],
                             __v : data['__v'],
@@ -103,7 +103,7 @@ router.post('/signin',(req, res)=> {
                         };
                         res.cookie('authCookieb', 'authenticated');
                         res.cookie('userType', 'buyer');
-                        res.cookie('userId', 'buyer:'+buyer['_id']);
+                        res.cookie('userId', 'buyer:'+buyer['bid']);
                         res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
                         res.writeHead(200);
                         res.end("Logged In");
@@ -128,9 +128,9 @@ router.post('/update', (req,res) =>{
     let email = req.body.email;
     let password = req.body.password;
     let phone = req.body.phone;
-    let _id = req.body._id;
+    let bid = req.body.bid;
     let selfFlag = false;
-    let query = {_id:_id};
+    let query = {_id:bid};
     Buyer.find(query, function (err,result){
         if(err){
             console.log("Error in first if. Check Backend -> Buyer -> update ");
@@ -156,7 +156,7 @@ router.post('/update', (req,res) =>{
                 console.log("Checking if email exists in buyers table.");
 
                 if(result.length == 0 || selfFlag){
-                    let query = {_id:_id};
+                    let query = {_id:bid};
                     let buyer = {name:name, email:email, password:hashedPassword, phone:phone};
                     Buyer.findOneAndUpdate(query, buyer, {new : true}, function(err,result){
                         if(err){
@@ -167,7 +167,7 @@ router.post('/update', (req,res) =>{
                             console.log("Profile Updated");
                             console.log(result);
                             let buyer = {
-                                _id : result['_id'],
+                                bid : result['_id'],
                                 name : result['name'],
                                 email : result['email'],
                                 __v : result['__v'],
@@ -175,7 +175,7 @@ router.post('/update', (req,res) =>{
                             }
                             res.cookie('authCookieb', 'authenticated');
                             res.cookie('userType', 'buyer');
-                            res.cookie('userId', 'buyer:'+buyer['_id']);
+                            res.cookie('userId', 'buyer:'+buyer['bid']);
                             res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
                             res.writeHead(200);
                             res.end("Records Updated");
@@ -193,8 +193,8 @@ router.post('/update', (req,res) =>{
 });
 
 router.post('/home',(req, res)=> {
-    let _id = req.body._id;
-    let query = {_id:_id};
+    let bid = req.body.bid;
+    let query = {_id:bid};
     Buyer.find(query, function(err, result){
         if(err){
             console.log("Error in first if. Check Backend -> Buyer -> HOME ")
@@ -202,7 +202,7 @@ router.post('/home',(req, res)=> {
             if(result.length > 0){
                 let data = result[0];
                 let buyer = {
-                    _id : data['_id'],
+                    bid : data['_id'],
                     name : data['name'],
                     email : data['email'],
                     __v : data['__v'],
@@ -211,7 +211,7 @@ router.post('/home',(req, res)=> {
                 //console.log(buyer);
                 res.send(JSON.stringify(buyer));   
             }else{
-                console.log("No user with the given _id found.");
+                console.log("No user with the given bid found.");
                 res.end("You are not authenticated or user found.");
             }
         }

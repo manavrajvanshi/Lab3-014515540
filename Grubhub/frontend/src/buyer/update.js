@@ -36,7 +36,7 @@ export default class BuyerUpdate extends React.Component{
             email : this.state.email,
             password : this.state.password,
             phone : this.state.phone,
-            _id : cookie.load('buyerData')._id
+            bid : cookie.load('buyerData').bid
         }
 
         if( data.name === "" || data.email === "" || data.password === ""){
