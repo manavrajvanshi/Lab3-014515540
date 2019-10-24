@@ -62,7 +62,7 @@ export class Navbar extends React.Component{
                 //console.log(cookie.load('ownerData').restaurantName);
                 bar =  (
                     <div className = "topnav">
-                        <a class="navbar-brand" href='http://localhost:3000/welcome'>
+                        <a className="navbar-brand" href='http://localhost:3000/welcome'>
                         <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
                         <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>

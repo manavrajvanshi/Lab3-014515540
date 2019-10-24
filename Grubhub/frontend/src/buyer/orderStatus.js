@@ -37,7 +37,7 @@ export default class OrderStatus extends React.Component{
                             orderTable.push(
                                 <tr>
                                     <th>Order ID {oid}</th>
-                                    <th>{restaurantName}</th>
+                                    <th>Restaurant Name {restaurantName}</th>
                                     <th>Total: ${total } </th>
                                     <th>Status: {status}</th>
                                 </tr>

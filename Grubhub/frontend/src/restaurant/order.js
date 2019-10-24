@@ -68,8 +68,9 @@ export default class Order extends React.Component{
             bid : cookie.load('buyerData').bid,
             total : this.state.total,
             quantity : this.state.quantity,
-            address : this.state.deliveryAddress
-
+            deliveryAddress : this.state.deliveryAddress,
+            customerName : this.props.location.state.customerName,
+            restaurantName : this.props.location.state.restaurantName
         }
 
         for(let key in data.quantity){
@@ -78,15 +79,16 @@ export default class Order extends React.Component{
             }
         }
 
-        console.log(data.quantity);
+        console.log(data);
         if( Object.keys(data.quantity).length !== 0 && this.state.deliveryAddress !== ''){
             axios.post(nodeAddress+'buyer/placeOrder',data)
             .then(response => {
-            console.log(response.data);
-            alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
-            ree =  <Redirect to ="/buyerOrderStatus"/>;
-            this.setState({});
-            }).catch(error => console.log(error));
+                console.log(response.data);
+                alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
+                ree =  <Redirect to ="/buyerOrderStatus"/>;
+                this.setState({});
+            })
+            .catch(error => console.log(error));
         }else if(this.state.deliveryAddress === ''){
             alert("Please Enter the delivery address.")
         }else{
@@ -106,7 +108,7 @@ export default class Order extends React.Component{
         let data = {
             rid: rid
         }
-        //console.log(data);
+        console.log(data);
         axios.post(nodeAddress+'buyer/menu',data)
         .then(response => {
             this.data = response.data;
@@ -159,7 +161,8 @@ export default class Order extends React.Component{
                                         <td>${element.price}</td>
                                         <td><input className = "inp" type = "number" min = "0" name = {element.name}
                                             value = {this.state.quantity[element.name]}
-                                            onChange = {this.handleQuantity} /></td>
+                                            onChange = {this.handleQuantity} />
+                                        </td>
                                     </tr>
                                 )
                             }
@@ -178,25 +181,23 @@ export default class Order extends React.Component{
         }
         return(
             <div className = "searchBoxBack">
-            <div className = "menuContainer">
-                {ree}
-                <form >
-                    <table className = "menu">
-                        <tbody>
-                            {this.createTable()}
-                        </tbody>
-                    </table>
-                </form>
-                <br>
-                </br>
-                <div>
-                    {this.state.totalStatement}
-                    <br></br><br></br>
-                    <input className = "inp" type = "text" name ="address" placeholder = "Enter the Delivery address (240 Chars)" value = {this.state.deliveryAddress} onChange = {this.handleChange}/>
-                    {<button style = {{width:"40%"}}className = "bttn" onClick ={this.placeOrder} >Order</button>}
-                    
+                <div className = "menuContainer">
+                    {ree}
+                    <form >
+                        <table className = "menu">
+                            <tbody>
+                                {this.createTable()}
+                            </tbody>
+                        </table>
+                    </form>
+                    <br>
+                    </br>
+                    <div>
+                        {this.state.totalStatement}<br></br><br></br>
+                        <input className = "inp" type = "text" name ="address" placeholder = "Enter the Delivery address (240 Chars)" value = {this.state.deliveryAddress} onChange = {this.handleChange}/>
+                        <button style = {{width:"40%"}}className = "bttn" onClick ={this.placeOrder} >Order</button>  
+                    </div>
                 </div>
-            </div>
             </div>
         )
     }

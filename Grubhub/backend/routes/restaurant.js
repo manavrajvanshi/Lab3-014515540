@@ -4,6 +4,7 @@ const mysql = require('mysql');
 const multer = require('multer');
 const database = require('../database/database');
 const Restaurant = database.Restaurant;
+const Order = database.Order;
 let enVar = require('../enVar.js');
 const reactAddress = enVar.reactAddress;
 
@@ -113,17 +114,24 @@ router.post('/signin',(req, res)=> {
                             rid: data['_id'],
                             ownerName: data['ownerName'],
                             ownerEmail: data['ownerEmail'],
+                            ownerPhone: data['ownerPhone'],
                             restaurantName: data['restaurantName'],
                             restaurantZip: data['restaurantZip'],
+                            cuisine : data['cuisine'],
                             __v : data['__v']
                         }
+
                         res.cookie('authCookieo', 'authenticated');
                         res.cookie('userType', 'owner');
-                        res.cookie('rid', owner['rid']);
+                        res.cookie('rid', JSON.stringify(owner['rid']),{encode:String});
+                        // console.log("OWNER RID");
+                        // console.log(JSON.stringify(owner['rid']),{encode:String});
                         res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                         res.writeHead(200);
                         res.end("Signed in successfully");
                         console.log("Owner Signed in");
+
+                        console.log(owner);
                     }
                     else{
                         res.writeHead(201);
@@ -200,8 +208,10 @@ router.post('/update', (req,res) =>{
                                 rid: data['_id'],
                                 ownerName: data['ownerName'],
                                 ownerEmail: data['ownerEmail'],
+                                ownerPhone: data['ownerPhone'],
                                 restaurantName: data['restaurantName'],
                                 restaurantZip: data['restaurantZip'],
+                                cuisine : data['cuisine'],
                                 __v : data['__v']
                             }
                             res.cookie('authCookieo', 'authenticated');
@@ -236,8 +246,10 @@ router.post('/home',(req, res)=> {
                     rid: data['_id'],
                     ownerName: data['ownerName'],
                     ownerEmail: data['ownerEmail'],
+                    ownerPhone: data['ownerPhone'],
                     restaurantName: data['restaurantName'],
                     restaurantZip: data['restaurantZip'],
+                    cuisine : data['cuisine'],
                     __v : data['__v']
                 }
                 res.end(JSON.stringify(owner));    
@@ -253,22 +265,17 @@ router.post('/home',(req, res)=> {
 
 router.post('/profilePictureUpload',ownerUpload.single('ownerProfilePicture'), (req,res) =>{
     res.redirect(reactAddress + 'ownerHome');
-    
 })
 
 router.post('/restaurantPictureUpload',restaurantUpload.single('restaurantPicture'), (req,res) =>{
     res.redirect(reactAddress + 'ownerHome');
-    
 })
 
 const imageStorage = multer.diskStorage({
     destination: 'images/item/',
     filename: function(req, file, cb){
-        
-        let currentItemCookie = JSON.parse(req.cookies.item);
-        console.log(currentItemCookie);
-        
-        cb(null, JSON.stringify(currentItemCookie)+'.jpg' );
+        console.log(req.cookies.item);
+        cb(null, req.cookies.item+'.jpg' );
     }
 });
 
@@ -278,16 +285,12 @@ router.post('/itemImage',imageUpload.single('itemImage'), (req,res) =>{
     console.log(req.cookies.item);
     res.writeHead(200);
     res.end("Image Uploaded");
-    
 })
 
 router.get('/menu', (req,res) => {
-    
     if(req.cookies.authCookieo === 'authenticated'){
         let ownerData = req.cookies.ownerData;
         let rid = JSON.parse(ownerData).rid;
-
-       
         Restaurant.findById(rid, function(err, result){
             if(err){
                 console.log(err);
@@ -307,12 +310,8 @@ router.get('/menu', (req,res) => {
     }else{
         console.log("Not Authenticated (Backend / Restaurant / menu)");
         res.writeHead(405);
-        
     }
 });
-
-
-
 
 router.post('/addItem', (req, res)=>{
 
@@ -321,9 +320,7 @@ router.post('/addItem', (req, res)=>{
     let price = req.body.price;
     let section = req.body.section;
     let rid = req.body.rid;
-
     //console.log(name, description, price, section, rid);
-
     if(req.cookies.authCookieo === 'authenticated'){
         Restaurant.findById(rid, function(err, result){
             if(err){
@@ -341,7 +338,6 @@ router.post('/addItem', (req, res)=>{
               restaurant.items.push(item);
               restaurant.save( function(err,result){
                 if(err){
-
                     res.writeHead(400);
                     res.end();
                     console.log(err);
@@ -365,130 +361,123 @@ router.post('/addItem', (req, res)=>{
 router.post('/deleteMenuItem', (req,res) => {
     if( req.cookies.authCookieo === 'authenticated'){
         let iid = req.body.iid;
-        let query = `DELETE FROM items WHERE iid = '${iid}'`;
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> deleteMenuItem");
-                res.writeHead(500);
-                res.end();
+        let rid = req.body.rid;
+        console.log(iid, rid);
+
+        Restaurant.findById(rid, function(err, restaurant){
+            if(err){
+              console.log(err);
+              console.log("Error in first if. Check Backend -> restaurant -> deleteMenuItem");
+              res.writeHead(500);
+              res.end();
             }else{
-                res.writeHead(200);
-                res.end();
-                console.log("Item Deleted");          
-            }           
+                console.log(restaurant);
+                let items = restaurant.items;
+                for(let item of items){     
+                    if( item._id == iid  ){
+                    item.remove();
+                    break;
+                    }
+                }
+                restaurant.save(function(err,result){
+                    if(err){
+                        console.log(err);
+                        console.log("Error in Second if. Check Backend -> restaurant -> deleteMenuItem");
+                        res.writeHead(500);
+                        res.end();
+                    }else{
+                        console.log(result);
+                        res.writeHead(200);
+                        res.end();
+                        console.log("Item Deleted"); 
+                    }
+                })
+            }
         });
     }
-})
+});
+
 router.post('/deleteSection', (req,res) =>{
     if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let section = req.body.section;
-        
-        let query = `DELETE FROM items WHERE rid = ${rid} AND section ='${section}'`;
-        
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> deleteSection ");
-                res.writeHead(400);
-                res.end();
+
+        Restaurant.findById(rid, function(err, restaurant){
+            if(err){
+              console.log(err);
+              console.log("Error in first if. Check Backend -> restaurant -> deleteSection");
+              res.writeHead(400);
+              res.end("Section not deleted");
             }else{
-                res.writeHead(200);
-                res.end(JSON.stringify(results));       
-            }           
+                console.log(restaurant);
+                let items = restaurant.items;
+                for(let item of items){     
+                    if( item.section == section  ){
+                        item.remove();
+                    }
+                }
+                restaurant.save(function(err,result){
+                    if(err){
+                        console.log(err);
+                        console.log("Error in Second if. Check Backend -> restaurant -> deleteSection");
+                        res.writeHead(400);
+                        res.end("Section Not Deleted");
+                    }else{
+                        console.log(result);
+                        res.writeHead(200);
+                        res.end("Section Deleted");
+                        console.log("Section Deleted"); 
+                    }
+                })
+            }
         });
     }else{
         res.redirect(reactAddress + 'ownerLogin');
     }
 })
-// router.post('/addSection',(req,res) => {
-//     if(req.cookies.authCookieo === 'authenticated'){
-//         let rid = req.body.rid;
-//         let sectionName = req.body.sectionName;
 
-//         let query = `INSERT INTO sections VALUES ( ${rid}, '${sectionName}')`;
-        
-//         pool.query(query, function (queryError, results, fields) {
-//             if (queryError){
-//                 console.log("Error in first if. Check Backend -> restaurant -> addSection ");
-//                 res.writeHead(400);
-//                 res.end("Section not added");
-//             }else{
-//                 res.writeHead(200);
-//                 res.end('Section added sucessfully');       
-//             }           
-//         });
-//     }else{
-//         res.redirect(reactAddress + 'ownerLogin');
-//     }
-// })
 
 router.post('/viewOrders', (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'||1){
-       let rid = req.body.rid;
-       // console.log(query);
-       
-       let query = `SELECT buyers.name, orders.oid,orderdetails.itemName, orderdetails.qty, 
-       orders.total, orders.status, buyers.bid, orders.address
-       FROM( (buyers INNER JOIN orders ON buyers.bid = orders.bid) INNER JOIN
-       orderdetails ON orderdetails.oid = orders.oid) WHERE orders.rid = ${rid} and status<>'Delivered' and status <> 'Cancelled'`;
-
-
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurants -> viewOrders ")
+        let rid = req.body.rid;
+        //console.log(rid);   
+        Order.find({rid : rid}, function(err, result){
+            if(err){
+                console.log(err);
             }else{
-                if(results.length > 0){
-
-                    //console.log(results);
-                    let upcomingOrders = [];
-                    let orders = results;
-                    let oidSet = new Set();
-                    for( let order of orders){
-                        oidSet.add(order.oid);
-                    }
-                    // oidSet.forEach( i =>{
-                    //     console.log(i)
-                    // })
-                    for( let oid of oidSet){
-                        
+                //console.log(result);
+                if(result.length > 0){
+                    let orders = result;
+                    let upcomingOrders = []
+ 
+                    for(let order of orders){
                         let itemList = [];
-                        let buyerName ='';
-                        let address = '';
-                        let total ;
-                        let status;
-                        for( let order of orders){
-                            if( order.oid === oid){
-                                buyerName = order.name;
-                                total = order.total;
-                                address = order.address;
-                                status = order.status;
-                                itemList.push({'itemName':order.itemName, 'qty':order.qty})
+                        if(order.status !== 'Delivered' && order.status !== 'Cancelled'){
+                            for(let item in order['quantity']){
+                                //console.log( order.status == 'Delivered');
+                                itemList.push({'itemName':item, 'qty':order['quantity'][item]});
                             }
-                        }
-                        
-                        //console.log(itemList);
-                        upcomingOrders.push(
-                            {   'oid' : oid,
+                            upcomingOrders.push({
+                                'oid' : order['_id'],
                                 'itemList' : itemList,
-                                'buyerName' : buyerName,
-                                'status' : status,
-                                'total' : total,
-                                'address':address
-                            }
-                        );
-                        
+                                'buyerName' : order['customerName'],
+                                'status' : order['status'],
+                                'total' : order['total'],
+                                'address': order['deliveryAddress']
+                            });
+                        }
                     }
-                    console.log(upcomingOrders);
+                    //console.log(upcomingOrders);
                     res.end(JSON.stringify(upcomingOrders));
                 }else{
                     console.log("No orders found");
                     res.writeHead(201);
                     res.end("No orders found");
-                }           
-            }           
+                }
+            }
         });
     }else{
-        console.log("Error in second if. Check Backend -> buyer -> getCurrentOrders ");
+        console.log("Error in second if. Check Backend -> restaurant -> viewOrder ");
         res.writeHead(405);
         res.end("Error in validating authetication");
         
@@ -496,66 +485,44 @@ router.post('/viewOrders', (req,res) => {
 })
 
 router.post('/oldOrder', (req,res) => {
+
     if(req.cookies.authCookieo === 'authenticated'||1){
-       let rid = req.body.rid;
-       // console.log(query);
-       
-       let query = `SELECT buyers.name, orders.oid,orderdetails.itemName, orderdetails.qty, 
-       orders.total, orders.status, buyers.bid
-       FROM( (buyers INNER JOIN orders ON buyers.bid = orders.bid) INNER JOIN
-       orderdetails ON orderdetails.oid = orders.oid) WHERE orders.rid = ${rid} and (status='Delivered' or status = 'Cancelled')`;
-
-
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
+        let rid = req.body.rid;
+        //console.log(rid);   
+        Order.find({rid : rid}, function(err, result){
+            if(err){
                 console.log("Error in first if. Check Backend -> restaurants -> oldOrders ")
             }else{
-                if(results.length > 0){
-
-                    //console.log(results);
-                    let upcomingOrders = [];
-                    let orders = results;
-                    let oidSet = new Set();
-                    for( let order of orders){
-                        oidSet.add(order.oid);
-                    }
-                    // oidSet.forEach( i =>{
-                    //     console.log(i)
-                    // })
-                    for( let oid of oidSet){
-                        
+                //console.log(result);
+                if(result.length > 0){
+                    let orders = result;
+                    let oldOrders = []
+ 
+                    for(let order of orders){
                         let itemList = [];
-                        let buyerName ='';
-                        let total ;
-                        let status;
-                        for( let order of orders){
-                            if( order.oid === oid){
-                                buyerName = order.name;
-                                total = order.total;
-                                status = order.status;
-                                itemList.push({'itemName':order.itemName, 'qty':order.qty})
+                        if(order.status === 'Delivered' || order.status === 'Cancelled'){
+                            for(let item in order['quantity']){
+                                //console.log( order.status == 'Delivered');
+                                itemList.push({'itemName':item, 'qty':order['quantity'][item]});
                             }
-                        }
-                        
-                        //console.log(itemList);
-                        upcomingOrders.push(
-                            {   'oid' : oid,
+                            oldOrders.push({
+                                'oid' : order['_id'],
                                 'itemList' : itemList,
-                                'buyerName' : buyerName,
-                                'status' : status,
-                                'total' : total
-                            }
-                        );
-                        
+                                'buyerName' : order['customerName'],
+                                'status' : order['status'],
+                                'total' : order['total'],
+                                'address': order['deliveryAddress']
+                            });
+                        }
                     }
-                    console.log(upcomingOrders);
-                    res.end(JSON.stringify(upcomingOrders));
+                    console.log(oldOrders);
+                    res.end(JSON.stringify(oldOrders));
                 }else{
                     console.log("No orders found");
                     res.writeHead(201);
                     res.end("No orders found");
-                }           
-            }           
+                }
+            }
         });
     }else{
         console.log("Error in second if. Check Backend -> Restaurant -> oldOrders ");
@@ -563,6 +530,7 @@ router.post('/oldOrder', (req,res) => {
         res.end("Error in validating authetication");
         
     }
+   
 })
 
 router.post('/updateSection', (req,res) => {
@@ -570,40 +538,64 @@ router.post('/updateSection', (req,res) => {
         let rid = req.body.rid;
         let oldSection = req.body.oldSection;
         let newSectionName = req.body.newSectionName;
-
-        let query = `UPDATE items SET section = '${newSectionName}' WHERE section = '${oldSection}' and rid = '${rid}'`;
-        
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> updateSection ");
-                res.writeHead(400);
-                res.end("Status Not Updated");
+        Restaurant.findById(rid, function(err, restaurant){
+            if(err){
+              console.log(err);
+              console.log("Error in first if. Check Backend -> restaurant -> updateSection");
+              res.writeHead(400);
+              res.end("Section Not Updated");
             }else{
-                res.writeHead(200);
-                res.end('Section Updated');       
-            }           
+                console.log(restaurant);
+                let items = restaurant.items;
+                for(let item of items){     
+                    if( item.section == oldSection  ){
+                        item.section = newSectionName;
+                    }
+                }
+                restaurant.save(function(err,result){
+                    if(err){
+                        console.log(err);
+                        console.log("Error in Second if. Check Backend -> restaurant -> updateSection");
+                        res.writeHead(400);
+                        res.end("Section Not Updated");
+                    }else{
+                        console.log(result);
+                        res.writeHead(200);
+                        res.end("Section Updated");
+                        console.log("Section Updated"); 
+                    }
+                })
+            }
         });
-
     }
 })
 
 router.post('/updateStatus',(req,res) =>{
     if(req.cookies.authCookieo === 'authenticated'){
-        let oid = req.body.oid;
-        let status = req.body.status;
-        let query = `UPDATE orders SET status = '${status}' where oid = '${oid}'`;
-        
-        pool.query(query, function (queryError, results, fields) {
-            if (queryError){
-                console.log("Error in first if. Check Backend -> restaurant -> updateStatus ");
+        Order.findById( req.body.oid, function(err, order){
+            if(err){
+                console.log(err);
+                console.log("Error in Second if. Check Backend -> restaurant -> updateStatus ");
                 res.writeHead(400);
                 res.end("Status Not Updated");
             }else{
-                res.writeHead(200);
-                res.end('Status Updated');       
-            }           
+                order.status = req.body.status;
+                order.save( function (err, result){
+                    if(err){
+                        console.log("Error in Third if. Check Backend -> restaurant -> updateStatus ");
+                        res.writeHead(400);
+                        res.end("Status Not Updated");
+                    }else{
+                        res.writeHead(200);
+                        res.end('Status Updated');       
+                    }
+                } );
+            }
         });
-
+    }else{
+        console.log("Error in first if/else. Check Backend -> restaurant -> updateStatus ");
+        res.writeHead(400);
+        res.end("Status Not Updated / Not Authorized");
     }
 })
 
@@ -613,18 +605,43 @@ router.post('/updateItem', (req,res) =>{
     let price = req.body.priceUpdate;
     let section = req.body.sectionUpdate;
     let iid = req.body.iid;
+    let rid = req.body.rid;
 
-    let query = `UPDATE items SET name = '${name}',description = '${description}',
-            price = '${price}', section = '${section}' WHERE iid = '${iid}'`;
-    pool.query(query, function (queryError, results, fields) {
-        if (queryError){
-            console.log("Error in first if. Check Backend -> restaurant -> updateItem ");
-            res.writeHead(400);
-            res.end("Status Not Updated");
+    console.log(req.body);
+    console.log(rid);
+
+    Restaurant.findById(rid, function(err, restaurant){
+        if(err){
+          console.log(err);
+          console.log("Error in first if. Check Backend -> restaurant -> updateItem");
+          res.writeHead(400);
+          res.end("Item Not Updated");
         }else{
-            res.writeHead(200);
-            res.end('Item Updated');       
-        }           
+            console.log(restaurant);
+            let items = restaurant.items;
+            for(let item of items){     
+                if( item._id == iid  ){
+                    item.name = name;
+                    item.description = description;
+                    item.section = section;
+                    item.price = price;
+                    break;
+                }
+            }
+            restaurant.save(function(err,result){
+                if(err){
+                    console.log(err);
+                    console.log("Error in Second if. Check Backend -> restaurant -> updateItem");
+                    res.writeHead(400);
+                    res.end("Item Not Updated");
+                }else{
+                    console.log(result);
+                    res.writeHead(200);
+                    res.end("Item Updated");
+                    console.log("Item Updated"); 
+                }
+            })
+        }
     });
 })
 

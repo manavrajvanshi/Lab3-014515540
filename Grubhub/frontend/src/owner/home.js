@@ -49,8 +49,9 @@ export default class OwnerHome extends React.Component{
             <div className = "searchBoxBack" >
                 <div className = "homeContainer">
                     {re}
-                    <div class = "heading">
+                    <div className = "heading">
                         <img src = {image} width ="200" height = "200" alt = 'Please Upload A Profile Pic'className = "profilePic"/>
+                        {console.log(owner)}
                         <p>Welcome {owner.ownerName}</p>
                         <p>Your E-mail: {owner.ownerEmail}</p>
                         <p>Your Contact Number: {owner.ownerPhone}</p>

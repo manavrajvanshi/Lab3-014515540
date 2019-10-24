@@ -40,22 +40,29 @@ const restaurantSchema = new Schema(
     }
 );
 ///////////////////////////////////////
-const orders = new Schema(
+const orderSchema = new Schema(
     {
-        name: String,
-        email: String,
-        password: String,
-        phone: Number
+        rid: Schema.Types.ObjectId,
+        restaurantName : String,
+        bid: Schema.Types.ObjectId,
+        customerName : String,
+        total: Number,
+        quantity: {},
+        status : {type: String, default:'Pending'},
+        deliveryAddress: String,
     },
     {
-        collection : 'buyers'
+        collection : 'orders'
     }
 );
+
 ////////////////////////////////////////
 const buyer = mongoose.model('buyer', buyerSchema);
 const restaurant = mongoose.model('restaurant', restaurantSchema);
+const order = mongoose.model('order',orderSchema);
 
 module.exports = {
     Buyer : buyer,
-    Restaurant : restaurant
+    Restaurant : restaurant,
+    Order : order
 }

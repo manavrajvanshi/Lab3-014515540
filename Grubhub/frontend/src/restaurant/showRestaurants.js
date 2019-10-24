@@ -7,17 +7,24 @@ let re;
 export default class ShowRestaurants extends React.Component{
     constructor(props){
         super(props);
+        this.restNames ={};
         this.viewRestaurant = this.viewRestaurant.bind(this);
-     
+        
     }
     
     viewRestaurant(e){
+        let rid = e.target.value;
+        let restName = this.restNames[rid];
+        
+        // console.log(rid);
+        // console.log(restName);
         re = <Redirect to={{
             pathname : '/order',
             rid : e.target.value,
-            state : {rid : e.target.value}
-          }} />;
+            state : {rid : rid, customerName: cookie.load('buyerData').name, restaurantName:restName}
+        }} />;
         this.setState({});
+        
     }
     render(){
         let ree = null;
@@ -28,8 +35,9 @@ export default class ShowRestaurants extends React.Component{
         let foundFlag = false;
         //console.log(this.props.cuisineFilter);
         for(let restaurant in this.props.restaurantsList){
-        
+            
             if(this.props.cuisineFilter === ''){
+                this.restNames = Object.assign({},this.restNames, {[this.props.restaurantsList[restaurant].rid]:this.props.restaurantsList[restaurant].restaurantName})
                 foundFlag = true;
                 restaurantsTable.push(
                 
@@ -56,6 +64,8 @@ export default class ShowRestaurants extends React.Component{
             }
             
         }
+
+        //console.log(this.restNames);
 
         if(!foundFlag){
             return <div>No restaurants with your cuisine choice found</div>

@@ -26,6 +26,7 @@ export default class PastOrder extends React.Component{
             .then(response => {
                 if(response.status === 200){
                     flag = true;
+                    console.log(response.data);
                     this.setState({
                         orders:response.data
                     }, ()=>{

@@ -43,7 +43,7 @@ export default class Menu extends React.Component{
     }
     editItem(element){
         
-        let iid = element.iid;
+        let iid = element._id;
         let nameUpdate = this.state.nameUpdate;
         let descriptionUpdate = this.state.descriptionUpdate;
         let sectionUpdate = this.state.sectionUpdate;
@@ -66,7 +66,8 @@ export default class Menu extends React.Component{
             nameUpdate:nameUpdate,
             descriptionUpdate:descriptionUpdate,
             sectionUpdate:sectionUpdate,
-            priceUpdate:priceUpdate
+            priceUpdate:priceUpdate,
+            rid: cookie.load('ownerData').rid
         }
 
 
@@ -174,15 +175,17 @@ export default class Menu extends React.Component{
                 selectedFile: null,
             },()=>{
                 window.location.reload();
-            })
+            }
+        )
        
       }).catch(error => {
           console.log("ERRRROOORRR");
         });
     }
+
     deleteSection(e){
         let data = {
-            rid : cookie.load('rid'),
+            rid:cookie.load('ownerData').rid,
             section : e.target.value
         }
 
@@ -203,7 +206,7 @@ export default class Menu extends React.Component{
 
     handleDelete(e){
         axios.defaults.withCredentials = true;
-        axios.post(nodeAddress+'restaurant/deleteMenuItem',{iid:e.target.value})
+        axios.post(nodeAddress+'restaurant/deleteMenuItem',{iid:e.target.value, rid:cookie.load('ownerData').rid})
         .then(response => {
             if(response.status === 200 ){
                 console.log("Item Deleted");
@@ -250,6 +253,7 @@ export default class Menu extends React.Component{
         axios.get(nodeAddress+'restaurant/menu',{})
         .then(response => {
             this.data = response.data;
+            console.log(this.data);
             this.setState({})
             
         }).catch(error => console.log(error));
@@ -313,25 +317,28 @@ export default class Menu extends React.Component{
                     this.data.forEach(
                         element =>{
                             if (element.section === section){
-                                 //console.log(element)
+                                //console.log(element)
 
                                 itemsArray.push(
                                     <tr>
-                                        <td><img className = "itemImage" src = {nodeAddress+'item/'+element.iid+'.jpg'} width ="200" height = "200" alt = 'Upload an Image'/></td>
+                                        <td><img className = "itemImage" src = {nodeAddress+'item/'+element._id+'.jpg'} width ="200" height = "200" alt = 'Upload an Image'/></td>
                                         <td className = "hdng">{element.name}</td>
                                         <td className = "hdng">{element.description}</td>
                                         <td className = "hdng">{element.section}</td>
                                         <td className = "hdng">{element.price}</td>
-                                        <td className = "hdng"><input className = "inp" onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br>
-                                            <button className = "bttn" value = {element.iid} onClick = {this.uploadImage}>Image Upload</button></td>
-                                        <td><button class = "bttn" value = {element.iid} onClick = {this.handleDelete}>Delete Item</button><br></br>
-                                            <button className = "bttn" value = {element.iid} onClick = {this.showEdit}>Edit Item</button>
+                                        <td className = "hdng">
+                                            <input className = "inp" onChange ={this.onImageChange} name = "itemImage" type = "file"/><br></br>
+                                            <button className = "bttn" value = {element._id} onClick = {this.uploadImage}>Image Upload</button>
+                                        </td>
+                                        <td>
+                                            <button class = "bttn" value = {element._id} onClick = {this.handleDelete}>Delete Item</button><br></br>
+                                            <button className = "bttn" value = {element._id} onClick = {this.showEdit}>Edit Item</button>
                                         </td>
                                     </tr>
                                 )
 
                                 itemsArray.push(
-                                    <tr style = {{display:"none"}} id = {element.iid}>
+                                    <tr style = {{display:"none"}} id = {element._id}>
                                         <td className = "hdng">Enter Details</td>
                                         <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.name} onChange = {this.handleInputEdit} name = "nameUpdate"/></td>
                                         <td className = "hdng"><input class = "inp" type = "text" defaultValue = {element.description} onChange = {this.handleInputEdit} name = "descriptionUpdate"/></td>
