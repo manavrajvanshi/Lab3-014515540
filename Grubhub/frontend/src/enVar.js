@@ -1,4 +1,4 @@
-let nodeAddress = "http://localhost:3001/";
+let nodeAddress = 'http://localhost:3001/';
 
 
 module.exports= {

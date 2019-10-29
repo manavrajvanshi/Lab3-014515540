@@ -44,7 +44,22 @@ export default class BuyerLogin extends React.Component{
             axios.post(nodeAddress+'buyer/signin',data)
                 .then(response => {
                     if(response.status === 200){
-                        console.log("cookie: ",cookie.load('buyerData'));
+                        //console.log("cookie: ",cookie.load('buyerData'));
+                        //console.log("Response Headers ", response);
+
+                        if(typeof (Storage) !== "undefined"){
+                            localStorage.setItem("Buyer-Auth-Token", response.headers.authorization);
+                        }else{
+                            alert("Please use a browser that uses local storage!");
+                        }
+                        // if (typeof(Storage) !== "undefined") {
+                        //     // Store
+                        //     localStorage.setItem("Auth-Token", response.headers.authorization);
+                        //     // Retrieve
+                        //     document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+                        //   } else {
+                        //     document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+                        //   }
                         if( cookie.load('authCookieb') === "authenticated"){
                             this.setState({
                                 auth:true

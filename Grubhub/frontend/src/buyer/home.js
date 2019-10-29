@@ -29,12 +29,22 @@ class BuyerHome extends React.Component{
     componentDidMount(){
         if(cookie.load('authCookieb') === "authenticated" ){  
             axios.defaults.withCredentials = true;
+            let token = localStorage.getItem("Buyer-Auth-Token");
+            // console.log(token);
+            // console.log(typeof token)
+           
             //make a post request with the user data
             let data = {
                 "bid" : cookie.load('buyerData').bid
             }
             
-            axios.post(nodeAddress+'buyer/home',data)
+            axios.post(nodeAddress+'buyer/home',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
                 .then(response => {
                     buyer = response.data;
                     image = nodeAddress+'buyer/'+data.bid+'.jpg';
@@ -42,7 +52,8 @@ class BuyerHome extends React.Component{
                         imageRendered : true
                     })
                 }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error));
+                    console.log("Errorrrrrr: "+JSON.stringify(error));
+                    re = <Redirect to = "/welcome"/>
                 }
             );
         }else{

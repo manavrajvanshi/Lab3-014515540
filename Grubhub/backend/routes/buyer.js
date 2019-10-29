@@ -1,22 +1,36 @@
 var express = require('express');
-const bcrypt = require('bcrypt');
-const mysql = require('mysql');
 const multer = require('multer');
 const mongoose = require('mongoose');
 const database = require('../database/database');
 const Buyer = database.Buyer;
 const Restaurant = database.Restaurant;
 const Order = database.Order;
-let enVar = require('../enVar.js');
+const enVar = require('../enVar.js');
 const reactAddress = enVar.reactAddress;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken'); 
+const passport  = require('passport')
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('buyer');
+opts.secretOrKey = 'HashString';
 
-const pool  = mysql.createPool({
-    connectionLimit : 100,
-    host            : 'grubhubproject.c22vppsjstv3.us-east-2.rds.amazonaws.com',
-    user            : 'root',
-    password        : 'rootroot',
-    database        : 'grubhubproject'
-});
+
+passport.use("jwt", new JwtStrategy(opts, function(jwt_payload, done) {
+    console.log("HEREE");
+    console.log(jwt_payload);
+    Buyer.findOne({_id: jwt_payload.bid}, function(err, user) {
+        if (err) {
+            return done(err, false);
+        }
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+        }
+    });
+}));
 
 const storage = multer.diskStorage({
     destination: 'images/buyer/',
@@ -107,6 +121,10 @@ router.post('/signin',(req, res)=> {
                         res.cookie('userType', 'buyer');
                         res.cookie('userId', 'buyer:'+buyer['bid']);
                         res.cookie('buyerData',JSON.stringify(buyer),{encode:String});
+                        let token = jwt.sign({bid : buyer['bid']}, "HashString");
+                        console.log("Token: "+token);
+                        res.setHeader("Access-Control-Expose-Headers","Authorization");
+                        res.header({"Authorization": 'buyer '+token});
                         res.writeHead(200);
                         res.end("Logged In");
                         console.log("Logged In");
@@ -194,7 +212,7 @@ router.post('/update', (req,res) =>{
     }).catch(error => console.log(error));
 });
 
-router.post('/home',(req, res)=> {
+router.post('/home', passport.authenticate("jwt",{ session: false }), (req, res)=> {
     let bid = req.body.bid;
     let query = {_id:bid};
     Buyer.find(query, function(err, result){
