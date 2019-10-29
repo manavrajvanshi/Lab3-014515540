@@ -20,10 +20,17 @@ export default class OrderStatus extends React.Component{
     componentDidMount(){
         
         axios.defaults.withCredentials = true;
+        let token = localStorage.getItem("Buyer-Auth-Token");
         let data = {
             bid : cookie.load('buyerData').bid
         }
-        axios.post(nodeAddress+'buyer/getCurrentOrders',data)
+        axios.post(nodeAddress+'buyer/getCurrentOrders',data, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
             .then(response => {
                 if(response.status === 200){
                     flag = true;

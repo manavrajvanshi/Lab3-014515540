@@ -47,30 +47,35 @@ export default class OwnerUpdate extends React.Component{
         }else{
             // console.log("HEREEEE")
             axios.defaults.withCredentials = true;
-            //make a post request with the user data
-            axios.post(nodeAddress+'restaurant/update',data)
-                .then(response => {
-                    console.log(response.data);
-                    this.forceUpdate();
-                    if(response.status === 200){
-                        alert("Profile Updated");
-                        re = <Redirect to = '/ownerHome'/>
-                        this.setState({
-                            updated : true
-                        })
-                    }else if( response.status === 201){
-                        alert("Data not updated, contact support team.");
-                        console.log(response.data);
-                    }else if(response.status === 202){
-                        console.log("Data not updated, contact support team.");
-                    }
-                    else if(response.status === 203){
-                        alert(response.data);
-                    }
-                }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error));
+            let token = localStorage.getItem("Owner-Auth-Token");
+            axios.post(nodeAddress+'restaurant/update',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
                 }
-            );
+            })
+            .then(response => {
+                console.log(response.data);
+                this.forceUpdate();
+                if(response.status === 200){
+                    alert("Profile Updated");
+                    re = <Redirect to = '/ownerHome'/>
+                    this.setState({
+                        updated : true
+                    })
+                }else if( response.status === 201){
+                    alert("Data not updated, contact support team.");
+                    console.log(response.data);
+                }else if(response.status === 202){
+                    console.log("Data not updated, contact support team.");
+                }
+                else if(response.status === 203){
+                    alert(response.data);
+                }
+            }).catch(error=>{
+                console.log("Error: "+JSON.stringify(error));
+            });
         }
         
     }

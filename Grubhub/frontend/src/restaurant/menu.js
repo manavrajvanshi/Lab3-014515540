@@ -74,7 +74,14 @@ export default class Menu extends React.Component{
         console.log(data);
 
         axios.defaults.withCredentials = true;
-        axios.post(nodeAddress+'restaurant/updateItem',data)
+        let token = localStorage.getItem("Owner-Auth-Token");
+        axios.post(nodeAddress+'restaurant/updateItem',data, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
         .then(response => {
             if(response.status === 200 ){
                 console.log("Item Updated");
@@ -139,7 +146,14 @@ export default class Menu extends React.Component{
         }
         if(newSectionName !== ''){
             axios.defaults.withCredentials = true;
-            axios.post(nodeAddress+'restaurant/updateSection',data)
+            let token = localStorage.getItem("Owner-Auth-Token");
+            axios.post(nodeAddress+'restaurant/updateSection',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
             .then(response => {
                 if(response.status === 200 ){
                     console.log("Section Updated");
@@ -168,7 +182,14 @@ export default class Menu extends React.Component{
         console.log(e.target.value);
         const data = new FormData();
         data.append('itemImage', this.state.selectedFile);
-        axios.post(nodeAddress+'restaurant/itemImage', data)
+        let token = localStorage.getItem("Owner-Auth-Token");
+        axios.post(nodeAddress+'restaurant/itemImage', data, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
         .then(res => { 
             
             this.setState({
@@ -190,7 +211,14 @@ export default class Menu extends React.Component{
         }
 
         axios.defaults.withCredentials = true;
-        axios.post(nodeAddress+'restaurant/deleteSection',data)
+        let token = localStorage.getItem("Owner-Auth-Token");
+        axios.post(nodeAddress+'restaurant/deleteSection',data, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
         .then(response => {
             if(response.status === 200 ){
                 console.log("Section Deleted");
@@ -206,7 +234,14 @@ export default class Menu extends React.Component{
 
     handleDelete(e){
         axios.defaults.withCredentials = true;
-        axios.post(nodeAddress+'restaurant/deleteMenuItem',{iid:e.target.value, rid:cookie.load('ownerData').rid})
+        let token = localStorage.getItem("Owner-Auth-Token");
+        axios.post(nodeAddress+'restaurant/deleteMenuItem',{iid:e.target.value, rid:cookie.load('ownerData').rid}, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
         .then(response => {
             if(response.status === 200 ){
                 console.log("Item Deleted");
@@ -230,9 +265,15 @@ export default class Menu extends React.Component{
         }
 
         axios.defaults.withCredentials = true;
-
+        let token = localStorage.getItem("Owner-Auth-Token");
         if( itemData.name !== '' && itemData.description !== '' && itemData.price !== '' && itemData.section !== ''){
-            axios.post(nodeAddress+'restaurant/addItem',itemData)
+            axios.post(nodeAddress+'restaurant/addItem',itemData, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
             .then(response => {
                 if(response.status === 200 ){
                     window.location.reload();
@@ -249,8 +290,15 @@ export default class Menu extends React.Component{
 
     componentDidMount(){
         axios.defaults.withCredentials = true;
-
-        axios.get(nodeAddress+'restaurant/menu',{})
+        let token = localStorage.getItem("Owner-Auth-Token");
+        //console.log("OAT", token)
+        axios.post(nodeAddress+'restaurant/menu',{}, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
         .then(response => {
             this.data = response.data;
             console.log(this.data);

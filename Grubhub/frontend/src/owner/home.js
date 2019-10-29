@@ -15,22 +15,26 @@ export default class OwnerHome extends React.Component{
         if(cookie.load('authCookieo') === "authenticated" ){
             
             axios.defaults.withCredentials = true;
-            //make a post request with the user data
+            let token = localStorage.getItem("Owner-Auth-Token");
             let data = {
                 "rid" : cookie.load('ownerData').rid
             }
-            
-            axios.post(nodeAddress+'restaurant/home',data)
-                .then(response => {
-                    owner = response.data;
-                    image = nodeAddress+'owner/'+data.rid+'.jpg';
-                    this.setState({
-                        imageRendered : true
-                    })
-                }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error));
+            axios.post(nodeAddress+'restaurant/home',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
                 }
-            );
+            })
+            .then(response => {
+                owner = response.data;
+                image = nodeAddress+'owner/'+data.rid+'.jpg';
+                this.setState({
+                    imageRendered : true
+                })
+            }).catch(error=>{
+                console.log("Error: "+JSON.stringify(error));
+            });
         }else{
             re = <Redirect to = "welcome/"/>
             console.log("Inside Else");

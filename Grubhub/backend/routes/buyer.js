@@ -18,8 +18,8 @@ opts.secretOrKey = 'HashString';
 
 
 passport.use("jwt", new JwtStrategy(opts, function(jwt_payload, done) {
-    console.log("HEREE");
-    console.log(jwt_payload);
+    // console.log("HEREE");
+    // console.log(jwt_payload);
     Buyer.findOne({_id: jwt_payload.bid}, function(err, user) {
         if (err) {
             return done(err, false);
@@ -37,8 +37,8 @@ const storage = multer.diskStorage({
     filename: function(req, file, cb){
         
         let currentUserCookie = JSON.parse(req.cookies.buyerData);
-        console.log("HEREEEEE");
-        console.log(currentUserCookie.bid);
+        // console.log("HEREEEEE");
+        // console.log(currentUserCookie.bid);
         
         cb(null, currentUserCookie.bid+'.jpg' );
     }
@@ -143,7 +143,7 @@ router.post('/signin',(req, res)=> {
     });  
 })
 
-router.post('/update', (req,res) =>{
+router.post('/update', passport.authenticate("jwt",{ session: false }), (req,res) =>{
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
@@ -245,7 +245,7 @@ router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,r
     
 })
 
-router.post('/searchItem', (req,res) =>{
+router.post('/searchItem' , passport.authenticate("jwt",{ session: false }),  (req,res) =>{
     let searchItem = req.body.searchItem;
     console.log(searchItem);
 
@@ -284,7 +284,7 @@ router.post('/searchItem', (req,res) =>{
     });
 })
 
-router.post('/menu', (req,res) => {
+router.post('/menu', passport.authenticate("jwt",{ session: false }), (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
         let rid = req.body.rid;
         Restaurant.find( {_id:rid}, function(err,result){
@@ -322,7 +322,7 @@ router.post('/menu', (req,res) => {
     }
 });
 
-router.post('/placeOrder',(req,res) => {
+router.post('/placeOrder', passport.authenticate("jwt",{ session: false }), (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
         Order.create(req.body, function(err,result){
             if(err){
@@ -344,7 +344,7 @@ router.post('/placeOrder',(req,res) => {
     }
 })
 
-router.post('/getCurrentOrders',(req,res) => {
+router.post('/getCurrentOrders',passport.authenticate("jwt",{ session: false }),(req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
 
         let bid = req.body.bid;
@@ -395,7 +395,7 @@ router.post('/getCurrentOrders',(req,res) => {
 })
 
 
-router.post('/getPastOrders',(req,res) => {
+router.post('/getPastOrders',passport.authenticate("jwt",{ session: false }),(req,res) => {
     if(req.cookies.authCookieb === 'authenticated'||1){
         let bid = req.body.bid;
         // console.log(query);

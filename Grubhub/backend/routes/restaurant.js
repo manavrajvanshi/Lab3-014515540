@@ -1,12 +1,36 @@
 var express = require('express');
 const bcrypt = require('bcrypt');
-const mysql = require('mysql');
 const multer = require('multer');
 const database = require('../database/database');
 const Restaurant = database.Restaurant;
 const Order = database.Order;
 let enVar = require('../enVar.js');
 const reactAddress = enVar.reactAddress;
+
+const jwt = require('jsonwebtoken'); 
+const passport  = require('passport')
+const JwtStrategy = require('passport-jwt').Strategy;
+const ExtractJwt = require('passport-jwt').ExtractJwt;
+const opts = {}
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('owner');
+opts.secretOrKey = 'HashString';
+
+
+passport.use("jwt", new JwtStrategy(opts, function(jwt_payload, done) {
+    // console.log("HEREE");
+    // console.log(jwt_payload);
+    Restaurant.findOne({_id: jwt_payload.rid}, function(err, user) {
+        if (err) {
+            return done(err, false);
+        }
+        if (user) {
+            return done(null, user);
+        } else {
+            return done(null, false);
+        }
+    });
+}));
+
 
 const ownerStorage = multer.diskStorage({
     destination: 'images/owner/',
@@ -31,14 +55,6 @@ const restaurantStorage = multer.diskStorage({
 });
 
 const restaurantUpload = multer({storage:restaurantStorage});
-
-const pool  = mysql.createConnection({
-    connectionLimit : 100,
-    host            : 'grubhubproject.c22vppsjstv3.us-east-2.rds.amazonaws.com',
-    user            : 'root',
-    password        : 'rootroot',
-    database        : 'grubhubproject'
-});
 
 
 
@@ -127,6 +143,10 @@ router.post('/signin',(req, res)=> {
                         // console.log("OWNER RID");
                         // console.log(JSON.stringify(owner['rid']),{encode:String});
                         res.cookie('ownerData',JSON.stringify(owner),{encode:String});
+                        let token = jwt.sign({rid : owner['rid']}, "HashString");
+                        console.log("Token: "+token);
+                        res.setHeader("Access-Control-Expose-Headers","Authorization");
+                        res.header({"Authorization": 'owner '+token});
                         res.writeHead(200);
                         res.end("Signed in successfully");
                         console.log("Owner Signed in");
@@ -150,7 +170,7 @@ router.post('/signin',(req, res)=> {
 
 
 
-router.post('/update', (req,res) =>{
+router.post('/update', passport.authenticate("jwt",{ session: false }), (req,res) =>{
     let ownerName = req.body.ownerName;
     let ownerEmail = req.body.ownerEmail;
     let ownerPassword = req.body.ownerPassword;
@@ -233,7 +253,7 @@ router.post('/update', (req,res) =>{
 });
 
 
-router.post('/home',(req, res)=> {
+router.post('/home',passport.authenticate("jwt",{ session: false }),(req, res)=> {
     let rid = req.body.rid;
     let query = { _id: rid};
     Restaurant.find(query, function(err,result){
@@ -287,7 +307,7 @@ router.post('/itemImage',imageUpload.single('itemImage'), (req,res) =>{
     res.end("Image Uploaded");
 })
 
-router.get('/menu', (req,res) => {
+router.post('/menu', passport.authenticate("jwt",{ session: false }), (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'){
         let ownerData = req.cookies.ownerData;
         let rid = JSON.parse(ownerData).rid;
@@ -313,7 +333,7 @@ router.get('/menu', (req,res) => {
     }
 });
 
-router.post('/addItem', (req, res)=>{
+router.post('/addItem', passport.authenticate("jwt",{ session: false }) , (req, res)=>{
 
     let name = req.body.name;
     let description = req.body.description;
@@ -358,7 +378,7 @@ router.post('/addItem', (req, res)=>{
     }
 });
 
-router.post('/deleteMenuItem', (req,res) => {
+router.post('/deleteMenuItem', passport.authenticate("jwt",{ session: false }), (req,res) => {
     if( req.cookies.authCookieo === 'authenticated'){
         let iid = req.body.iid;
         let rid = req.body.rid;
@@ -397,7 +417,7 @@ router.post('/deleteMenuItem', (req,res) => {
     }
 });
 
-router.post('/deleteSection', (req,res) =>{
+router.post('/deleteSection', passport.authenticate("jwt",{ session: false }),(req,res) =>{
     if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let section = req.body.section;
@@ -411,10 +431,13 @@ router.post('/deleteSection', (req,res) =>{
             }else{
                 console.log(restaurant);
                 let items = restaurant.items;
-                for(let item of items){     
+                var i = items.length-1;
+                while (i>=0) {
+                    var item = items[i];
                     if( item.section == section  ){
                         item.remove();
                     }
+                    i--;
                 }
                 restaurant.save(function(err,result){
                     if(err){
@@ -437,7 +460,7 @@ router.post('/deleteSection', (req,res) =>{
 })
 
 
-router.post('/viewOrders', (req,res) => {
+router.post('/viewOrders', passport.authenticate("jwt",{ session: false }), (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'||1){
         let rid = req.body.rid;
         //console.log(rid);   
@@ -484,7 +507,7 @@ router.post('/viewOrders', (req,res) => {
     }
 })
 
-router.post('/oldOrder', (req,res) => {
+router.post('/oldOrder', passport.authenticate("jwt",{ session: false }), (req,res) => {
 
     if(req.cookies.authCookieo === 'authenticated'||1){
         let rid = req.body.rid;
@@ -533,7 +556,7 @@ router.post('/oldOrder', (req,res) => {
    
 })
 
-router.post('/updateSection', (req,res) => {
+router.post('/updateSection', passport.authenticate("jwt",{ session: false }) , (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let oldSection = req.body.oldSection;
@@ -570,7 +593,7 @@ router.post('/updateSection', (req,res) => {
     }
 })
 
-router.post('/updateStatus',(req,res) =>{
+router.post('/updateStatus', passport.authenticate("jwt",{ session: false }), (req,res) =>{
     if(req.cookies.authCookieo === 'authenticated'){
         Order.findById( req.body.oid, function(err, order){
             if(err){
@@ -599,7 +622,7 @@ router.post('/updateStatus',(req,res) =>{
     }
 })
 
-router.post('/updateItem', (req,res) =>{
+router.post('/updateItem',  passport.authenticate("jwt",{ session: false }) ,(req,res) =>{
     let name = req.body.nameUpdate;
     let description = req.body.descriptionUpdate;
     let price = req.body.priceUpdate;

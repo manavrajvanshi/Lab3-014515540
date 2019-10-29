@@ -63,6 +63,7 @@ export default class Order extends React.Component{
     
     placeOrder(){
         axios.defaults.withCredentials = true;
+        let token = localStorage.getItem("Buyer-Auth-Token");
         let data = {
             rid: this.props.location.state.rid,
             bid : cookie.load('buyerData').bid,
@@ -81,7 +82,13 @@ export default class Order extends React.Component{
 
         console.log(data);
         if( Object.keys(data.quantity).length !== 0 && this.state.deliveryAddress !== ''){
-            axios.post(nodeAddress+'buyer/placeOrder',data)
+            axios.post(nodeAddress+'buyer/placeOrder',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
             .then(response => {
                 console.log(response.data);
                 alert("Order Placed, You will be redirected to order Status Page. Click OK to continue");
@@ -105,11 +112,18 @@ export default class Order extends React.Component{
         }
         let rid = this.props.location.state.rid;
         axios.defaults.withCredentials = true;
+        let token = localStorage.getItem("Buyer-Auth-Token");
         let data = {
             rid: rid
         }
         console.log(data);
-        axios.post(nodeAddress+'buyer/menu',data)
+        axios.post(nodeAddress+'buyer/menu',data, {
+            headers: {
+                'Authorization' : token,
+                'Accept' : 'application/json',
+                'Content-Type': 'application/json'
+            }
+        })
         .then(response => {
             this.data = response.data;
             let pricesList = {}

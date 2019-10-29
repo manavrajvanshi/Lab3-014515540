@@ -37,28 +37,31 @@ export default class OwnerLogin extends React.Component{
             axios.defaults.withCredentials = true;
             //make a post request with the user data
             axios.post(nodeAddress+'restaurant/signin',data)
-                .then(response => {
-
-                    if(response.status === 200){
-                        console.log(cookie.load('ownerData'));
-                        if( cookie.load('authCookieo') === "authenticated"){
-                            this.setState({
-                                auth : true
-                            })
-                        }
-                    }else if(response.status === 201){
-                        console.log(response.status+" error "+ response.data);
-                        alert("Incorrect Password");
-                    }else if(response.status === 202){
-                        console.log(response.status+" error "+ response.data);
-                        alert("No User with the given credentials.");
-                    }else if(response.status === 203){
-                        console.log("Error in first if in backend - restaurant - signin")
-                    }          
-                }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error));
+            .then(response => {
+                if(typeof (Storage) !== "undefined"){
+                    localStorage.setItem("Owner-Auth-Token", response.headers.authorization);
+                }else{
+                    alert("Please use a browser that uses local storage!");
                 }
-            );
+                if(response.status === 200){
+                    console.log(cookie.load('ownerData'));
+                    if( cookie.load('authCookieo') === "authenticated"){
+                        this.setState({
+                            auth : true
+                        })
+                    }
+                }else if(response.status === 201){
+                    console.log(response.status+" error "+ response.data);
+                    alert("Incorrect Password");
+                }else if(response.status === 202){
+                    console.log(response.status+" error "+ response.data);
+                    alert("No User with the given credentials.");
+                }else if(response.status === 203){
+                    console.log("Error in first if in backend - restaurant - signin")
+                }          
+            }).catch(error=>{
+                console.log("Error: "+JSON.stringify(error));
+            });
         }   
     }
     

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 let url = 'mongodb+srv://root:rootroot@cluster0-dqihd.mongodb.net/grubhubproject?retryWrites=true&w=majority';
-mongoose.connect(url, {useNewUrlParser: true});
+mongoose.connect(url, {useNewUrlParser: true,useUnifiedTopology: true });
 
 ///////////////////////////////////////////
 const buyerSchema = new Schema(

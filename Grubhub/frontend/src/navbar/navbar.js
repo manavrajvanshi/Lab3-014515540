@@ -16,8 +16,10 @@ export class Navbar extends React.Component{
         let url;
         if(cookie.load('userType')==="buyer"){
             url =nodeAddress+'buyer/logout';
+            localStorage.removeItem("Buyer-Auth-Token");
         }else{
             url =nodeAddress+'restaurant/logout';
+            localStorage.removeItem("Owner-Auth-Token");
         }
         cookie.remove('authCookieb');
         cookie.remove('authCookieo');

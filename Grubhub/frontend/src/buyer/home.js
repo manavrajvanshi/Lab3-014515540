@@ -45,17 +45,17 @@ class BuyerHome extends React.Component{
                     'Content-Type': 'application/json'
                 }
             })
-                .then(response => {
-                    buyer = response.data;
-                    image = nodeAddress+'buyer/'+data.bid+'.jpg';
-                    this.setState({
-                        imageRendered : true
-                    })
-                }).catch(error=>{
-                    console.log("Errorrrrrr: "+JSON.stringify(error));
-                    re = <Redirect to = "/welcome"/>
-                }
-            );
+            .then(response => {
+                buyer = response.data;
+                image = nodeAddress+'buyer/'+data.bid+'.jpg';
+                this.setState({
+                    imageRendered : true
+                })
+            })
+            .catch(error=>{
+                console.log("Error: "+JSON.stringify(error));
+                re = <Redirect to = "/welcome"/>
+            });
         }else{
             re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
@@ -63,12 +63,18 @@ class BuyerHome extends React.Component{
     }
 
     search(){
-
         let data = {
             'searchItem' : this.state.searchItem
         }
         if(this.state.searchItem !== ''){
-            axios.post(nodeAddress+'buyer/searchItem',data)
+            let token = localStorage.getItem("Buyer-Auth-Token");
+            axios.post(nodeAddress+'buyer/searchItem',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
             .then(response => {
                 if(response.status === 200){
                     //console.log(response.data);

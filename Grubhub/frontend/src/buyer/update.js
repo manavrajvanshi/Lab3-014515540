@@ -44,26 +44,31 @@ export default class BuyerUpdate extends React.Component{
         }else{
             
             axios.defaults.withCredentials = true;
-            //make a post request with the user data
-            axios.post(nodeAddress+'buyer/update',data)
-                .then(response => {
-                    if(response.status === 200){
-                        alert("Profile Updated");
-                        re = <Redirect to = "/buyerHome"/>
-                        this.setState({
-                            updated: true
-                        })
-                    }else if( response.status === 201){
-                        alert("Some Error Occured, records not updated");
-                        console.log(response.data);
-                    }else if(response.status === 202){
-                        alert("The email belongs to someone else");
-                    }
-                    
-                }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error.data));
+            let token = localStorage.getItem("Buyer-Auth-Token");
+            axios.post(nodeAddress+'buyer/update',data, {
+                headers: {
+                    'Authorization' : token,
+                    'Accept' : 'application/json',
+                    'Content-Type': 'application/json'
                 }
-            );
+            })
+            .then(response => {
+                if(response.status === 200){
+                    alert("Profile Updated");
+                    re = <Redirect to = "/buyerHome"/>
+                    this.setState({
+                        updated: true
+                    })
+                }else if( response.status === 201){
+                    alert("Some Error Occured, records not updated");
+                    console.log(response.data);
+                }else if(response.status === 202){
+                    alert("The email belongs to someone else");
+                }
+                
+            }).catch(error=>{
+                console.log("Error: "+JSON.stringify(error.data));
+            });
         }
         
     }
