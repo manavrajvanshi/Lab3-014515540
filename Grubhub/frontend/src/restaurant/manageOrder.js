@@ -58,7 +58,10 @@ export default class ManageOrder extends React.Component{
         .then(response => {
             console.log(JSON.stringify(response.data));
             if(response.status === 200){
-                window.location.reload();
+                //window.location.reload();
+                orderTable = [];
+                this.createTable();
+
             }else{
                 console.log(response.data);
             }
