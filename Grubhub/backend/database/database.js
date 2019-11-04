@@ -50,6 +50,7 @@ const orderSchema = new Schema(
         quantity: {},
         status : {type: String, default:'Pending'},
         deliveryAddress: String,
+        message:[]
     },
     {
         collection : 'orders'
