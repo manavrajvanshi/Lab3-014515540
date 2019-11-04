@@ -16,8 +16,8 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('owner');
 opts.secretOrKey = 'HashString';
 
 
-passport.use("jwt", new JwtStrategy(opts, function(jwt_payload, done) {
-    // console.log("HEREE");
+passport.use("jwto", new JwtStrategy(opts, function(jwt_payload, done) {
+    console.log("HEREE");
     // console.log(jwt_payload);
     Restaurant.findOne({_id: jwt_payload.rid}, function(err, user) {
         if (err) {
@@ -170,7 +170,7 @@ router.post('/signin',(req, res)=> {
 
 
 
-router.post('/update', passport.authenticate("jwt",{ session: false }), (req,res) =>{
+router.post('/update', passport.authenticate("jwto",{ session: false }), (req,res) =>{
     let ownerName = req.body.ownerName;
     let ownerEmail = req.body.ownerEmail;
     let ownerPassword = req.body.ownerPassword;
@@ -253,7 +253,7 @@ router.post('/update', passport.authenticate("jwt",{ session: false }), (req,res
 });
 
 
-router.post('/home',passport.authenticate("jwt",{ session: false }),(req, res)=> {
+router.post('/home',passport.authenticate("jwto",{ session: false }),(req, res)=> {
     let rid = req.body.rid;
     let query = { _id: rid};
     Restaurant.find(query, function(err,result){
@@ -307,7 +307,7 @@ router.post('/itemImage',imageUpload.single('itemImage'), (req,res) =>{
     res.end("Image Uploaded");
 })
 
-router.post('/menu', passport.authenticate("jwt",{ session: false }), (req,res) => {
+router.post('/menu', passport.authenticate("jwto",{ session: false }), (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'){
         let ownerData = req.cookies.ownerData;
         let rid = JSON.parse(ownerData).rid;
@@ -333,7 +333,7 @@ router.post('/menu', passport.authenticate("jwt",{ session: false }), (req,res) 
     }
 });
 
-router.post('/addItem', passport.authenticate("jwt",{ session: false }) , (req, res)=>{
+router.post('/addItem', passport.authenticate("jwto",{ session: false }) , (req, res)=>{
 
     let name = req.body.name;
     let description = req.body.description;
@@ -378,7 +378,7 @@ router.post('/addItem', passport.authenticate("jwt",{ session: false }) , (req, 
     }
 });
 
-router.post('/deleteMenuItem', passport.authenticate("jwt",{ session: false }), (req,res) => {
+router.post('/deleteMenuItem', passport.authenticate("jwto",{ session: false }), (req,res) => {
     if( req.cookies.authCookieo === 'authenticated'){
         let iid = req.body.iid;
         let rid = req.body.rid;
@@ -417,7 +417,7 @@ router.post('/deleteMenuItem', passport.authenticate("jwt",{ session: false }), 
     }
 });
 
-router.post('/deleteSection', passport.authenticate("jwt",{ session: false }),(req,res) =>{
+router.post('/deleteSection', passport.authenticate("jwto",{ session: false }),(req,res) =>{
     if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let section = req.body.section;
@@ -460,7 +460,7 @@ router.post('/deleteSection', passport.authenticate("jwt",{ session: false }),(r
 })
 
 
-router.post('/viewOrders', passport.authenticate("jwt",{ session: false }), (req,res) => {
+router.post('/viewOrders', passport.authenticate("jwto",{ session: false }), (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'||1){
         let rid = req.body.rid;
         //console.log(rid);   
@@ -507,7 +507,7 @@ router.post('/viewOrders', passport.authenticate("jwt",{ session: false }), (req
     }
 })
 
-router.post('/oldOrder', passport.authenticate("jwt",{ session: false }), (req,res) => {
+router.post('/oldOrder', passport.authenticate("jwto",{ session: false }), (req,res) => {
 
     if(req.cookies.authCookieo === 'authenticated'||1){
         let rid = req.body.rid;
@@ -556,7 +556,7 @@ router.post('/oldOrder', passport.authenticate("jwt",{ session: false }), (req,r
    
 })
 
-router.post('/updateSection', passport.authenticate("jwt",{ session: false }) , (req,res) => {
+router.post('/updateSection', passport.authenticate("jwto",{ session: false }) , (req,res) => {
     if(req.cookies.authCookieo === 'authenticated'){
         let rid = req.body.rid;
         let oldSection = req.body.oldSection;
@@ -593,7 +593,7 @@ router.post('/updateSection', passport.authenticate("jwt",{ session: false }) , 
     }
 })
 
-router.post('/updateStatus', passport.authenticate("jwt",{ session: false }), (req,res) =>{
+router.post('/updateStatus', passport.authenticate("jwto",{ session: false }), (req,res) =>{
     if(req.cookies.authCookieo === 'authenticated'){
         Order.findById( req.body.oid, function(err, order){
             if(err){
@@ -622,7 +622,7 @@ router.post('/updateStatus', passport.authenticate("jwt",{ session: false }), (r
     }
 })
 
-router.post('/updateItem',  passport.authenticate("jwt",{ session: false }) ,(req,res) =>{
+router.post('/updateItem',  passport.authenticate("jwto",{ session: false }) ,(req,res) =>{
     let name = req.body.nameUpdate;
     let description = req.body.descriptionUpdate;
     let price = req.body.priceUpdate;

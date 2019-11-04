@@ -17,7 +17,7 @@ opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme('buyer');
 opts.secretOrKey = 'HashString';
 
 
-passport.use("jwt", new JwtStrategy(opts, function(jwt_payload, done) {
+passport.use("jwtb", new JwtStrategy(opts, function(jwt_payload, done) {
     // console.log("HEREE");
     // console.log(jwt_payload);
     Buyer.findOne({_id: jwt_payload.bid}, function(err, user) {
@@ -143,7 +143,7 @@ router.post('/signin',(req, res)=> {
     });  
 })
 
-router.post('/update', passport.authenticate("jwt",{ session: false }), (req,res) =>{
+router.post('/update', passport.authenticate("jwtb",{ session: false }), (req,res) =>{
     let name = req.body.name;
     let email = req.body.email;
     let password = req.body.password;
@@ -212,7 +212,7 @@ router.post('/update', passport.authenticate("jwt",{ session: false }), (req,res
     }).catch(error => console.log(error));
 });
 
-router.post('/home', passport.authenticate("jwt",{ session: false }), (req, res)=> {
+router.post('/home', passport.authenticate("jwtb",{ session: false }), (req, res)=> {
     let bid = req.body.bid;
     let query = {_id:bid};
     Buyer.find(query, function(err, result){
@@ -245,7 +245,7 @@ router.post('/profilePictureUpload',upload.single('buyerProfilePicture'), (req,r
     
 })
 
-router.post('/searchItem' , passport.authenticate("jwt",{ session: false }),  (req,res) =>{
+router.post('/searchItem' , passport.authenticate("jwtb",{ session: false }),  (req,res) =>{
     let searchItem = req.body.searchItem;
     console.log(searchItem);
 
@@ -284,7 +284,7 @@ router.post('/searchItem' , passport.authenticate("jwt",{ session: false }),  (r
     });
 })
 
-router.post('/menu', passport.authenticate("jwt",{ session: false }), (req,res) => {
+router.post('/menu', passport.authenticate("jwtb",{ session: false }), (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
         let rid = req.body.rid;
         Restaurant.find( {_id:rid}, function(err,result){
@@ -322,7 +322,7 @@ router.post('/menu', passport.authenticate("jwt",{ session: false }), (req,res) 
     }
 });
 
-router.post('/placeOrder', passport.authenticate("jwt",{ session: false }), (req,res) => {
+router.post('/placeOrder', passport.authenticate("jwtb",{ session: false }), (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
         Order.create(req.body, function(err,result){
             if(err){
@@ -344,7 +344,7 @@ router.post('/placeOrder', passport.authenticate("jwt",{ session: false }), (req
     }
 })
 
-router.post('/getCurrentOrders',passport.authenticate("jwt",{ session: false }),(req,res) => {
+router.post('/getCurrentOrders',passport.authenticate("jwtb",{ session: false }),(req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
 
         let bid = req.body.bid;
@@ -395,7 +395,7 @@ router.post('/getCurrentOrders',passport.authenticate("jwt",{ session: false }),
 })
 
 
-router.post('/getPastOrders',passport.authenticate("jwt",{ session: false }),(req,res) => {
+router.post('/getPastOrders',passport.authenticate("jwtb",{ session: false }),(req,res) => {
     if(req.cookies.authCookieb === 'authenticated'||1){
         let bid = req.body.bid;
         // console.log(query);
