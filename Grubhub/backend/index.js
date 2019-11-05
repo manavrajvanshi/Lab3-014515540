@@ -1,11 +1,12 @@
 const express = require ('express');
+
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const cookieParser = require ('cookie-parser');
-const enVar = require('./enVar.js');
-const reactAddress = enVar.reactAddress;
+
 const buyerRoute = require('./routes/buyer.js');
 const restaurantRoute = require('./routes/restaurant.js');
+
 const passport = require('passport');
 
 const app = express();
