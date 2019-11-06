@@ -85,4 +85,3 @@ handleTopicRequest("restaurant_updateSection",RestaurantUpdateSection);
 handleTopicRequest("restaurant_updateStatus",RestaurantUpdateStatus);
 handleTopicRequest("restaurant_viewOrders", RestaurantViewOrders);
 
-//handleTopicRequest("buyer_signin",BuyerSignin);
