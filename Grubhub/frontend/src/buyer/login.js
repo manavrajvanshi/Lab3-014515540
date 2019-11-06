@@ -44,8 +44,14 @@ export default class BuyerLogin extends React.Component{
             axios.post(nodeAddress+'buyer/signin',data)
             .then(response => {
                 if(response.status === 200){
+                    for(let cookieItem in response.data){
+                        console.log(cookieItem);
+                        console.log(response.data[cookieItem])
+                        cookie.save(cookieItem,response.data[cookieItem],{encode:String} )
+                        //Cookies.set(cookieItem,JSON.stringify(response.data[cookieItem]));
+                    }
                     //console.log("cookie: ",cookie.load('buyerData'));
-                    //console.log("Response Headers ", response);
+                    console.log("Cookie Data ", response.data);
 
                     if(typeof (Storage) !== "undefined"){
                         localStorage.setItem("Buyer-Auth-Token", response.headers.authorization);

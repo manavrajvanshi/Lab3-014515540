@@ -54,6 +54,12 @@ export default class BuyerUpdate extends React.Component{
             })
             .then(response => {
                 if(response.status === 200){
+                    for(let cookieItem in response.data){
+                        console.log(cookieItem);
+                        console.log(response.data[cookieItem])
+                        cookie.save(cookieItem,response.data[cookieItem],{encode:String} )
+                        
+                    }
                     alert("Profile Updated");
                     re = <Redirect to = "/buyerHome"/>
                     this.setState({

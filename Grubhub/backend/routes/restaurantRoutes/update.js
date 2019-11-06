@@ -21,12 +21,18 @@ const update = (req,res) =>{
                 res.end("Email Belongs to another account.");
             }else{
                 let owner = kafkaResult;
-                res.cookie('authCookieo', 'authenticated');
-                res.cookie('userType', 'owner');
-                res.cookie('rid', owner['rid']);
-                res.cookie('ownerData',JSON.stringify(owner),{encode:String});
+                let cookieObj ={
+                    'authCookieo'   :'authenticated',
+                    'userType'      :'owner',
+                    'rid'           :owner['rid'],
+                    'ownerData'     :JSON.stringify(owner)
+                }
+                // res.cookie('authCookieo', 'authenticated');
+                // res.cookie('userType', 'owner');
+                // res.cookie('rid', owner['rid']);
+                // res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                 res.writeHead(200);
-                res.end("Records Updated");
+                res.end(JSON.stringify(cookieObj));
             }
         }
     });

@@ -44,6 +44,12 @@ export default class OwnerLogin extends React.Component{
                     alert("Please use a browser that uses local storage!");
                 }
                 if(response.status === 200){
+                    for(let cookieItem in response.data){
+                        console.log(cookieItem);
+                        console.log(response.data[cookieItem])
+                        cookie.save(cookieItem,response.data[cookieItem],{encode:String} )
+                        //Cookies.set(cookieItem,JSON.stringify(response.data[cookieItem]));
+                    }
                     console.log(cookie.load('ownerData'));
                     if( cookie.load('authCookieo') === "authenticated"){
                         this.setState({

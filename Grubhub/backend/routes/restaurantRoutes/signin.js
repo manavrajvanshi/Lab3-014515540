@@ -18,18 +18,24 @@ const signin = (req, res)=> {
                 res.end("No user with the given email found.");
             }else{
                 let owner = kafkaResult;
-                res.cookie('authCookieo', 'authenticated');
-                res.cookie('userType', 'owner');
-                res.cookie('rid', JSON.stringify(owner['rid']),{encode:String});
-                // console.log("OWNER RID");
-                // console.log(JSON.stringify(owner['rid']),{encode:String});
-                res.cookie('ownerData',JSON.stringify(owner),{encode:String});
+                let cookieObj ={
+                    'authCookieo'   :'authenticated',
+                    'userType'      :'owner',
+                    'rid'           :owner['rid'],
+                    'ownerData'     :JSON.stringify(owner)
+                }
+                // res.cookie('authCookieo', 'authenticated');
+                // res.cookie('userType', 'owner');
+                // res.cookie('rid', JSON.stringify(owner['rid']),{encode:String});
+                // // console.log("OWNER RID");
+                // // console.log(JSON.stringify(owner['rid']),{encode:String});
+                // res.cookie('ownerData',JSON.stringify(owner),{encode:String});
                 let token = jwt.sign({rid : owner['rid']}, "HashString");
                 //console.log("Token: "+token);
                 res.setHeader("Access-Control-Expose-Headers","Authorization");
                 res.header({"Authorization": 'owner '+token});
                 res.writeHead(200);
-                res.end("Signed in successfully");
+                res.end(JSON.stringify(cookieObj));
                 console.log("Owner Signed in");
                 //console.log(owner);
             }
