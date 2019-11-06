@@ -1,34 +1,25 @@
-const database = require('../../database/database');
-const Order = database.Order;
+let kafka = require('../../kafka/client.js');
 
 let sendChat = (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
-        let oid = req.body.oid;
-        let chatMessage = req.body.chatMessage;
-
-        Order.findById(oid, function(err,order){
+        kafka.make_request('buyer_sendChat',req.body, function(err,kafkaResult){
             if(err){
                 console.log(err);
-                console.log("Error in first if. Check Backend -> buyer -> sendChat ");
-                res.writeHead(401);
-                res.end();
+                console.log("Error in first if. Check Backend -> Buyer -> searchItem ");
+                res.writeHead(202);
+                res.end("Sorry, We're closed!");
             }else{
-                if(order){ 
-                    order.message.push({'type':'buyer','message':chatMessage});
-                    order.save(function (err, result){
-                        if(err){
-                            console.log("Error in Third if. Check Backend -> buyer -> sendChat ");
-                            res.writeHead(400);
-                            res.end();
-                        }else{
-                            res.writeHead(200);
-                            //console.log(result.message);
-                            res.end(JSON.stringify(result.message));  
-                        }
-                    })
+                console.log("RESPONSE: ",kafkaResult);
+                if(kafkaResult == 400 ){
+                    console.log("Error in Third if. Check Backend -> buyer -> sendChat ");
+                    res.writeHead(400);
+                    res.end();
+                }else{
+                    res.writeHead(200);
+                    res.end(JSON.stringify(kafkaResult.message)); 
                 }
             }
-        })
+        });
     }else{
         console.log("Error in first else Check Backend -> buyer -> sendChat ");
         res.writeHead(403);

@@ -36,11 +36,12 @@ export default class OldOrder extends React.Component{
         .then(response => {
             if(response.status === 200){
                 flag = true;
+                //console.log(response.data);
                 this.setState({
                     orders:response.data
                 }, ()=>{
                     let orders = this.state.orders;
-                        
+                    //console.log(orders);
                     for(let order of orders){
                         let {oid,itemList,buyerName,status,total} = order;
                         orderTable.push(
@@ -88,11 +89,12 @@ export default class OldOrder extends React.Component{
         this.createTable();
     }
     render(){
-
+        
         if(cookie.load('authCookieo') !== "authenticated" ){
             re = <Redirect to = "/welcome"/>
         }
         if(!flag){
+            //console.log("HERE")
             return(
                 <div>
                     {this.state.message}

@@ -1,47 +1,23 @@
-const database = require('../../database/database');
-const Order = database.Order;
-
+let kafka = require('../../kafka/client.js');
 const getCurrentOrders = (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
-        let bid = req.body.bid;
-        // console.log(query);
-        Order.find({bid:bid}, function(err,result){
+        kafka.make_request('buyer_getCurrentOrders',req.body, function(err,kafkaResult){
             if(err){
                 console.log(err);
                 console.log("Error in first if. Check Backend -> buyer -> getCurrentOrders ");
                 res.writeHead(404);
                 res.end("No orders found");
             }else{
-                if(result.length > 0){
-                    let orders = result;
-                    let upcomingOrders = []
-                    for(let order of orders){
-                        let itemList = [];
-                        if(order.status !== 'Delivered' && order.status !== 'Cancelled'){
-                            for(let item in order['quantity']){
-                                //console.log(item, order['quantity'][item]);
-                                itemList.push({'itemName':item, 'qty':order['quantity'][item]});
-                            }
-                            upcomingOrders.push({
-                                'oid' : order['_id'],
-                                'itemList' : itemList,
-                                'restaurantName' : order['restaurantName'],
-                                'status' : order['status'],
-                                'total' : order['total'],
-                                'message' : order['message']
-                            });
-                        }    
-                    }
-                    //console.log(upcomingOrders);
-                    res.end(JSON.stringify(upcomingOrders));
-                }else{
+                if(kafkaResult == 404){
                     console.log("No orders found");
                     res.writeHead(404);
                     res.end("No orders found");
+                }else{
+                    let upcomingOrders = kafkaResult;
+                    res.end(JSON.stringify(upcomingOrders));
                 }
             }
-        });
-
+        });  
     }else{
         console.log("Error in second if. Check Backend -> buyer -> getCurrentOrders ");
         res.writeHead(405);

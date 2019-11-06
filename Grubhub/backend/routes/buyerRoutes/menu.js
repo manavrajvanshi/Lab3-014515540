@@ -1,34 +1,20 @@
-const database = require('../../database/database');
-const Restaurant = database.Restaurant;
+let kafka = require('../../kafka/client.js');
 
 const menu = (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
-        let rid = req.body.rid;
-        Restaurant.find( {_id:rid}, function(err,result){
+        kafka.make_request('buyer_menu',req.body, function(err,kafkaResult){
             if(err){
                 console.log(err);
                 console.log("Error in first if, Check Backend -> buyer -> menu");
                 res.writeHead(404);
                 res.end("OOPS!! The restaurant is closed.");
             }else{
-                if(result.length > 0 ){
-                    let items = result[0].items;
-                    let data = [];
-                    for( let item of items){
-                        data.push({
-                            iid: item['_id'],
-                            name: item['name'],
-                            description: item['description'],
-                            section: item['section'],
-                            price: item['price']
-                        })
-                    }
-                    res.writeHead(200);
-                    res.end(JSON.stringify(data));
-                }else{
+                if(kafkaResult == 404 ){
                     console.log("No Items found at this restaurant.");
                     res.writeHead(404);
                     res.end("OOPS!! The restaurant is closed or out of items.");
+                }else{
+                    res.end(JSON.stringify(kafkaResult));
                 }
             }
         });

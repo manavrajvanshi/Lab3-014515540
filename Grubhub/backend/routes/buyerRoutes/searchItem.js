@@ -1,40 +1,21 @@
-const database = require('../../database/database');
-const Restaurant = database.Restaurant;
+let kafka = require('../../kafka/client.js');
 
 const searchItem = (req,res) =>{
-    let searchItem = req.body.searchItem;
-    console.log(searchItem);
-
-    Restaurant.find( {}, function(err,restaurants){
+    kafka.make_request('buyer_searchItem',req.body, function(err,kafkaResult){
         if(err){
             console.log(err);
             console.log("Error in first if. Check Backend -> Buyer -> searchItem ");
             res.writeHead(202);
             res.end("Sorry, We're closed!");
         }else{
-            let restaurantResult = [];
-            for(let restaurant of restaurants){
-                let items = restaurant.items;
-                for( let item of items){
-                    if(item.name == searchItem){
-                        restaurantResult.push(
-                            {
-                                rid : restaurant._id,
-                                restaurantName : restaurant.restaurantName,
-                                cuisine : restaurant.cuisine
-                            }
-                        );
-                    }
-                }
-            }
-            if(restaurantResult.length == 0 ){
+            console.log("RESPONSE: ",kafkaResult);
+            if(kafkaResult == 202 ){
                 res.writeHead(202);
                 console.log("Item not available at any of the restaurants!");
                 res.end("Item not found at any of the restaurants!");
             }else{
                 res.writeHead(200);
-                res.end(JSON.stringify(restaurantResult));
-                console.log(restaurantResult);
+                res.end(JSON.stringify(kafkaResult))
             }
         }
     });

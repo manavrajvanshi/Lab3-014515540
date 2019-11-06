@@ -1,21 +1,16 @@
-const database = require('../../database/database');
-const Order = database.Order;
-
+let kafka = require('../../kafka/client.js');
 const placeOrder = (req,res) => {
     if(req.cookies.authCookieb === 'authenticated'){
-    Order.create(req.body, function(err,result){
+    kafka.make_request('buyer_placeOrder',req.body, function(err,kafkaResult){
             if(err){
                 console.log(err);
-                console.log("Error in first if. Check Backend -> buyer -> placeOrder ");
-                res.writeHead(401);
-                res.end();
+                console.log("Error in first if, Check Backend -> buyer -> menu");
+                res.writeHead(404);
+                res.end("OOPS!! The restaurant is closed.");
             }else{
-                console.log("Order Placed");
-                res.end("Order Placed");
-                //console.log(result);
+                res.end(kafkaResult);
             }
         });
-        // console.log(req.body);
     }else{
         console.log("Error in third if. Check Backend -> buyer -> placeOrder ");
         res.writeHead(403);

@@ -146,7 +146,7 @@ export default class ManageOrder extends React.Component{
                             let sender = message.type;
                             let msg = message.message;
 
-                            if(sender === "restaurant"){
+                            if(sender == "restaurant"){
                                 sender = "You"
                             }else{
                                 sender = "Buyer"

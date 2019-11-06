@@ -1,39 +1,21 @@
-const database = require('../../database/database');
-const Restaurant = database.Restaurant;
+let kafka = require('../../kafka/client.js');
 
 const deleteMenuItem = (req,res) => {
     if( req.cookies.authCookieo === 'authenticated'){
-        let iid = req.body.iid;
-        let rid = req.body.rid;
-
-        Restaurant.findById(rid, function(err, restaurant){
+        kafka.make_request('restaurant_deleteMenuItem', req.body, function(err,kafkaResult){
             if(err){
-              console.log(err);
-              console.log("Error in first if. Check Backend -> restaurant -> deleteMenuItem");
-              res.writeHead(500);
-              res.end();
+                console.log("Error in first if. Check Backend -> restaurant -> addItem");
             }else{
-                //console.log(restaurant);
-                let items = restaurant.items;
-                for(let item of items){     
-                    if( item._id == iid  ){
-                    item.remove();
-                    break;
-                    }
-                }
-                restaurant.save(function(err,result){
-                    if(err){
-                        console.log(err);
+                if(kafkaResult == 500){
+                    console.log(err);
                         console.log("Error in Second if. Check Backend -> restaurant -> deleteMenuItem");
                         res.writeHead(500);
                         res.end();
-                    }else{
-                        //console.log(result);
-                        res.writeHead(200);
-                        res.end();
-                        console.log("Item Deleted"); 
-                    }
-                })
+                }else if (kafkaResult == 200){
+                    res.writeHead(200);
+                    res.end();
+                    console.log("Item Deleted"); 
+                }
             }
         });
     }
