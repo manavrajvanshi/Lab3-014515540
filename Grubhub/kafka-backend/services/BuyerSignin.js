@@ -1,16 +1,13 @@
 const bcrypt = require('bcrypt');
-const database = require('../database/database.js');
+var database = require('../database/database.js');
 const Buyer = database.Buyer;
 
 function handle_request(msg, callback){
     console.log("Inside kafka backend--------------------");
     console.log(JSON.stringify(msg));
-    
     let email = msg.email;
     let password = msg.password;
-
     let query = {email : email};
-
     Buyer.find(query, function(err, result){
         if(err){
             console.log("Error in first if. Check Kafka -> Buyer -> Signin ");
@@ -40,7 +37,7 @@ function handle_request(msg, callback){
             }else{
                 callback(null, 202);
                 console.log("No user with the given email found.");
-                res.end("No user with the given email found.");
+                
             }
         }
     });

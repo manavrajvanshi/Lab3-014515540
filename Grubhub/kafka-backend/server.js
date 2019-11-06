@@ -1,5 +1,8 @@
 var connection =  new require('./kafka/Connection');
 //topics files
+var BuyerSignup = require('./services/BuyerSignup.js');
+var BuyerSignin = require('./services/BuyerSignin.js');
+var BuyerUpdate = require('./services/BuyerUpdate.js');
 var BuyerHome = require('./services/BuyerHome.js');
 var BuyerGetCurrentOrders = require('./services/BuyerGetCurrentOrders.js');
 var BuyerGetPastOrders = require('./services/BuyerGetPastOrders.js');
@@ -8,6 +11,9 @@ var BuyerPlaceOrder = require('./services/BuyerPlaceOrder.js');
 var BuyerSearchItem = require('./services/BuyerSearchItem.js');
 var BuyerSendChat = require('./services/BuyerSendChat.js');
 
+var RestaurantSignup = require('./services/RestaurantSignup.js');
+var RestaurantSignin = require('./services/RestaurantSignin.js');
+var RestaurantUpdate = require('./services/RestaurantUpdate.js');
 var RestaurantHome = require('./services/RestaurantHome.js');
 var RestaurantMenu = require('./services/RestaurantMenu.js');
 var RestaurantAddItem = require('./services/RestaurantAddItem.js');
@@ -53,6 +59,9 @@ function handleTopicRequest(topic_name,fname){
 // Add your TOPICs here
 // first argument is topic name
 // second argument is a function that will handle this topic request
+handleTopicRequest("buyer_signup", BuyerSignup);
+handleTopicRequest("buyer_signin", BuyerSignin);
+handleTopicRequest("buyer_update", BuyerUpdate);
 handleTopicRequest("buyer_home",BuyerHome);
 handleTopicRequest("buyer_getCurrentOrders",BuyerGetCurrentOrders);
 handleTopicRequest("buyer_getPastOrders",BuyerGetPastOrders);
@@ -61,6 +70,9 @@ handleTopicRequest("buyer_placeOrder",BuyerPlaceOrder);
 handleTopicRequest("buyer_searchItem",BuyerSearchItem);
 handleTopicRequest("buyer_sendChat",BuyerSendChat);
 
+handleTopicRequest("restaurant_signup", RestaurantSignup);
+handleTopicRequest("restaurant_signin",RestaurantSignin);
+handleTopicRequest("restaurant_update", RestaurantUpdate);
 handleTopicRequest("restaurant_home",RestaurantHome);
 handleTopicRequest("restaurant_menu",RestaurantMenu);
 handleTopicRequest("restaurant_addItem",RestaurantAddItem);
