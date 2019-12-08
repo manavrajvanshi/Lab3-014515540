@@ -1,5 +1,6 @@
 const graphql = require('graphql'); 
-const {Buyer, Owner} = require('../database/database.js')
+const {Buyer, Owner} = require('../database/database.js');
+const bcrypt = require('bcrypt');
 
 
 const {
@@ -92,7 +93,6 @@ const OwnerType = new GraphQLObjectType({
                     }
                 }
             }
-
         }
     })
 });
@@ -139,7 +139,20 @@ const RootQuery = new GraphQLObjectType({
                 }
             }
         },
-
+        signInBuyer :{
+            type : BuyerType,
+            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
+            async resolve(parent, args){
+                let buyer = await Buyer.find({email : args.email});
+                if(buyer.length == 0){
+                    return null;
+                }
+                else{
+                    let auth = await bcrypt.compare(args.password, buyer[0].password);
+                    return auth ? buyer[0] : null;
+                }
+            }
+        },
         owner :{
             type : OwnerType,
             args : { id : {type : GraphQLID}},
@@ -148,6 +161,22 @@ const RootQuery = new GraphQLObjectType({
                     if( owner.id == args.id){
                         return owner;
                     }
+                }
+            }
+        },
+
+        signInOwner :{
+            type : OwnerType,
+            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
+            async resolve(parent, args){
+                let owner = await Owner.find({email : args.email});
+                //console.log(owner);
+                if(owner.length == 0){
+                    return null;
+                }
+                else{
+                    let auth = await bcrypt.compare(args.password, owner[0].password);
+                    return auth ? owner[0] : null;
                 }
             }
         },
@@ -194,15 +223,24 @@ const Mutation = new GraphQLObjectType({
                 password : { type : GraphQLString }
             },
             async resolve(parent, args){
-                let buyer = new Buyer({
-                    firstName : args.firstName,
-                    lastName : args.lastName,
-                    email : args.email,
-                    password : args.password
-                });
+                let buyers = await Buyer.find({email : args.email});
+                //console.log(buyers);
+                let hashedPassword = await bcrypt.hash(args.password, 10);
+                //console.log(hashedPassword);
+                if(buyers.length == 0){
+                    let buyer = new Buyer({
+                        firstName : args.firstName,
+                        lastName : args.lastName,
+                        email : args.email,
+                        password : hashedPassword
+                    });
 
-                let b = await buyer.save();
-                return b == null? null : b;
+                    let signedUpBuyer = await buyer.save();
+                    console.log("Buyer Signed Up!");
+                    return signedUpBuyer == null? null : signedUpBuyer;
+                }
+                console.log("Buyer Signup Error!");
+                return null;              
             }
         },
         signUpOwner:{
@@ -216,17 +254,27 @@ const Mutation = new GraphQLObjectType({
                 cuisine : { type : GraphQLString }
             },
             async resolve(parent, args){
-                let owner = new Owner({
-                    firstName : args.firstName,
-                    lastName : args.lastName,
-                    email : args.email,
-                    password : args.password,
-                    restaurant: args.restaurant,
-                    cuisine : args.cuisine
-                });
-
-                let b = await buyer.save();
-                return b == null? null : b;
+                let owners = await Owner.find({email : args.email});
+                //console.log(owners);
+                let hashedPassword = await bcrypt.hash(args.password, 10);
+                //console.log(hashedPassword);
+                if(owners.length == 0){
+                    let owner = new Owner({
+                        firstName : args.firstName,
+                        lastName : args.lastName,
+                        email : args.email,
+                        password : hashedPassword,
+                        restaurant: args.restaurant,
+                        cuisine : args.cuisine,
+                        menu :[]
+                    });
+                    //console.log(owner);
+                    let signedUpOwner = await owner.save();
+                    console.log("Owner Signed Up!");
+                    return signedUpOwner == null? null : signedUpOwner;
+                }
+                console.log("Owner Signup Error!");
+                return null;              
             }
         }
     }

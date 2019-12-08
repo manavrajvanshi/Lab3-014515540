@@ -26,7 +26,7 @@ const ownerSchema = new Schema(
         firstName: String,
         lastName: String,
         email: String,
-        password: Number,
+        password: String,
         restaurant: String,
         cuisine: String,
         menu : [itemSchema]
