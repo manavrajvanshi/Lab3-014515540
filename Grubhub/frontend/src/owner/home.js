@@ -12,40 +12,22 @@ let owner, image;
 export default class OwnerHome extends React.Component{
 
     componentDidMount(){
-        if(cookie.load('authCookieo') === "authenticated" ){
-            
-            axios.defaults.withCredentials = true;
-            let token = localStorage.getItem("Owner-Auth-Token");
-            let data = {
-                "rid" : cookie.load('ownerData').rid
+        if(localStorage.getItem("autho")==1 ){  
+            console.log("Authhhh");
+            owner = {
+                name : localStorage.getItem('firstName')+" "+localStorage.getItem('lastName'),
+                email : localStorage.getItem('email'),
+                restaurant: localStorage.getItem('restaurant'),
+                cuisine: localStorage.getItem('cuisine'),
             }
-            axios.post(nodeAddress+'restaurant/home',data, {
-                headers: {
-                    'Authorization' : token,
-                    'Accept' : 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                owner = response.data;
-                image = nodeAddress+'owner/'+data.rid+'.jpg';
-                this.setState({
-                    imageRendered : true
-                })
-            }).catch(error=>{
-                console.log("Error: "+JSON.stringify(error));
-            });
+            this.setState({});
         }else{
-            re = <Redirect to = "welcome/"/>
+            re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
         }
     }
     
     render(){
-
-        
-        
-
         if(!owner){
             return <div></div>
         }
@@ -56,11 +38,11 @@ export default class OwnerHome extends React.Component{
                     <div className = "heading">
                         <img src = {image} width ="200" height = "200" alt = 'Please Upload A Profile Pic'className = "profilePic"/>
                         {console.log(owner)}
-                        <p>Welcome {owner.ownerName}</p>
-                        <p>Your E-mail: {owner.ownerEmail}</p>
-                        <p>Your Contact Number: {owner.ownerPhone}</p>
+                        <p>Welcome {owner.name}</p>
+                        <p>Your E-mail: {owner.email}</p>
+                        <p>Your Restaurant: {owner.restaurant}</p>
+                        <p>Cuisine: {owner.cuisine}</p>
                     </div>
-                    
                 </div>
             </div>
         );

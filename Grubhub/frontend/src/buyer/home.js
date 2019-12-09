@@ -1,5 +1,4 @@
 import React from 'react';
-import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import axios from 'axios';
 import ShowRestaurants from '../restaurant/showRestaurants.js'
@@ -7,9 +6,6 @@ import '../App.css';
 
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
-
-
-
 let re = null;
 let buyer,image ;
 let restaurantsTable=null;
