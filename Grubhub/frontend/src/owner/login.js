@@ -2,12 +2,27 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
+import {gql} from 'apollo-boost';
+import {graphql} from 'react-apollo';
+import {flowRight as compose} from 'lodash';
 import './login.css';
+
+const ownerLoginQuery = gql`
+mutation signInOwner($email: String!, $password: String!){
+    signInOwner(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+        email
+        restaurant
+        cuisine
+    }
+}`;
 
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 
-export default class OwnerLogin extends React.Component{
+class OwnerLogin extends React.Component{
 
     constructor(props){
         super(props);
@@ -23,58 +38,35 @@ export default class OwnerLogin extends React.Component{
             [e.target.name] : e.target.value
         })
     }
-    login(e){
+    async login(e){
         e.preventDefault();
-        const data = {
+        const vars = {
             email : this.state.email,
             password : this.state.password,
         }
+        let {data} = await this.props.ownerLoginQuery({
+            variables:vars
+        });
 
-        if(  data.email === "" || data.password === ""){
-            console.log("Invalid data, Cannot Login");
+        if(data.signInOwner != null){
+            localStorage.setItem("firstName", data.signInOwner['firstName']);
+            localStorage.setItem("lastName", data.signInOwner['lastName']);
+            localStorage.setItem("email", data.signInOwner['email']);
+            localStorage.setItem("id", data.signInOwner['id']);
+            localStorage.setItem("restaurant", data.signInOwner['restaurant']);
+            localStorage.setItem("cuisine", data.signInOwner['cuisine']);
+            localStorage.setItem("autho", 1);
+            localStorage.setItem("userType", "owner");
+            this.setState({});
         }else{
-            
-            axios.defaults.withCredentials = true;
-            //make a post request with the user data
-            axios.post(nodeAddress+'restaurant/signin',data)
-            .then(response => {
-                if(typeof (Storage) !== "undefined"){
-                    localStorage.setItem("Owner-Auth-Token", response.headers.authorization);
-                }else{
-                    alert("Please use a browser that uses local storage!");
-                }
-                if(response.status === 200){
-                    for(let cookieItem in response.data){
-                        console.log(cookieItem);
-                        console.log(response.data[cookieItem])
-                        cookie.save(cookieItem,response.data[cookieItem],{encode:String} )
-                        //Cookies.set(cookieItem,JSON.stringify(response.data[cookieItem]));
-                    }
-                    console.log(cookie.load('ownerData'));
-                    if( cookie.load('authCookieo') === "authenticated"){
-                        this.setState({
-                            auth : true
-                        })
-                    }
-                }else if(response.status === 201){
-                    console.log(response.status+" error "+ response.data);
-                    alert("Incorrect Password");
-                }else if(response.status === 202){
-                    console.log(response.status+" error "+ response.data);
-                    alert("No User with the given credentials.");
-                }else if(response.status === 203){
-                    console.log("Error in first if in backend - restaurant - signin")
-                }          
-            }).catch(error=>{
-                console.log("Error: "+JSON.stringify(error));
-            });
-        }   
+            alert("Credentials Mismatch!");
+        }
     }
     
     render(){
 
         let redirect = null;
-        if (cookie.load('authCookieo')==="authenticated"){
+        if (localStorage.getItem("autho")==1){
             redirect = <Redirect to = "/ownerHome"/>
         }
         return(
@@ -123,3 +115,6 @@ export default class OwnerLogin extends React.Component{
     }
 }
 
+export default compose(
+    graphql(ownerLoginQuery, {name :"ownerLoginQuery"})
+)(OwnerLogin);

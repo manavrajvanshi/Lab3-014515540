@@ -1,7 +1,5 @@
 import React from 'react';
-import axios from 'axios';
 import {Redirect} from 'react-router';
-import cookie from 'react-cookies';
 import {gql} from 'apollo-boost';
 import {graphql} from 'react-apollo';
 import {flowRight as compose} from 'lodash';
@@ -44,11 +42,6 @@ class BuyerLogin extends React.Component{
 
     async login(e){
         e.preventDefault();
-        // const data = {
-        //     email : this.state.email,
-        //     password : this.state.password,
-        // }
-
         console.log(this.state);
 
         let {data} = await this.props.buyerLoginQuery({
@@ -76,7 +69,7 @@ class BuyerLogin extends React.Component{
         
     }
     render(){
-        console.log(this.props.data);
+        //console.log(this.props.data);
         if (localStorage.getItem("authb")==1){
             redirect = <Redirect to = "/buyerHome"/>
         }
@@ -129,4 +122,4 @@ class BuyerLogin extends React.Component{
 
 export default compose(
     graphql(buyerLoginQuery, {name :"buyerLoginQuery"})
-)( BuyerLogin);
+)(BuyerLogin);

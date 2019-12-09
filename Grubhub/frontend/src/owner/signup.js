@@ -1,21 +1,38 @@
 import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
+import {gql} from 'apollo-boost';
+import {graphql} from 'react-apollo';
+import {flowRight as compose} from 'lodash';
 import '../App.css';
+
+const ownerSignupMutation = gql`
+mutation($firstName:String!, $lastName:String!, $email: String!, $password: String!,$restaurantName:String!, $restaurantCuisine:String!) {
+    signUpOwner(firstName: $firstName, lastName: $lastName, email: $email, password: $password, restaurant: $restaurantName , cuisine: $restaurantCuisine) {
+        firstName
+        lastName
+        email
+        restaurant
+        cuisine
+        password
+    }
+}`;
+
 let re = null;
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 
-export default class OwnerSignup extends React.Component{
+class OwnerSignup extends React.Component{
 
     constructor(props){
         super(props);
         this.state = {
-            name : '',
+            firstName : '',
+            lastName: '',
             email : '',
             password : '',
             restaurantName :'',
-            restaurantZip : ''
+            restaurantCuisine : ''
         }
         this.handleInput = this.handleInput.bind(this);
         this.signup = this.signup.bind(this);
@@ -27,42 +44,29 @@ export default class OwnerSignup extends React.Component{
         })
     }
 
-    signup(e){
+    async signup(e){
         e.preventDefault();
 
-        const data = {
-            name : this.state.name,
+        const vars = {
+            firstName : this.state.firstName,
+            lastName : this.state.lastName,
             email : this.state.email,
             password : this.state.password,
             restaurantName : this.state.restaurantName,
-            restaurantZip : this.state.restaurantZip
+            restaurantCuisine : this.state.restaurantCuisine
+        }
+        console.log(vars);
+        let {data} = await this.props.ownerSignupMutation({
+            variables: vars
+        });
+
+        if(data.signUpOwner == null){
+            alert("Email already exists!");
+        }else{
+            re = <Redirect to = '/ownerLogin'/>
+            this.setState({});
         }
         console.log(data);
-        if( data.name === "" || data.email === "" || data.password === ""){
-            console.log("Invalid data, Cannot signup");
-        }else{
-            axios.defaults.withCredentials = true;
-            //make a post request with the user data
-            axios.post(nodeAddress+'restaurant/signup',data)
-                .then(response => {
-                    if(response.status === 200){
-                        alert("Sucessfully Signed Up, please update your profile after logging in.");
-                        re = <Redirect to = '/ownerLogin'/>
-                        this.setState({
-                            signedup :true
-                        })
-                    }else if(response.status === 201){
-                        alert("Error Signing up.");
-                        console.log(response.data);
-                    }else if(response.status === 202){
-                        alert(response.data);
-                    }
-                }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error.data));
-                }
-            );
-        }
-        
     }
     render(){
         return(
@@ -76,11 +80,23 @@ export default class OwnerSignup extends React.Component{
                             <tr>
                                 <div>
                                     <label className = "hdng">
-                                        Name
+                                        First Name
                                     </label>
                                     
                                     <td>
-                                        <input className = "inp" size = "45" type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name} autoFocus required/>
+                                        <input className = "inp" size = "45" type = "text" name = "firstName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.firstName} autoFocus required/>
+                                    </td>
+                                </div>
+                            </tr>
+
+                            <tr>
+                                <div>
+                                    <label className = "hdng">
+                                        Last Name
+                                    </label>
+                                    
+                                    <td>
+                                        <input className = "inp" size = "45" type = "text" name = "lastName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.lastName}  required/>
                                     </td>
                                 </div>
                             </tr>
@@ -121,10 +137,10 @@ export default class OwnerSignup extends React.Component{
                             <tr>
                                 <div>
                                     <label className = "hdng">
-                                        Restaurant Zip
+                                        Restaurant Cuisine
                                     </label>
                                     <td>
-                                        <input className = "inp" size = "45" type = "number" name = "restaurantZip" onChange = {this.handleInput}  value = {this.state.restaurantZip}required />
+                                        <input className = "inp" size = "45" type = "text" name = "restaurantCuisine" onChange = {this.handleInput}  value = {this.state.restaurantCuisine}required />
                                     </td>
                                 </div>
                             </tr>
@@ -142,6 +158,6 @@ export default class OwnerSignup extends React.Component{
         )
     }
 }
-
-
-
+export default compose(
+    graphql(ownerSignupMutation, {name :"ownerSignupMutation"})
+)(OwnerSignup);

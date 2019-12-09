@@ -99,23 +99,6 @@ const RootQuery = new GraphQLObjectType({
                 }
             }
         },
-
-        signInOwner :{
-            type : OwnerType,
-            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
-            async resolve(parent, args){
-                let owner = await Owner.find({email : args.email});
-                //console.log(owner);
-                if(owner.length == 0){
-                    return null;
-                }
-                else{
-                    let auth = await bcrypt.compare(args.password, owner[0].password);
-                    return auth ? owner[0] : null;
-                }
-            }
-        },
-
         menu :{
             type : MenuType,
             args : { rid : {type : GraphQLID}},
@@ -154,7 +137,7 @@ const Mutation = new GraphQLObjectType({
             args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
             async resolve(parent, args){
                 let buyer = await Buyer.find({email : args.email});
-                console.log(buyer);
+                //console.log(buyer);
                 if(buyer.length == 0){
                     return null;
                 }
@@ -191,6 +174,22 @@ const Mutation = new GraphQLObjectType({
                 }
                 console.log("Buyer Signup Error!");
                 return null;              
+            }
+        },
+
+        signInOwner :{
+            type : OwnerType,
+            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
+            async resolve(parent, args){
+                let owner = await Owner.find({email : args.email});
+                //console.log(owner);
+                if(owner.length == 0){
+                    return null;
+                }
+                else{
+                    let auth = await bcrypt.compare(args.password, owner[0].password);
+                    return auth ? owner[0] : null;
+                }
             }
         },
         signUpOwner:{

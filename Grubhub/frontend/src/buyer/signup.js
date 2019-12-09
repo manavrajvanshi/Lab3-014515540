@@ -3,13 +3,18 @@ import axios from 'axios';
 import {Redirect} from 'react-router';
 import {gql} from 'apollo-boost';
 import {graphql} from 'react-apollo';
+import {flowRight as compose} from 'lodash';
 import '../App.css';
 
-// const buyerSignupMutation = gql`
-// {
-
-// }
-// `
+const buyerSignupMutation = gql`
+mutation($firstName:String!, $lastName:String!, $email: String!, $password: String!) {
+    signupBuyer(firstName: $firstName, lastName: $lastName, email: $email, password: $password){
+      firstName,
+      lastName,
+      email
+    }
+  }
+`
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 let re = null;
@@ -22,7 +27,6 @@ class BuyerSignup extends React.Component{
             lastName:'',
             email:'',
             password:'',
-            phone:'',
             signedup:false
         }
         this.signup = this.signup.bind(this);
@@ -34,40 +38,30 @@ class BuyerSignup extends React.Component{
             [e.target.name] : e.target.value
         })
     }
-    signup(e){
+    async signup(e){
         e.preventDefault();
-        const data = {
-            firstName : this.state.firstName,
-            lastName : this.state.lastName,
-            email : this.state.email,
-            password : this.state.password,
-        }
-
-        if( data.firstName === "" || data.lastName ==="" || data.email === "" || data.password === ""){
+        if( this.state.firstName === "" || this.state.lastName ==="" || this.state.email === "" || this.state.password === ""){
             console.log("Invalid data, Cannot signup");
         }else{
-            
-            axios.defaults.withCredentials = true;
-            //make a post request with the user data
-            axios.post(nodeAddress+'buyer/signup',data)
-                .then(response => {
-                    if(response.status === 200){
-                        alert("Sucessfully Signed Up, please update your profile after logging in.");
-                        re = <Redirect to = '/buyerLogin'/>
-                        this.setState({
-                            signedup :true
-                        })
-                        
-                    }else if(response.status === 201){
-                        alert("Error Signing up.");
-                        console.log(response.data);
-                    }else if(response.status === 202){
-                        alert(response.data);
-                    }
-                }).catch(error=>{
-                    console.log("Error: "+JSON.stringify(error.data));
+            console.log(this.state);
+            let {data} = await this.props.buyerSignupMutation({
+                variables:{
+                    firstName: this.state.firstName,
+                    lastName: this.state.lastName,
+                    email: this.state.email,
+                    password : this.state.password
                 }
-            );
+            });
+
+            if(data.signupBuyer == null){
+                alert("Email already exists!");
+            }else{
+                re = <Redirect to = '/buyerLogin'/>
+                this.setState({
+                    signedup :true
+                })
+            }
+            console.log(data);
         }
         
     }
@@ -143,5 +137,7 @@ class BuyerSignup extends React.Component{
     }
 }
 
-export default BuyerSignup;
-//export default graphql(buyerSignupMutation)(BuyerSignup);
+//export default BuyerSignup;
+export default compose(
+    graphql(buyerSignupMutation, {name :"buyerSignupMutation"})
+)( BuyerSignup);

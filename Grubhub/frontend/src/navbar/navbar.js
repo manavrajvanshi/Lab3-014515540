@@ -48,7 +48,7 @@ export class Navbar extends React.Component{
                         <a className="navbar-brand" href='http://localhost:3000/welcome'>
                         <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
-                        <a href="/ownerHome">{cookie.load('ownerData').ownerName.split(" ")[0]}'s Profile</a>
+                        <a href="/ownerHome">{localStorage.getItem("firstName")}'s Profile</a>
                         <a href ="/menu">View/Edit Menu</a>
                         <a href="/manageOrder" >View / Manage Orders</a> 
                         <a href="/oldOrder" >Old Orders</a> 
@@ -64,8 +64,6 @@ export class Navbar extends React.Component{
                     <a className="navbar-brand" href='http://localhost:3000/welcome'>
                         <img alt ="Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                     </a>
-                    
-                   
                     <a href="/ownerSignup"style = {{float: "right"}}>Owner Signup</a> 
                     <a href="/ownerLogin" style = {{float: "right"}}>Owner Login</a>  
                     <a href="/buyerSignup"style = {{float: "right"}}>Buyer Signup</a>  
