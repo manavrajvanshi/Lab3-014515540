@@ -79,27 +79,15 @@ const RootQuery = new GraphQLObjectType({
     name : 'RootQueryType',
     fields : {
         buyer :{
-            type : BuyerType,
+            type : GraphQLList(BuyerType),
             args : { },
             resolve(parent, args){
-                return buyers[0];
+                return buyers;
             }
         },
 
-        signInBuyer :{
-            type : BuyerType,
-            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
-            async resolve(parent, args){
-                let buyer = await Buyer.find({email : args.email});
-                if(buyer.length == 0){
-                    return null;
-                }
-                else{
-                    let auth = await bcrypt.compare(args.password, buyer[0].password);
-                    return auth ? buyer[0] : null;
-                }
-            }
-        },
+        
+
         owner :{
             type : OwnerType,
             args : { id : {type : GraphQLID}},
@@ -161,6 +149,21 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name : 'Mutation',
     fields: {
+        signInBuyer :{
+            type : BuyerType,
+            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
+            async resolve(parent, args){
+                let buyer = await Buyer.find({email : args.email});
+                console.log(buyer);
+                if(buyer.length == 0){
+                    return null;
+                }
+                else{
+                    let auth = await bcrypt.compare(args.password, buyer[0].password);
+                    return auth ? buyer[0] : null;
+                }
+            }
+        },
         signupBuyer:{
             type : BuyerType,
             args :{

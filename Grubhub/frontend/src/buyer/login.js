@@ -4,14 +4,19 @@ import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
 import {gql} from 'apollo-boost';
 import {graphql} from 'react-apollo';
+import {flowRight as compose} from 'lodash';
 import '../App.css';
 
 const buyerLoginQuery = gql`
+mutation signInBuyer($email: String!, $password: String!) 
 {
-    buyer{
-      firstName
+    signInBuyer(email: $email, password: $password) {
+        id
+        firstName
+        lastName
+        email
     }
-  }
+}
 `;
 
 var enVar = require ('../enVar.js');
@@ -37,59 +42,41 @@ class BuyerLogin extends React.Component{
         })
     }
 
-    login(e){
+    async login(e){
         e.preventDefault();
-        const data = {
-            email : this.state.email,
-            password : this.state.password,
-        }
-        //console.log(data); 
-        if(  data.email === "" || data.password === ""){
-            // console.log(data.email);
-            // console.log(data.password);
-            console.log("Invalid data, Cannot Login");
-        }else{
-            axios.defaults.withCredentials = true;
-            //make a post request with the user data
-            axios.post(nodeAddress+'buyer/signin',data)
-            .then(response => {
-                if(response.status === 200){
-                    for(let cookieItem in response.data){
-                        console.log(cookieItem);
-                        console.log(response.data[cookieItem])
-                        cookie.save(cookieItem,response.data[cookieItem],{encode:String} )
-                        //Cookies.set(cookieItem,JSON.stringify(response.data[cookieItem]));
-                    }
-                    //console.log("cookie: ",cookie.load('buyerData'));
-                    console.log("Cookie Data ", response.data);
+        // const data = {
+        //     email : this.state.email,
+        //     password : this.state.password,
+        // }
 
-                    if(typeof (Storage) !== "undefined"){
-                        localStorage.setItem("Buyer-Auth-Token", response.headers.authorization);
-                    }else{
-                        alert("Please use a browser that uses local storage!");
-                    }
-                    if( cookie.load('authCookieb') === "authenticated"){
-                        this.setState({
-                            auth:true
-                        })
-                    }
-                }else if(response.status === 201){
-                    console.log(response.status+" error "+ response.data);
-                    alert("Incorrect Password");
-                }else if(response.status === 202){
-                    console.log(response.status+" error "+ response.data);
-                    alert("No User with the given credentials.");
-                }
-            }).catch(error=>{
-                console.log("ADD: "+ nodeAddress+'buyer/signin');
-                console.log(error);
-            });
+        console.log(this.state);
+
+        let {data} = await this.props.buyerLoginQuery({
+            variables:{
+                email: this.state.email,
+                password : this.state.password
+            }
+        });
+
+        console.log(data);
+        if(data.signInBuyer != null){
+            localStorage.setItem("firstName", data.signInBuyer['firstName']);
+            localStorage.setItem("lastName", data.signInBuyer['lastName']);
+            localStorage.setItem("email", data.signInBuyer['email']);
+            localStorage.setItem("id", data.signInBuyer['id']);
+            localStorage.setItem("authb", 1);
+            this.setState({});
+        }else{
+            alert("Credentials Mismatch!");
         }
+
+        
+        
         
     }
     render(){
-        console.log(this.props);
-        if (cookie.load('authCookieb')==="authenticated"){
+        console.log(this.props.data);
+        if (localStorage.getItem("authb")==1){
             redirect = <Redirect to = "/buyerHome"/>
         }
         return(
@@ -139,4 +126,6 @@ class BuyerLogin extends React.Component{
     }
 }
 
-export default graphql(buyerLoginQuery)( BuyerLogin);
+export default compose(
+    graphql(buyerLoginQuery, {name :"buyerLoginQuery"})
+)( BuyerLogin);
