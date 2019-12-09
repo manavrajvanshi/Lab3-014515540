@@ -27,35 +27,13 @@ class BuyerHome extends React.Component{
     }
 
     componentDidMount(){
-        if(cookie.load('authCookieb') === "authenticated" ){  
-            axios.defaults.withCredentials = true;
-            let token = localStorage.getItem("Buyer-Auth-Token");
-            // console.log(token);
-            // console.log(typeof token)
-           
-            //make a post request with the user data
-            let data = {
-                "bid" : cookie.load('buyerData').bid
+        if(localStorage.getItem("authb")==1 ){  
+            console.log("Authhhh");
+            buyer = {
+                name : localStorage.getItem('firstName')+" "+localStorage.getItem('lastName'),
+                email : localStorage.getItem('email')
             }
-            
-            axios.post(nodeAddress+'buyer/home',data, {
-                headers: {
-                    'Authorization' : token,
-                    'Accept' : 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                buyer = response.data;
-                image = nodeAddress+'buyer/'+data.bid+'.jpg';
-                this.setState({
-                    imageRendered : true
-                })
-            })
-            .catch(error=>{
-                console.log("Error: "+JSON.stringify(error));
-                re = <Redirect to = "/welcome"/>
-            });
+            this.setState({});
         }else{
             re = <Redirect to = "/welcome"/>
             console.log("Inside Else");
@@ -122,7 +100,7 @@ class BuyerHome extends React.Component{
                         <img src = {image} width ="200" height = "200" alt = 'Profile' className = "profilePic"/>
                         <p>Welcome {buyer.name}</p>
                         <p>Email: {buyer.email}</p>
-                        <p>M: {buyer.phone}</p>
+                        
                 
                         <input className = "inp" size = "45" type = "text" name ="searchItem" value = {this.state.searchItem} placeholder = "Hungry? Order Now!" onChange = {this.handleInput}/>
                         <input pattern = "[A-Za-z]*" className = "inp" size = "45" type = "text" name = "cuisineFilter" value = {this.state.cuisineFilter} placeholder = "Filter by cuisine" onChange = {this.handleInput} />

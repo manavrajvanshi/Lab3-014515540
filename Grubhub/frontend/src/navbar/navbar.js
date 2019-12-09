@@ -13,37 +13,18 @@ export class Navbar extends React.Component{
     }
 
     handleLogout(){
-        let url;
-        if(cookie.load('userType')==="buyer"){
-            url =nodeAddress+'buyer/logout';
-            localStorage.removeItem("Buyer-Auth-Token");
-        }else{
-            url =nodeAddress+'restaurant/logout';
-            localStorage.removeItem("Owner-Auth-Token");
-        }
-        cookie.remove('authCookieb');
-        cookie.remove('authCookieo');
-        cookie.remove('userType');
-        cookie.remove('userId');
-        cookie.remove('buyerData');
-        cookie.remove('ownerData');
-        axios.get(url,{})
-        .then(response => {
-            console.log("Logged Out");
-        })
-        .catch(error=>{
-            console.log("Error: "+JSON.stringify(error));
-        });
+       
+        localStorage.clear();
+       
     }
     render(){
         let bar;
-        let authCookieb = cookie.load('authCookieb');
-        let authCookieo = cookie.load('authCookieo');
-        let userType = cookie.load('userType');
+        
+        let userType = localStorage.getItem('userType');
         //let userId = cookie.load('userId');
         
 
-        if(authCookieb === "authenticated" || authCookieo === "authenticated"){
+        if(localStorage.getItem("authb")==1 || localStorage.getItem("autho")==1 ){
             
             
             if (userType === "buyer"){
@@ -52,7 +33,7 @@ export class Navbar extends React.Component{
                         <a className="navbar-brand" href='http://localhost:3000/welcome'>
                         <img alt = "Grubhub Logo" width="130px" height="35px"src='https://www.grubhub.com/assets/img/grubhub/logo-full-primary.svg'/>
                         </a>
-                        <a href="/buyerHome">{cookie.load('buyerData').name.split(" ")[0]}'s Profile</a>
+                        <a href="/buyerHome">{localStorage.getItem("firstName")}'s Profile</a>
                         <a href="/pastOrder" >Past Orders</a> 
                         <a href="/buyerOrderStatus" >Order Status</a>    
                         <a href="/welcome" style = {{float: "right"}} onClick = {this.handleLogout}>Logout</a> 

@@ -65,6 +65,7 @@ class BuyerLogin extends React.Component{
             localStorage.setItem("email", data.signInBuyer['email']);
             localStorage.setItem("id", data.signInBuyer['id']);
             localStorage.setItem("authb", 1);
+            localStorage.setItem("userType", "buyer");
             this.setState({});
         }else{
             alert("Credentials Mismatch!");
