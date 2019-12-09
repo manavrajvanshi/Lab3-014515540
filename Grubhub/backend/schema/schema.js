@@ -255,7 +255,42 @@ const Mutation = new GraphQLObjectType({
                 console.log("Owner Signup Error!");
                 return null;              
             }
-        }
+        },
+        updateOwner:{
+            type : OwnerType,
+            args : {
+                id : {type:GraphQLID},
+                firstName : { type : GraphQLString },
+                lastName : { type : GraphQLString },
+                email : { type : GraphQLString },
+                password : { type : GraphQLString },
+                restaurant : { type : GraphQLString },
+                cuisine : { type : GraphQLString }
+            },
+            async resolve(parent, args){
+                let owner = await Owner.findById({_id : args.id});
+                if(owner.length != 0 && owner != null){
+                    let hashedPassword = await bcrypt.hash(args.password, 10);
+                    let updates = {
+                        firstName:args.firstName,
+                        lastName: args.lastName,
+                        email:args.email,
+                        password:hashedPassword,
+                        restaurant : args.restaurant,
+                        cuisine : args.cuisine
+                    };
+
+                    let updatedOwner = await Owner.findOneAndUpdate({_id:args.id}, updates, {new : true});
+
+                    if(updatedOwner != null){
+                        return updatedOwner;
+                    }else{
+                        return null;
+                    }
+                }
+                return null;
+            } 
+        },
     }
 })
 

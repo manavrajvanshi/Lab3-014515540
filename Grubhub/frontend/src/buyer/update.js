@@ -14,10 +14,10 @@ mutation updateBuyer($id:ID!, $firstName:String!, $lastName:String!, $email:Stri
         email:$email,
         password: $password
     ){
-      id
-      firstName
-      lastName
-      email
+        id
+        firstName
+        lastName
+        email
     }
 }`;
 
@@ -69,6 +69,7 @@ class BuyerUpdate extends React.Component{
             localStorage.setItem("id", data.updateBuyer['id']);
             localStorage.setItem("authb", 1);
             localStorage.setItem("userType", "buyer");
+            re = <Redirect to = "/buyerHome"/>
             this.setState({});
         }else{
             alert("Details Not Updated!");

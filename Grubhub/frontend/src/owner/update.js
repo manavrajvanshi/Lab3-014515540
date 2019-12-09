@@ -3,22 +3,48 @@ import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
 import '../App.js'
+
+import {gql} from 'apollo-boost';
+import {graphql} from 'react-apollo';
+import {flowRight as compose} from 'lodash';
+
 let re = null;
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 
-export default class OwnerUpdate extends React.Component{
+const ownerUpdateMutation = gql`
+mutation updateOwner($id:ID!, $firstName:String!, $lastName:String!, $email:String!, $password:String!, $restaurant:String!, $cuisine:String!){
+   
+    updateOwner(
+        id :$id,
+        firstName: $firstName, 
+        lastName:$lastName,
+        email:$email,
+        password:$password,
+        restaurant:$restaurant,
+        cuisine:$cuisine
+    ){
+        id
+        firstName, 
+        lastName,
+        email,
+        restaurant,
+        cuisine
+    }
+}`;
+
+class OwnerUpdate extends React.Component{
 
     constructor(props){
         super(props);
         this.state = {
-            ownerName : cookie.load('ownerData').ownerName,
-            ownerEmail : cookie.load('ownerData').ownerEmail,
+            firstName : localStorage.getItem('firstName'),
+            lastName : localStorage.getItem('lastName'),
             ownerPassword : '',
-            ownerPhone : cookie.load('ownerData').ownerPhone,
-            cuisine : cookie.load('ownerData').cuisine,
-            restaurantName : cookie.load('ownerData').restaurantName,
-            restaurantZip : cookie.load('ownerData').restaurantZip
+            email : localStorage.getItem('email'),
+            cuisine : localStorage.getItem('cuisine'),
+            restaurant : localStorage.getItem('restaurant')
+            
         }
         this.handleInput = this.handleInput.bind(this);
         this.update = this.update.bind(this);
@@ -29,61 +55,43 @@ export default class OwnerUpdate extends React.Component{
             [e.target.name] : e.target.value
         })
     }
-    update(e){
+    async update(e){
         e.preventDefault();
-        const data = {
-            ownerName : this.state.ownerName,
-            ownerEmail : this.state.ownerEmail,
-            ownerPassword : this.state.ownerPassword,
-            ownerPhone : this.state.ownerPhone,
-            rid : cookie.load('ownerData').rid,
+        const vars = {
+            firstName : this.state.firstName,
+            lastName : this.state.lastName,
+            password : this.state.ownerPassword,
+            email : this.state.email,
+            id :localStorage.getItem('id'),
             cuisine : this.state.cuisine,
-            restaurantName : this.state.restaurantName,
-            restaurantZip : this.state.restaurantZip
+            restaurant : this.state.restaurant
+            
         }
-        console.log(data);
-        if( data.ownerName === "" || data.ownerEmail === "" || data.ownerPassword === ""){
-            console.log("Invalid data, Cannot Update");
+        console.log(vars);
+        let {data} =  await this.props.ownerUpdateMutation({
+            variables:vars
+        });
+
+       console.log(data);
+        if(data.updateOwner != null){
+            localStorage.setItem("firstName", data.updateOwner['firstName']);
+            localStorage.setItem("lastName", data.updateOwner['lastName']);
+            localStorage.setItem("email", data.updateOwner['email']);
+            localStorage.setItem("id", data.updateOwner['id']);
+            localStorage.setItem("restaurant", data.updateOwner['restaurant']);
+            localStorage.setItem("cuisine", data.updateOwner['cuisine']);
+            localStorage.setItem("autho", 1);
+            localStorage.setItem("userType", "owner");
+            re = <Redirect to = "/ownerHome"/>
+            this.setState({});
         }else{
-            // console.log("HEREEEE")
-            axios.defaults.withCredentials = true;
-            let token = localStorage.getItem("Owner-Auth-Token");
-            axios.post(nodeAddress+'restaurant/update',data, {
-                headers: {
-                    'Authorization' : token,
-                    'Accept' : 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                console.log(response.data);
-                this.forceUpdate();
-                if(response.status === 200){
-                    alert("Profile Updated");
-                    re = <Redirect to = '/ownerHome'/>
-                    this.setState({
-                        updated : true
-                    })
-                }else if( response.status === 201){
-                    alert("Data not updated, contact support team.");
-                    console.log(response.data);
-                }else if(response.status === 202){
-                    console.log("Data not updated, contact support team.");
-                }
-                else if(response.status === 203){
-                    alert(response.data);
-                }
-            }).catch(error=>{
-                console.log("Error: "+JSON.stringify(error));
-            });
+            alert("Details Not Updated!");
         }
-        
     }
     
     render(){
-        if(cookie.load('authCookieo') !== "authenticated" ){
+        if (localStorage.getItem("autho")!=1){
             re = <Redirect to = "/welcome"/>
-            console.log("Inside Else");
         }
         return(
             <div className = "updateContainer">
@@ -94,22 +102,31 @@ export default class OwnerUpdate extends React.Component{
                             <tr>
                                 <div>
                                     <label className = "hdng">
-                                        Owner Name
+                                        First Name
                                     </label>
                                     <td>
-                                        <input className = "inp"size = "45" type = "text" name = "ownerName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.ownerName} autoFocus    />
+                                        <input className = "inp"size = "45" type = "text" name = "firstName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.firstName} autoFocus required  />
                                     </td>
                                 </div>
                             </tr>
                             
-                            
                             <tr>
                                 <div>
                                     <label className = "hdng">
-                                        Owner Email
+                                        Last Name
                                     </label>
                                     <tr>
-                                        <input className = "inp" size = "45" type = "email" name = "ownerEmail" onChange = {this.handleInput} value = {this.state.ownerEmail} />
+                                        <input className = "inp"size = "45" type = "text" name = "lastName" onChange = {this.handleInput} value = {this.state.lastName} />   
+                                    </tr>
+                                </div>
+                            </tr>
+                            <tr>
+                                <div>
+                                    <label className = "hdng">
+                                        Email
+                                    </label>
+                                    <tr>
+                                        <input className = "inp" size = "45" type = "email" name = "email" onChange = {this.handleInput} value = {this.state.email} />
                                     </tr>
                                 </div>
                             </tr>
@@ -120,40 +137,18 @@ export default class OwnerUpdate extends React.Component{
                                         Password
                                     </label>
                                     <tr>
-                                        <input className = "inp" size = "45" type = "password" name = "ownerPassword" onChange = {this.handleInput}  />
+                                        <input className = "inp" size = "45" type = "password" name = "ownerPassword" onChange = {this.handleInput}  value = {this.state.ownerPassword} />
                                     </tr>
                                 </div>
                             </tr>
 
-                            <tr>
-                                <div>
-                                    <label className = "hdng">
-                                        Owner Phone
-                                    </label>
-                                    <tr>
-                                        <input className = "inp" size = "45" type = "text" name = "ownerPhone" pattern="[0-9]{10}" title="10 Digits Only" onChange = {this.handleInput} value = {this.state.ownerPhone} />
-                                    </tr>
-                                </div>
-                            </tr>
-                                
                             <tr>
                                 <div>
                                     <label className = "hdng">
                                     Restaurant Name
                                     </label>
                                     <tr>
-                                        <input className = "inp" size = "45" type = "text" name = "restaurantName" onChange = {this.handleInput} value = {this.state.restaurantName} />  
-                                    </tr>
-                                </div>
-                            </tr>
-
-                            <tr>
-                                <div>
-                                    <label className = "hdng">
-                                        Restaurant Zip
-                                    </label>
-                                    <tr>
-                                        <input className = "inp"size = "45" type = "text" name = "restaurantZip" onChange = {this.handleInput} value = {this.state.restaurantZip} />   
+                                        <input className = "inp" size = "45" type = "text" name = "restaurantName" onChange = {this.handleInput} value = {this.state.restaurant} />  
                                     </tr>
                                 </div>
                             </tr>
@@ -182,3 +177,7 @@ export default class OwnerUpdate extends React.Component{
         )
     }
 }
+
+export default compose(
+    graphql(ownerUpdateMutation, {name :"ownerUpdateMutation"})
+)(OwnerUpdate);
