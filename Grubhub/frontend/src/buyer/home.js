@@ -1,7 +1,7 @@
 import React from 'react';
 import {Redirect} from 'react-router';
 import axios from 'axios';
-import ShowRestaurants from '../restaurant/showRestaurants.js'
+
 import '../App.css';
 
 var enVar = require ('../enVar.js');
@@ -53,7 +53,7 @@ class BuyerHome extends React.Component{
                 if(response.status === 200){
                     //console.log(response.data);
                     tableCreatedFlag = true;
-                    restaurantsTable = <ShowRestaurants  searchItem = { this.state.searchItem} cuisineFilter = {this.state.cuisineFilter}restaurantsList = {response.data}></ShowRestaurants>
+                   
                 }else{
                     alert(response.data);
                 }
