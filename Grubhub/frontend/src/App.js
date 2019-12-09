@@ -1,5 +1,7 @@
 import React from 'react';
 import {BrowserRouter,Route} from 'react-router-dom';
+import ApolloClient from 'apollo-boost';
+import {ApolloProvider} from 'react-apollo';
 
 import {Navbar} from './navbar/navbar.js';
 import Welcome from './navbar/welcome.js';
@@ -19,34 +21,39 @@ import ManageOrder from './restaurant/manageOrder.js';
 import OldOrder from './restaurant/oldOrder.js';
 import Order from './restaurant/order.js';
 import Menu from './restaurant/menu.js';
-
 import './App.css';
+
+const client = new ApolloClient({
+    uri: 'http://localhost:3001/graphql'
+});
 
 function App() {
   return (
-    <BrowserRouter>
-        <div>    
-          <Route path = "/" component={Navbar}/>
-          <Route path = "/welcome" component={Welcome}/>
-          
-          <Route path = "/buyerLogin" component={BuyerLogin}/>
-          <Route path = "/buyerSignup" component={BuyerSignup}/>
-          <Route path = "/buyerHome" component={BuyerHome}/>
-          <Route path = "/buyerUpdate" component={BuyerUpdate}/>
-          <Route path = "/buyerPicture" component = {BuyerPicture}/>
-          <Route path = "/buyerOrderStatus" component = {BuyerOrderStatus} />
-          <Route path = "/pastOrder" component = {PastOrder} />
-          <Route path = "/ownerLogin" component = {OwnerLogin}/>
-          <Route path = "/ownerSignup" component={OwnerSignup}/>
-          <Route path = "/ownerHome" component={OwnerHome}/>
-          <Route path = "/ownerUpdate" component = {OwnerUpdate}/>
-          <Route path = "/ownerPicture" component = {OwnerPicture}/>
-          <Route path = "/menu" component = {Menu} />
-          <Route path = "/order" component = {Order} />
-          <Route path = "/manageOrder" component = {ManageOrder} />
-          <Route path = "/oldOrder" component = {OldOrder} />
-        </div>
-      </BrowserRouter>
+    <ApolloProvider client = {client}>
+      <BrowserRouter>
+          <div>    
+            <Route path = "/" component={Navbar}/>
+            <Route path = "/welcome" component={Welcome}/>
+            
+            <Route path = "/buyerLogin"   component={BuyerLogin}/>
+            <Route path = "/buyerSignup"  component={BuyerSignup}/>
+            <Route path = "/buyerHome"    component={BuyerHome}/>
+            <Route path = "/buyerUpdate"  component={BuyerUpdate}/>
+            <Route path = "/buyerPicture" component = {BuyerPicture}/>
+            <Route path = "/buyerOrderStatus" component = {BuyerOrderStatus} />
+            <Route path = "/pastOrder"    component = {PastOrder} />
+            <Route path = "/ownerLogin"   component = {OwnerLogin}/>
+            <Route path = "/ownerSignup"  component={OwnerSignup}/>
+            <Route path = "/ownerHome"    component={OwnerHome}/>
+            <Route path = "/ownerUpdate"  component = {OwnerUpdate}/>
+            <Route path = "/ownerPicture" component = {OwnerPicture}/>
+            <Route path = "/menu"         component = {Menu} />
+            <Route path = "/order"        component = {Order} />
+            <Route path = "/manageOrder"  component = {ManageOrder} />
+            <Route path = "/oldOrder"     component = {OldOrder} />
+          </div>
+        </BrowserRouter>
+      </ApolloProvider>
   );
 }
 

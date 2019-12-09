@@ -2,14 +2,24 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
 import cookie from 'react-cookies';
+import {gql} from 'apollo-boost';
+import {graphql} from 'react-apollo';
 import '../App.css';
+
+const buyerLoginQuery = gql`
+{
+    buyer{
+      firstName
+    }
+  }
+`;
 
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 
 let redirect = null;
         
-export default class BuyerLogin extends React.Component{
+class BuyerLogin extends React.Component{
 
     constructor(props){
         super(props);
@@ -78,6 +88,7 @@ export default class BuyerLogin extends React.Component{
         
     }
     render(){
+        console.log(this.props);
         if (cookie.load('authCookieb')==="authenticated"){
             redirect = <Redirect to = "/buyerHome"/>
         }
@@ -127,3 +138,5 @@ export default class BuyerLogin extends React.Component{
         )
     }
 }
+
+export default graphql(buyerLoginQuery)( BuyerLogin);

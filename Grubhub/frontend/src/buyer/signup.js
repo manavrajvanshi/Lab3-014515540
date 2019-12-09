@@ -1,16 +1,25 @@
 import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router';
+import {gql} from 'apollo-boost';
+import {graphql} from 'react-apollo';
 import '../App.css';
+
+// const buyerSignupMutation = gql`
+// {
+
+// }
+// `
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 let re = null;
-export default class BuyerSignup extends React.Component{
+class BuyerSignup extends React.Component{
 
     constructor(props){
         super(props);
         this.state = {
-            name :'',
+            firstName :'',
+            lastName:'',
             email:'',
             password:'',
             phone:'',
@@ -28,12 +37,13 @@ export default class BuyerSignup extends React.Component{
     signup(e){
         e.preventDefault();
         const data = {
-            name : this.state.name,
+            firstName : this.state.firstName,
+            lastName : this.state.lastName,
             email : this.state.email,
             password : this.state.password,
         }
 
-        if( data.name === "" || data.email === "" || data.password === ""){
+        if( data.firstName === "" || data.lastName ==="" || data.email === "" || data.password === ""){
             console.log("Invalid data, Cannot signup");
         }else{
             
@@ -73,11 +83,23 @@ export default class BuyerSignup extends React.Component{
                             <tr>
                                 <div>
                                     <label className = "hdng">
-                                        Name
+                                        First Name
                                     </label>
                                     
                                     <td>
-                                        <input className = "inp"type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name} size = "45" autoFocus required/>
+                                        <input className = "inp"type = "text" name = "firstName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.firstName} size = "45" autoFocus required/>
+                                    </td>
+                                </div>
+                            </tr>
+
+                            <tr>
+                                <div>
+                                    <label className = "hdng">
+                                        Last Name
+                                    </label>
+                                    
+                                    <td>
+                                        <input className = "inp"type = "text" name = "lastName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.lastName} size = "45" required/>
                                     </td>
                                 </div>
                             </tr>
@@ -121,4 +143,5 @@ export default class BuyerSignup extends React.Component{
     }
 }
 
-
+export default BuyerSignup;
+//export default graphql(buyerSignupMutation)(BuyerSignup);

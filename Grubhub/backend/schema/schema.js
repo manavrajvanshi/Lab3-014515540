@@ -12,56 +12,6 @@ const {
     GraphQLInt
 } = graphql;
 
-var buyers = [
-    {id:'1', firstName : 'Tony', lastName : 'Stark', email : 'iam@ironman.com', password : 'jarvis'},
-    {id:'2', firstName : 'Thor', lastName : 'Odinson', email : 'thunder@hotmail.com', password : 'mjonir'},
-    {id:'3', firstName : 'Harry', lastName : 'Potter', email : 'hp@hogwarts.com', password : 'stupefy'},
-    {id:'4', firstName : 'Manav', lastName : 'Rajvanshi', email : 'manavraj97@hotmail.com', password : 'abcd1234'}
-];
-
-var owners = [
-    {id:'1', firstName : 'Tony', lastName : 'Stark', email : 'iam@ironman.com', password : 'jarvis', restaurant:'rest 1', cuisine: 'cuisine 1'},
-    {id:'2', firstName : 'Thor', lastName : 'Odinson', email : 'thunder@hotmail.com', password : 'mjonir', restaurant:'rest 2', cuisine: 'cuisine 2'},
-    {id:'3', firstName : 'Harry', lastName : 'Potter', email : 'hp@hogwarts.com', password : 'stupefy', restaurant:'rest 3', cuisine: 'cuisine 3'},
-    {id:'4', firstName : 'Manav', lastName : 'Rajvanshi', email : 'manavraj97@hotmail.com', password : 'abcd1234', restaurant:'rest 4', cuisine: 'cuisine 4'}
-];
-
-var menus =[
-    {
-        rid : 1,
-        items : [
-            {name : 'Chicken', price: 10, description:'Grilled', section: 'snacks'},
-            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
-            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
-        ]
-    },
-    {
-        rid : 2,
-        items : [
-            {name : 'Mutton', price: 10, description:'Grilled', section: 'snacks'},
-            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
-            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
-        ]
-    },
-    {
-        rid : 3,
-        items : [
-            {name : 'Chicken', price: 10, description:'Grilled', section: 'snacks'},
-            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
-            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
-        ]
-    },
-    {
-        rid : 4,
-        items : [
-            {name : 'Sausage', price: 10, description:'Grilled', section: 'snacks'},
-            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
-            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
-        ]
-    }
-    
-]
-
 const BuyerType = new GraphQLObjectType({
     name : 'Buyer',
     fields : () => ({
@@ -130,15 +80,12 @@ const RootQuery = new GraphQLObjectType({
     fields : {
         buyer :{
             type : BuyerType,
-            args : { id : {type : GraphQLID}},
+            args : { },
             resolve(parent, args){
-                for(buyer of buyers){
-                    if( buyer.id == args.id){
-                        return buyer;
-                    }
-                }
+                return buyers[0];
             }
         },
+
         signInBuyer :{
             type : BuyerType,
             args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
@@ -279,6 +226,57 @@ const Mutation = new GraphQLObjectType({
         }
     }
 })
+
+
+var buyers = [
+    {id:'1', firstName : 'Tony', lastName : 'Stark', email : 'iam@ironman.com', password : 'jarvis'},
+    {id:'2', firstName : 'Thor', lastName : 'Odinson', email : 'thunder@hotmail.com', password : 'mjonir'},
+    {id:'3', firstName : 'Harry', lastName : 'Potter', email : 'hp@hogwarts.com', password : 'stupefy'},
+    {id:'4', firstName : 'Manav', lastName : 'Rajvanshi', email : 'manavraj97@hotmail.com', password : 'abcd1234'}
+];
+
+var owners = [
+    {id:'1', firstName : 'Tony', lastName : 'Stark', email : 'iam@ironman.com', password : 'jarvis', restaurant:'rest 1', cuisine: 'cuisine 1'},
+    {id:'2', firstName : 'Thor', lastName : 'Odinson', email : 'thunder@hotmail.com', password : 'mjonir', restaurant:'rest 2', cuisine: 'cuisine 2'},
+    {id:'3', firstName : 'Harry', lastName : 'Potter', email : 'hp@hogwarts.com', password : 'stupefy', restaurant:'rest 3', cuisine: 'cuisine 3'},
+    {id:'4', firstName : 'Manav', lastName : 'Rajvanshi', email : 'manavraj97@hotmail.com', password : 'abcd1234', restaurant:'rest 4', cuisine: 'cuisine 4'}
+];
+
+var menus =[
+    {
+        rid : 1,
+        items : [
+            {name : 'Chicken', price: 10, description:'Grilled', section: 'snacks'},
+            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
+            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
+        ]
+    },
+    {
+        rid : 2,
+        items : [
+            {name : 'Mutton', price: 10, description:'Grilled', section: 'snacks'},
+            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
+            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
+        ]
+    },
+    {
+        rid : 3,
+        items : [
+            {name : 'Chicken', price: 10, description:'Grilled', section: 'snacks'},
+            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
+            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
+        ]
+    },
+    {
+        rid : 4,
+        items : [
+            {name : 'Sausage', price: 10, description:'Grilled', section: 'snacks'},
+            {name : 'Pasta', price: 10, description:'Red', section: 'snacks'},
+            {name : 'Burger', price: 10, description:'Cheese', section: 'lunch'}
+        ]
+    }
+    
+]
 
 module.exports = new GraphQLSchema({
     query : RootQuery,
