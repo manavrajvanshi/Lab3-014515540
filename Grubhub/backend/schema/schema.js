@@ -132,21 +132,6 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name : 'Mutation',
     fields: {
-        signInBuyer :{
-            type : BuyerType,
-            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
-            async resolve(parent, args){
-                let buyer = await Buyer.find({email : args.email});
-                //console.log(buyer);
-                if(buyer.length == 0){
-                    return null;
-                }
-                else{
-                    let auth = await bcrypt.compare(args.password, buyer[0].password);
-                    return auth ? buyer[0] : null;
-                }
-            }
-        },
         signupBuyer:{
             type : BuyerType,
             args :{
@@ -176,7 +161,52 @@ const Mutation = new GraphQLObjectType({
                 return null;              
             }
         },
+        signInBuyer :{
+            type : BuyerType,
+            args : { email : {type : GraphQLString}, password : {type : GraphQLString}},
+            async resolve(parent, args){
+                let buyer = await Buyer.find({email : args.email});
+                //console.log(buyer);
+                if(buyer.length == 0){
+                    return null;
+                }
+                else{
+                    let auth = await bcrypt.compare(args.password, buyer[0].password);
+                    return auth ? buyer[0] : null;
+                }
+            }
+        },
+        updateBuyer:{
+            type : BuyerType,
+            args : {
+                id : {type:GraphQLID},
+                firstName : { type : GraphQLString },
+                lastName : { type : GraphQLString },
+                email : { type : GraphQLString },
+                password : { type : GraphQLString }
+            },
+            async resolve(parent, args){
+                let buyer = await Buyer.findById({_id : args.id});
+                if(buyer.length != 0 && buyer != null){
+                    let hashedPassword = await bcrypt.hash(args.password, 10);
+                    let updates = {
+                        firstName:args.firstName,
+                        lastName: args.lastName,
+                        email:args.email,
+                        password:hashedPassword
+                    };
 
+                    let updatedBuyer = await Buyer.findOneAndUpdate({_id:args.id}, updates, {new : true});
+
+                    if(updatedBuyer != null){
+                        return updatedBuyer;
+                    }else{
+                        return null;
+                    }
+                }
+                return null;
+            } 
+        },
         signInOwner :{
             type : OwnerType,
             args : { email : {type : GraphQLString}, password : {type : GraphQLString}},

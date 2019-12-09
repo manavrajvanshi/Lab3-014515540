@@ -1,7 +1,5 @@
 import React from 'react';
-import axios from 'axios';
 import {Redirect} from 'react-router';
-import cookie from 'react-cookies';
 import {gql} from 'apollo-boost';
 import {graphql} from 'react-apollo';
 import {flowRight as compose} from 'lodash';

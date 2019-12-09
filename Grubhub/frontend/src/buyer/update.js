@@ -1,22 +1,39 @@
 import React from 'react';
-import axios from 'axios';
-import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import {gql} from 'apollo-boost';
+import {graphql} from 'react-apollo';
+import {flowRight as compose} from 'lodash';
 import '../App.css';
+
+const buyerUpdateMutation = gql`
+mutation updateBuyer($id:ID!, $firstName:String!, $lastName:String!, $email:String!, $password:String!){
+    updateBuyer(
+        id :$id,
+        firstName: $firstName, 
+        lastName: $lastName, 
+        email:$email,
+        password: $password
+    ){
+      id
+      firstName
+      lastName
+      email
+    }
+}`;
 
 var enVar = require ('../enVar.js');
 const nodeAddress = enVar.nodeAddress;
 
 let re = null;
-export default class BuyerUpdate extends React.Component{
+class BuyerUpdate extends React.Component{
 
     constructor(props){
         super(props);   
         this.state = {
-            name : cookie.load('buyerData').name,
-            email : cookie.load('buyerData').email,
-            password :'',
-            phone :cookie.load('buyerData').phone
+            firstName : localStorage.getItem('firstName'),
+            lastName : localStorage.getItem('lastName'),
+            email : localStorage.getItem('email'),
+            password :''
         }  
         
         this.handleInput = this.handleInput.bind(this);
@@ -29,59 +46,37 @@ export default class BuyerUpdate extends React.Component{
         })
     }
 
-    update(e){
+    async update(e){
         e.preventDefault();
-        const data = {
-            name : this.state.name,
+        const vars = {
+            firstName : this.state.firstName,
+            lastName: this.state.lastName,
             email : this.state.email,
             password : this.state.password,
-            phone : this.state.phone,
-            bid : cookie.load('buyerData').bid
+            id : localStorage.getItem('id')
         }
+        console.log(vars);
 
-        if( data.name === "" || data.email === "" || data.password === ""){
-            console.log("Invalid data, Cannot Update");
+        let {data} =  await this.props.buyerUpdateMutation({
+            variables:vars
+        });
+
+        console.log(data);
+        if(data.updateBuyer != null){
+            localStorage.setItem("firstName", data.updateBuyer['firstName']);
+            localStorage.setItem("lastName", data.updateBuyer['lastName']);
+            localStorage.setItem("email", data.updateBuyer['email']);
+            localStorage.setItem("id", data.updateBuyer['id']);
+            localStorage.setItem("authb", 1);
+            localStorage.setItem("userType", "buyer");
+            this.setState({});
         }else{
-            
-            axios.defaults.withCredentials = true;
-            let token = localStorage.getItem("Buyer-Auth-Token");
-            axios.post(nodeAddress+'buyer/update',data, {
-                headers: {
-                    'Authorization' : token,
-                    'Accept' : 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => {
-                if(response.status === 200){
-                    for(let cookieItem in response.data){
-                        console.log(cookieItem);
-                        console.log(response.data[cookieItem])
-                        cookie.save(cookieItem,response.data[cookieItem],{encode:String} )
-                        
-                    }
-                    alert("Profile Updated");
-                    re = <Redirect to = "/buyerHome"/>
-                    this.setState({
-                        updated: true
-                    })
-                }else if( response.status === 201){
-                    alert("Some Error Occured, records not updated");
-                    console.log(response.data);
-                }else if(response.status === 202){
-                    alert("The email belongs to someone else");
-                }
-                
-            }).catch(error=>{
-                console.log("Error: "+JSON.stringify(error.data));
-            });
+            alert("Details Not Updated!");
         }
-        
     }
     render(){
-        if(cookie.load('authCookieb') !== "authenticated" ){
+        if (localStorage.getItem("authb")!=1){
             re = <Redirect to = "/welcome"/>
-            console.log("Inside Else");
         }
         return(
             <div className = "updateContainer">
@@ -93,10 +88,21 @@ export default class BuyerUpdate extends React.Component{
                             <tr>
                                 <div>
                                     <label className = "hdng">
-                                        Name
+                                        First Name
                                     </label>
                                     <td>
-                                        <input className = "inp" size = "45" type = "text" name = "name" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.name}  autoFocus required/>
+                                        <input className = "inp" size = "45" type = "text" name = "firstName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.firstName}  autoFocus required/>
+                                    </td>
+                                </div>
+                            </tr>
+
+                            <tr>
+                                <div>
+                                    <label className = "hdng">
+                                        Last Name
+                                    </label>
+                                    <td>
+                                        <input className = "inp" size = "45" type = "text" name = "lastName" pattern = "[A-Za-z ]+" title="Alphabets Only" onChange = {this.handleInput} value = {this.state.lastName} required/>
                                     </td>
                                 </div>
                             </tr>
@@ -124,26 +130,19 @@ export default class BuyerUpdate extends React.Component{
                             </tr>
 
                             <tr>
-                                <div>
-                                    <label className = "hdng">
-                                        Phone
-                                    </label>
-                                    <td>
-                                        <input className = "inp" size = "45" type = "text" name = "phone" pattern="[0-9]{10}" title="10 Digits Only" onChange = {this.handleInput} value = {this.state.phone} />
-                                    </td>
-                                </div>
-                            </tr>
-
-                            <tr>
                                 <td colSpan = "2" align = "center">
                                     <input className = "bttn" type = "submit" name = "update" value = "UPDATE"/>
                                 </td> 
                             </tr>
+
                         </tbody>
                     </table>
                 </form>
-
             </div>
         )
     }
 }
+
+export default compose(
+    graphql(buyerUpdateMutation, {name :"buyerUpdateMutation"})
+)(BuyerUpdate);
